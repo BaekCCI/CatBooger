@@ -19,7 +19,7 @@ const hospitals = [
   // 필요에 따라 병원 객체를 더 추가하세요
 ];
 
-const App = () => {
+const Hospital = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Container>
@@ -42,13 +42,6 @@ const App = () => {
             </HospitalCard>
           ))}
         </ScrollView>
-        <Footer>
-          <FooterIcon name="medkit-outline" size={24} />
-          <FooterIcon name="chatbubble-outline" size={24} />
-          <FooterIcon name="home-outline" size={24} />
-          <FooterIcon name="people-outline" size={24} />
-          <FooterIcon name="menu-outline" size={24} />
-        </Footer>
       </Container>
     </SafeAreaView>
   );
@@ -115,17 +108,4 @@ const HospitalAddress = styled.Text`
   color: #777;
 `;
 
-const Footer = styled.View`
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  padding: 16px;
-  border-top-width: 1px;
-  border-top-color: #eee;
-`;
-
-const FooterIcon = styled(Icon)`
-  color: #777;
-`;
-
-export default App;
+export default Hospital;
