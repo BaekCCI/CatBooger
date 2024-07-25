@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import Home from './screen/home';
 import Hospital from './screen/Hospital';
-import Counseling from './screen/Counseling';
+import Counseling from './screen/Counseling/Counsel';
 import Comunity from './screen/Comunity';
 import Menu from './screen/Menu';
 import HospitalDetail from './screen/HospitalDetail';

@@ -1,31 +1,23 @@
 import React from "react";
-import { View, Text} from "react-native";
-import styled from "styled-components";
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import { View, Text } from "react-native";
+import styled from "styled-components/native";
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
+import ChatList from "./ChatList";
 import DoctorList from "./DoctorList";
-
-
-
-
-function Ticket() {
-  return (
-    <View>
-      <Text>보유한 상담권</Text>
-    </View>
-  );
-}
+import Ticket from "./Ticket";
 
 const Tab = createMaterialTopTabNavigator();
 
-function CounselingTabs(){
-  return(
+function CounselingTabs() {
+  return (
     <Tab.Navigator
-      screenOptions={({route})=>({
-        tabBarLabel:({focused})=>{
+        initialRouteName="DoctorList"
+        screenOptions={({ route }) => ({
+        tabBarLabel: ({ focused }) => {
           let label;
 
-          switch(route.name){
+          switch (route.name) {
             case 'DoctorList':
               label = '의사 목록';
               break;
@@ -36,8 +28,8 @@ function CounselingTabs(){
               label = '보유한 상담권';
               break;
           }
-          return(
-            <Text style={{color: focused ? '#0089AB':'gray', fontSize: 15}}>
+          return (
+            <Text style={{ color: focused ? '#0089AB' : 'gray', fontSize: 15 }}>
               {label}
             </Text>
           );
@@ -49,16 +41,12 @@ function CounselingTabs(){
       <Tab.Screen name="DoctorList" component={DoctorList} />
       <Tab.Screen name="ChatList" component={ChatList} />
       <Tab.Screen name="Ticket" component={Ticket} />
-
     </Tab.Navigator>
   );
 }
 
-
-export default function Counseling(){
-  return(
-    <CounselingTabs/>
+export default function Counsel() {
+  return (
+    <CounselingTabs />
   );
-
 }
-

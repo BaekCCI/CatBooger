@@ -19,7 +19,7 @@ const BtnText = styled.Text`
     font-size : 20px;
 `;
 
-const Start = ({ navigation }) =>{
+const Home = ({ navigation }) =>{
 
     const onPress = () => navigation.navigate('Home');
   return (
@@ -35,4 +35,4 @@ const Start = ({ navigation }) =>{
   );
 }
 
-export default Start;
+export default Home;
