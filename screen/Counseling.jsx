@@ -1,38 +1,64 @@
 import React from "react";
 import { View, Text} from "react-native";
 import styled from "styled-components";
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
-const StyledView = styled.View`
-  background: #d8d8d8;
-  padding: 10px;
-  border-radius: 5px;
-`;
+import DoctorList from "./DoctorList";
 
-const StyledButton = styled.TouchableOpacity`
-  border: 1px solid black;
-  height : 100px;
-    align-items: center;
-    font-color : blue;
-`;
-const BtnText = styled.Text`
-    color : blue;
-    font-size : 20px;
-`;
 
-const Counseling = ({ navigation }) =>{
 
-    const onPress = () => navigation.navigate('Home');
+
+function Ticket() {
   return (
-
-        <StyledView>
-            <StyledButton onPress={onPress}>
-                <BtnText>title="Go to Home" </BtnText>
-
-            </StyledButton>
-            <Text>상담</Text>
-        </StyledView>
-
+    <View>
+      <Text>보유한 상담권</Text>
+    </View>
   );
 }
 
-export default Counseling;
+const Tab = createMaterialTopTabNavigator();
+
+function CounselingTabs(){
+  return(
+    <Tab.Navigator
+      screenOptions={({route})=>({
+        tabBarLabel:({focused})=>{
+          let label;
+
+          switch(route.name){
+            case 'DoctorList':
+              label = '의사 목록';
+              break;
+            case 'ChatList':
+              label = '채팅 내역';
+              break;
+            case 'Ticket':
+              label = '보유한 상담권';
+              break;
+          }
+          return(
+            <Text style={{color: focused ? '#0089AB':'gray', fontSize: 15}}>
+              {label}
+            </Text>
+          );
+        },
+        tabBarActiveTintColor: '#0089AB',
+        tabBarInactiveTintColor: 'gray',
+      })}
+    >
+      <Tab.Screen name="DoctorList" component={DoctorList} />
+      <Tab.Screen name="ChatList" component={ChatList} />
+      <Tab.Screen name="Ticket" component={Ticket} />
+
+    </Tab.Navigator>
+  );
+}
+
+
+export default function Counseling(){
+  return(
+    <CounselingTabs/>
+  );
+
+}
+

@@ -153,7 +153,7 @@ function MyTabs() {
             </Text>
           );
         },
-        tabBarActiveTintColor: 'tomato',
+        tabBarActiveTintColor: '#0089AB',
         tabBarInactiveTintColor: 'gray',
       })}
     >
