@@ -19,7 +19,8 @@ const hospitals = [
   // 필요에 따라 병원 객체를 더 추가하세요
 ];
 
-const Hospital = () => {
+const Hospital = ({navigation}) => {
+  const onPress = () => navigation.navigate('HospitalDetail');
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Container>
@@ -32,7 +33,7 @@ const Hospital = () => {
         <Title>근처 동물병원</Title>
         <ScrollView>
           {hospitals.map((hospital, index) => (
-            <HospitalCard key={index}>
+            <HospitalCard key={index} onPress={onPress} >
               <HospitalImage source={{ uri: hospital.image }} />
               <HospitalInfo>
                 <HospitalName>{hospital.name}</HospitalName>
@@ -82,7 +83,7 @@ const Title = styled.Text`
   margin-right: 3%;
 `;
 
-const HospitalCard = styled.View`
+const HospitalCard = styled.TouchableOpacity`
   flex-direction: row;
   padding: 7% 5%;
   border: 1px solid #eee;
