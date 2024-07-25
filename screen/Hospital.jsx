@@ -8,13 +8,13 @@ const hospitals = [
     name: '올리몰스 동물메디컬센터',
     status: '진료중',
     address: '전주시 덕진구 송천중앙로 213',
-    image: 'https://via.placeholder.com/50', // 실제 이미지 URL로 대체하세요
+    image: 'https://via.placeholder.com/75', // 실제 이미지 URL로 대체하세요
   },
   {
     name: '올리몰스 동물메디컬센터',
     status: '진료 종료',
     address: '전주시 덕진구 송천중앙로 213',
-    image: 'https://via.placeholder.com/50', // 실제 이미지 URL로 대체하세요
+    image: 'https://via.placeholder.com/75', // 실제 이미지 URL로 대체하세요
   },
   // 필요에 따라 병원 객체를 더 추가하세요
 ];
@@ -49,7 +49,7 @@ const Hospital = () => {
 
 const Container = styled.View`
   flex: 1;
-  padding: 16px;
+  padding: 3%;
   background-color: #fff;
 `;
 
@@ -61,37 +61,43 @@ const Header = styled.View`
 
 const SearchInput = styled.TextInput`
   flex: 1;
-  padding: 8px;
+  align-items: center;
+  margin: 0 3%;
+  padding: 2%;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 10px;
 `;
 
 const MapButton = styled.TouchableOpacity`
-  margin-left: 8px;
+  align-items: center;
+  margin: 0 3%;
 `;
 
 const Title = styled.Text`
-  margin: 16px 0;
   font-size: 18px;
   font-weight: bold;
+  margin-top: 8%;
+  margin-bottom: 6%;
+  margin-left: 3%;
+  margin-right: 3%;
 `;
 
 const HospitalCard = styled.View`
   flex-direction: row;
-  padding: 16px;
+  padding: 7% 5%;
   border: 1px solid #eee;
-  border-radius: 8px;
-  margin-bottom: 8px;
+  border-radius: 10px;
+  margin-bottom: 3%;
 `;
 
 const HospitalImage = styled.Image`
-  width: 50px;
-  height: 50px;
+  width: 75px;
+  height: 75px;
   border-radius: 4px;
 `;
 
 const HospitalInfo = styled.View`
-  margin-left: 16px;
+  margin-left: 6%;
   flex: 1;
 `;
 
