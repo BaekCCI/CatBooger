@@ -19,20 +19,20 @@ const BtnText = styled.Text`
     font-size : 20px;
 `;
 
-const Start = ({ navigation }) =>{
+const Hospital = ({ navigation }) =>{
 
-    const onPress = () => navigation.navigate('Home');
+    const onPress = () => navigation.navigate('HospitalDetail');
   return (
 
         <StyledView>
             <StyledButton onPress={onPress}>
-                <BtnText>title="Go to Home" </BtnText>
+                <BtnText>title="Go to Detail" </BtnText>
 
             </StyledButton>
-            <Text>home!</Text>
+            <Text>Hospital</Text>
         </StyledView>
 
   );
 }
 
-export default Start;
+export default Hospital;
