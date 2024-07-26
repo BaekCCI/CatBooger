@@ -6,30 +6,33 @@ import { useNavigation } from '@react-navigation/native';
 
 const doctors = [
     {
+        id : "1",
         name : "홍길동",
         star : "1.8",
         explain : "정성껏 진료하는 수의사입니다.정성껏 진료하는 수의사입니다.정성껏 진료하는 수의사입니다.정성껏 진료하는 수의사입니다.정성껏 진료하는 수의사입니다.",
-        time : "상담시간 : 09:00 ~ 18:00"
+        time : "09:00 ~ 18:00"
     },
     {
+        id : "2",
         name : "홍길동",
         star : "0.8",
         explain : "정성껏 진료하는 수의사입니다.",
-        time : "상담시간 : 09:00 ~ 18:00"
+        time : "09:00 ~ 18:00"
     },
     {
+        id : "3",
         name : "홍길동",
         star : "2.8",
         explain : "정성껏 진료하는 수의사입니다.",
-        time : "상담시간 : 09:00 ~ 18:00"
+        time : "09:00 ~ 18:00"
     }
 ]
 
-const DoctorCard = ({name, star, explain, time}) => {
+const DoctorCard = ({id, name, star, explain, time}) => {
     const navigation = useNavigation();
 
     const navigate2Detail = () => {
-        navigation.navigate('DoctorDetail');
+        navigation.navigate('DoctorDetail',{id});
     };
 
     return(
@@ -42,7 +45,7 @@ const DoctorCard = ({name, star, explain, time}) => {
                     <TextTop>{star}</TextTop>
                 </DoctorTop>
                     <TextBottom numberOfLines={2}>{explain}</TextBottom>
-                    <TextBottom color="#595959" >{time}</TextBottom>
+                    <TextBottom color="#595959" >상담시간 {time}</TextBottom>
             </DoctorRight>
         </DoctorWrap>
 
@@ -70,7 +73,7 @@ export default function DoctorList() {
     const [doctorList, setDoctorList] = useState(doctors); //doctorList 정렬
 
     return (
-        <Scroll>
+        <ScrollView>
         <Wrap>
             <TopView>
                 <TittleText>검정콩 Pick</TittleText>
@@ -80,6 +83,7 @@ export default function DoctorList() {
                 .map((doctor, index)=>(
                 <React.Fragment key={index}><DoctorCard
                     key={index}
+                    id = {doctor.id}
                     name={doctor.name}
                     star={doctor.star}
                     explain={doctor.explain}
@@ -116,6 +120,7 @@ export default function DoctorList() {
             {doctorList.map((doctor, index)=>(
                 <React.Fragment key={index}><DoctorCard
                     key={index}
+                    id = {doctor.id}
                     name={doctor.name}
                     star={doctor.star}
                     explain={doctor.explain}
@@ -124,7 +129,7 @@ export default function DoctorList() {
             ))}
             
         </Wrap>
-        </Scroll>
+        </ScrollView>
     );
   }
 
@@ -135,13 +140,11 @@ export default function DoctorList() {
     height : 100%;
     background-color : white;
 `;
-const Scroll = styled(ScrollView)`
 
-`
 const Line = styled.View`
     background-color : #d0d0d0;
     width : ${props => props.width || '100%'};
-    height : ${props => props.height || '0.5px'};
+    height : ${props => props.height || '0.3px'};
 `;
 //검정콩 Pick
 const TopView = styled.View`
@@ -168,7 +171,7 @@ const DoctorRight = styled.View`
   flex-direction : column;
   margin-right : 80px;
 `;
-const DoctorWrap = styled(TouchableOpacity)`
+const DoctorWrap = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   width: 100%;
@@ -210,7 +213,7 @@ const TittleAll = styled.View`
     margin-top : 20px;
 `;
 const TextAll = styled.Text`
-    font-size : 22px;
+    font-size : 20px;
     font-weight : bold;
     margin : 10px;
 `;

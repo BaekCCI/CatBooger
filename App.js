@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, StatusBar, SafeAreaView, Text, TouchableOpacity, Image  } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -156,7 +156,7 @@ function MyTabs() {
 export default function App() {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <NavigationContainer>
+      <NavigationContainer theme={navTheme}>
         <MyTabs />
       </NavigationContainer>
     </SafeAreaView>
@@ -168,10 +168,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 });
+const navTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: 'white',
+  },
+};
