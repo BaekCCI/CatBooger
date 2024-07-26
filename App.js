@@ -10,6 +10,7 @@ import Counseling from './screen/Counseling/Counsel';
 import Comunity from './screen/Comunity';
 import Menu from './screen/Menu';
 import HospitalDetail from './screen/HospitalDetail';
+import DoctorDetail from './screen/Counseling/DoctorDetail';
 
 const HomeStack = createNativeStackNavigator();
 const HospitalStack = createNativeStackNavigator();
@@ -29,22 +30,7 @@ function HospitalStackScreen() {
   return (
     <HospitalStack.Navigator screenOptions={commonHeader}>
       <HospitalStack.Screen name="Hospital" component={Hospital} />
-      <HospitalStack.Screen 
-        name="HospitalDetail" 
-        component={HospitalDetail} 
-        options={{
-          headerRight: () => (
-            <TouchableOpacity onPress={() => alert('알림 클릭됨')}>
-              <Image 
-                source={require('./assets/alert.png')} 
-                style={{ width: 27, height: 27, marginRight: 10 }} 
-              />
-            </TouchableOpacity>
-          ),
-          headerTitle: '', 
-          headerBackTitleVisible: false,
-        }}
-      />
+      <HospitalStack.Screen name="HospitalDetail" component={HospitalDetail} />
     </HospitalStack.Navigator>
   );
 }
@@ -53,6 +39,7 @@ function CounselingStackScreen() {
   return (
     <CounselingStack.Navigator screenOptions={commonHeader}>
       <CounselingStack.Screen name="Counseling" component={Counseling} />
+      <CounselingStack.Screen name="DoctorDetail" component={DoctorDetail} />
     </CounselingStack.Navigator>
   );
 }
