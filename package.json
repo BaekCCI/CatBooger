@@ -16,6 +16,7 @@
     "expo-status-bar": "~1.12.1",
     "react": "^18.2.0",
     "react-native": "0.74.3",
+    "react-native-simple-modal": "^9.0.1",
     "styled-components": "^6.1.12"
   },
   "devDependencies": {

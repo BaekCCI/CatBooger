@@ -8,6 +8,7 @@ import Home from './screen/home';
 import Hospital from './screen/Hospital';
 import Counseling from './screen/Counseling';
 import Comunity from './screen/Comunity';
+import CommunityPost from './screen/CommunityPost';
 import Menu from './screen/Menu';
 import HospitalDetail from './screen/HospitalDetail';
 
@@ -61,6 +62,7 @@ function ComunityStackScreen() {
   return (
     <ComunityStack.Navigator screenOptions={commonHeader}>
       <ComunityStack.Screen name="Comunity" component={Comunity} />
+      <ComunityStack.Screen name="CommunityContentWindow" component={CommunityPost} />
     </ComunityStack.Navigator>
   );
 }
