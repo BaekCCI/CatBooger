@@ -7,7 +7,7 @@ import { HorizontalLine, LikeTag, ScrapeTag } from "./CommunityCommonStyles.jsx"
 const PostData = {
   title: "사실 우리집 고양이 킬러임",
   content: "레옹이 아니라 냐옹이라는 유명한 킬러임 지금도 황태밀수 사업에서 손때고 짜져있으라고 권총으로 협박받고이써 ㅠㅠ",
-  img: require('../assets/Comu_active.png'),
+  img: require('../../assets/Comu_active.png'),
   tags: ["고양이", "일상"],
   profileNickName: "괴문서맵게하는집",
   postTime: "2024-05-28 19:17:11",

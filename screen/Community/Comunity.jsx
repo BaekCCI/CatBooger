@@ -105,7 +105,7 @@ const Community = ({ navigation }) => {
               <FilterContent>
                 <View style={{flexDirection : 'row', alignItems : 'baseline'}}>
                   <TouchableOpacity onPress={closeFilter}> 
-                    <Image source={require("../assets/community/x_icon.png")} style={{width:20, height : 20}}/>
+                    <Image source={require("../../assets/community/x_icon.png")} style={{width:20, height : 20}}/>
                   </TouchableOpacity>
                   <Text style={{fontSize:25, textAlign : 'center'}}>
                     필터
@@ -187,10 +187,10 @@ const CommunityTopContainer = ({ openFilter }) => (
     <Text style={{ fontSize: 30 }}>커뮤니티</Text>
     <View style={{ flexDirection: 'row', gap: 10 }}>
       <TouchableOpacity onPress={() => alert("검색창 실행")}>
-        <Image source={require('../assets/community/search_logo.png')} style={{ width: 25, height: 25 }} />
+        <Image source={require('../../assets/community/search_logo.png')} style={{ width: 25, height: 25 }} />
       </TouchableOpacity>
       <TouchableOpacity onPress={openFilter}>
-        <Image source={require('../assets/community/filter_logo.png')} style={{ width: 25, height: 25 }} />
+        <Image source={require('../../assets/community/filter_logo.png')} style={{ width: 25, height: 25 }} />
       </TouchableOpacity>
     </View>
   </View>
