@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import Home from './screen/Home/home';
+import RecordDialog from './screen/Home/RecordDialog'
 import Hospital from './screen/Hospital';
 import Counseling from './screen/Counseling/Counsel';
 import Comunity from './screen/Comunity';
@@ -23,6 +24,7 @@ function HomeStackScreen() {
   return (
     <HomeStack.Navigator screenOptions={commonHeader}>
       <HomeStack.Screen name="Home" component={Home} />
+      <HomeStack.Screen name="RecordDialog" component={RecordDialog} />
     </HomeStack.Navigator>
   );
 }

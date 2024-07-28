@@ -1,16 +1,23 @@
 import React, {useState} from "react";
 import { View, Text, ImageBackground, Modal,  TouchableWithoutFeedback} from "react-native";
 import styled from "styled-components";
+import { useNavigation } from '@react-navigation/native';
 
-
-const Home = ({ navigation }) =>{
+export default function Home (){
   const [modalVisible, setIsModalVisible]=useState(false);
 
-    const onPress = () => navigation.navigate('Home');
+  const navigation = useNavigation();
+
 
     const handleModal = () => {
       setIsModalVisible(!modalVisible);
     }
+  const handleDialog = (info) =>{
+
+    navigation.navigate('RecordDialog',{info});
+    setIsModalVisible(!modalVisible);
+  }
+
   return (
     <BackGround source={require('../../assets/Home/HomeBG.png')}>
       <StyledView>
@@ -42,56 +49,52 @@ const Home = ({ navigation }) =>{
         <TouchableWithoutFeedback onPress={handleModal}>
           <ModalBack>
             <TouchableWithoutFeedback>
-        <ModalView>
-          <CalendarBtn align="center" onPress={handleModal}>
-              <CalendarImg source={require('../../assets/Home/ArrowDown.png')} />
-          </CalendarBtn>
-          <Icons>
-            < IconBtn>
-              <IconImg source={require('../../assets/Home/FeedIcon.png')}/>
-              <IconTxt>급여</IconTxt>
-            </IconBtn>
-            < IconBtn>
-              <IconImg source={require('../../assets/Home/MedicineIcon.png')}/>
-              <IconTxt>약</IconTxt>
-            </IconBtn>
-            < IconBtn>
-              <IconImg source={require('../../assets/Home/KgIcon.png')}/>
-              <IconTxt>체중</IconTxt>
-            </IconBtn>
-            < IconBtn>
-              <IconImg source={require('../../assets/Home/PoopIcon.png')}/>
-              <IconTxt>대소변</IconTxt>
-            </IconBtn>
-          </Icons>
-          <Icons>
-            < IconBtn>
-              <IconImg source={require('../../assets/Home/VaccineIcon.png')}/>
-              <IconTxt>예방접종</IconTxt>
-            </IconBtn>
-            < IconBtn>
-              <IconImg source={require('../../assets/Home/BathIcon.png')}/>
-              <IconTxt>목욕</IconTxt>
-            </IconBtn>
-            < IconBtn>
-              <IconImg source={require('../../assets/Home/WalkIcon.png')}/>
-              <IconTxt>산책</IconTxt>
-            </IconBtn>
-          </Icons>
-            
-          
-        </ModalView>
-        </TouchableWithoutFeedback>
-        </ModalBack>
+              <ModalView>
+                <CalendarBtn align="center" onPress={handleModal}>
+                  <CalendarImg source={require('../../assets/Home/ArrowDown.png')} />
+                </CalendarBtn>
+                <Icons>
+                  < IconBtn onPress={()=>handleDialog('급여')}>
+                    <IconImg source={require('../../assets/Home/FeedIcon.png')}/>
+                    <IconTxt>급여</IconTxt>
+                  </IconBtn>
+                  < IconBtn onPress={()=>handleDialog('약')}>
+                    <IconImg source={require('../../assets/Home/MedicineIcon.png')}/>
+                    <IconTxt>약</IconTxt>
+                  </IconBtn>
+                  < IconBtn onPress={()=>handleDialog('체중')}>  
+                    <IconImg source={require('../../assets/Home/KgIcon.png')}/>
+                    <IconTxt>체중</IconTxt>
+                  </IconBtn>
+                  < IconBtn onPress={()=>handleDialog('대소변')}>
+                    <IconImg source={require('../../assets/Home/PoopIcon.png')}/>
+                    <IconTxt>대소변</IconTxt>
+                  </IconBtn>
+                </Icons>
+                <Icons>
+                  < IconBtn onPress={()=>handleDialog('예방접종')}>
+                    <IconImg source={require('../../assets/Home/VaccineIcon.png')}/>
+                    <IconTxt>예방접종</IconTxt>
+                  </IconBtn>
+                  < IconBtn onPress={()=>handleDialog('목욕')}>
+                    <IconImg source={require('../../assets/Home/BathIcon.png')}/>
+                   <IconTxt>목욕</IconTxt>
+                  </IconBtn>
+                  < IconBtn onPress={()=>handleDialog('산책')}>
+                    <IconImg source={require('../../assets/Home/WalkIcon.png')}/>
+                    <IconTxt>산책</IconTxt>
+                 </IconBtn>
+               </Icons>
+              </ModalView>
+            </TouchableWithoutFeedback>
+          </ModalBack>
         </TouchableWithoutFeedback>
       </Modal>
-
     </BackGround>
 
   );
 }
 
-export default Home;
 
 
 const ModalBack = styled.View`
