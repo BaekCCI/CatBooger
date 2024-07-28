@@ -10,7 +10,7 @@ import Hospital from './screen/Hospital';
 import Counseling from './screen/Counseling/Counsel';
 import Comunity from './screen/Comunity';
 import CommunityPost from './screen/CommunityPost';
-import Menu from './screen/Menu';
+import Menu from './screen/Menu/Menu';
 import HospitalDetail from './screen/HospitalDetail';
 import DoctorDetail from './screen/Counseling/DoctorDetail';
 
