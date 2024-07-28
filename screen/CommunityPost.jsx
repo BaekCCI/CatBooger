@@ -34,7 +34,7 @@ const Comments = [
   },
 ];
 
-const CommunityContentWindow = () => {
+const CommunityPost = () => {
   return (
     <ScrollView backgroundColor='white'>
       <Post>
@@ -88,7 +88,7 @@ const CommunityContentWindow = () => {
   );
 };
 
-export default CommunityContentWindow;
+export default CommunityPost;
 
 /**------게시물의 기본 내용을 담을 태그------*/
 const Post = styled.View`

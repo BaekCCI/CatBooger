@@ -17,7 +17,7 @@ export const LikeTag = ({ likeNumber }) => {
       flexDirection: 'row',
       alignItems: 'center',
     }}>
-      <Image source={require('../assets/community/like_logo.png')} style = {{width : 17, height : 17, backgroundColor : 'pink'}}/>
+      <Image source={require('../assets/community/like_logo.png')} style = {{width : 17, height : 17}}/>
       <Text>
         {likeNumber}
       </Text>
