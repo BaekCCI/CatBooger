@@ -1,5 +1,5 @@
 import React , {useState, useEffect} from 'react';
-import { View, Text, Modal, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { View, Keyboard, Modal, TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -41,6 +41,8 @@ export default function RecordDialog(){
 
 }
 
+
+//급여
 const Feed = ({info}) => {
     const [bobCount, setBobCount] = useState(0);
     const [waterCount, setWaterCount] = useState(0);
@@ -75,6 +77,7 @@ const Feed = ({info}) => {
     }
     
     return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View>
             <RowView>
                 <TypeText>사료 추가</TypeText>
@@ -98,6 +101,7 @@ const Feed = ({info}) => {
                     <BtnImg source={require('../../assets/Home/MinusBtn.png')}/>
                 </CountBtn>
             </RowView>
+            <Line/>
 
             <TypeText>메모</TypeText>
             <InputWrap>
@@ -115,9 +119,11 @@ const Feed = ({info}) => {
             </CompleteBtn>
           
         </View>
+        </TouchableWithoutFeedback>
       );
 }
 
+//약
 const Medicine = ({info}) => {
     const [text, setText] = useState('');
     const [isModified, setIsModified] = useState(false);
@@ -148,18 +154,34 @@ const Medicine = ({info}) => {
 
     );
 }
-
+//무게
 const Kg = ({info}) => {
     const [text, setText] = useState('');
     const [isModified, setIsModified] = useState(false);
+    const [kg, setKg]=useState(0);
 
     useEffect(() => {
         // Check if there are any changes in the input or counts
-        setIsModified(text !== '');
-    }, [text]);
+        setIsModified(text !== '' || (kg !== 0 && kg !==''));
+    }, [text, kg]);
+
 
     return(
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View>
+            <RowView>
+                <TypeText>무게</TypeText>
+                <InputKg
+                    value={kg}
+                    onChangeText={setKg}
+                    placeholder="0.0"
+                    placeholderTextColor="#d9d9d9"
+                    keyboardType="numeric" 
+                /> 
+                <Component>Kg</Component>
+            </RowView>
+            <Line/>
+            
             <TypeText>메모</TypeText>
             <InputWrap>
             <InputMemo
@@ -176,6 +198,7 @@ const Kg = ({info}) => {
             </CompleteBtn>
 
         </View>
+        </TouchableWithoutFeedback>
 
     );
 }
@@ -183,14 +206,89 @@ const Kg = ({info}) => {
 const Poop = ({info}) => {
     const [text, setText] = useState('');
     const [isModified, setIsModified] = useState(false);
+    const [poopColor, setPoopColor]=useState('none');
+    const [poopStatus, setPoopStatus] = useState('none');
+    const [peeColor, setPeeColor] = useState('none');
+
 
     useEffect(() => {
         // Check if there are any changes in the input or counts
         setIsModified(text !== '');
     }, [text]);
+    
+    const handlePoopColor=(color)=>{
+        setPoopColor(color);
+    }
+    const handlePoopStatus=(status)=>{
+        setPoopStatus(status);
+    }
+    const handlePeeColor=(color)=>{
+        setPeeColor(color);
+    }
 
     return(
+        <ScrollView>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View>
+            <TypeText>대변 색</TypeText>
+            <RowView>
+                <ColorBtn selected={poopColor === 'none'} onPress={() => handlePoopColor('none')}></ColorBtn>
+                <ColorBtn color="brown" selected={poopColor === 'brown'} onPress={() => handlePoopColor('brown')}></ColorBtn>
+                <ColorBtn color="#FFC700" selected={poopColor === 'yellow'} onPress={() => handlePoopColor('yellow')}></ColorBtn>
+                <ColorBtn color="black" selected={poopColor === 'black'} onPress={() => handlePoopColor('black')}></ColorBtn>
+                <ColorBtn color="green" selected={poopColor === 'green'} onPress={() => handlePoopColor('green')}></ColorBtn>
+                <ColorBtn color="red" selected={poopColor === 'red'} onPress={() => handlePoopColor('red')}></ColorBtn>
+                <ColorBtn color="gray" selected={poopColor === 'gray'} onPress={() => handlePoopColor('gray')}></ColorBtn>
+            </RowView>
+            <TypeText>대변 상태</TypeText>
+            <RowView>
+                <StatusBtnWrap>
+                    <StatusBtn selected={poopStatus === 'none'} onPress={() => handlePoopStatus('none')}>
+                    </StatusBtn>
+                    <StatusText></StatusText>
+                </StatusBtnWrap>
+                <StatusBtnWrap>
+                    <StatusBtn selected={poopStatus === '원통형'} onPress={() => handlePoopStatus('원통형')}>
+                        <StatusImg source={require('../../assets/Home/Poop1.png')}/>
+                    </StatusBtn>
+                    <StatusText>원통형</StatusText>
+                </StatusBtnWrap>
+                <StatusBtnWrap>
+                    <StatusBtn selected={poopStatus === '토끼똥'} onPress={() => handlePoopStatus('토끼똥')}>
+                        <StatusImg source={require('../../assets/Home/Poop2.png')}/>
+                    </StatusBtn>
+                    <StatusText>토끼똥</StatusText>
+                </StatusBtnWrap>
+                <StatusBtnWrap>
+                    <StatusBtn selected={poopStatus === '무른똥'} onPress={() => handlePoopStatus('무른똥')}>
+                        <StatusImg source={require('../../assets/Home/Poop3.png')}/>
+                    </StatusBtn>
+                    <StatusText>무른똥</StatusText>
+                </StatusBtnWrap>
+                <StatusBtnWrap>
+                    <StatusBtn selected={poopStatus === '점액질'} onPress={() => handlePoopStatus('점액질')}>
+                        <StatusImg source={require('../../assets/Home/Poop4.png')}/>
+                    </StatusBtn>
+                    <StatusText>점액질</StatusText>
+                </StatusBtnWrap>
+            </RowView>
+            <Line/>
+            <TypeText>소변 색</TypeText>
+            <RowView>
+                <ColorBtn selected={peeColor === 'none'} onPress={() => handlePeeColor('none')}></ColorBtn>
+                <ColorBtn color="yellow" selected={peeColor === 'lightYellow'} onPress={() => handlePeeColor('lightYellow')}></ColorBtn>
+                <ColorBtn color="#FFCA0F" selected={peeColor === 'yellow'} onPress={() => handlePeeColor('yellow')}></ColorBtn>
+                <ColorBtn color="#FF9900" selected={peeColor === 'orange'} onPress={() => handlePeeColor('orange')}></ColorBtn>
+                <ColorBtn color="red" selected={peeColor === 'red'} onPress={() => handlePeeColor('red')}></ColorBtn>
+                <ColorBtn color="#FF9900" selected={peeColor === 'black'} onPress={() => handlePeeColor('black')}>
+                    <ColorImg source={require('../../assets/Home/BrBkColor.png')}/>
+                </ColorBtn>
+                <ColorBtn color="white" selected={peeColor === 'white'} onPress={() => handlePeeColor('white')}>
+                    <ColorImg source={require('../../assets/Home/WhiteColor.png')}/>
+                </ColorBtn>
+            </RowView>
+            <Line/>
+            
             <TypeText>메모</TypeText>
             <InputWrap>
             <InputMemo
@@ -207,6 +305,8 @@ const Poop = ({info}) => {
             </CompleteBtn>
 
         </View>
+        </TouchableWithoutFeedback>
+        </ScrollView>
 
     );
 }
@@ -221,6 +321,7 @@ const Vaccine = ({info}) => {
     }, [text]);
 
     return(
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View>
             <TypeText>메모</TypeText>
             <InputWrap>
@@ -238,6 +339,7 @@ const Vaccine = ({info}) => {
             </CompleteBtn>
 
         </View>
+        </TouchableWithoutFeedback>
 
     );
 }
@@ -251,6 +353,7 @@ const Bath = ({info}) => {
     }, [text]);
 
     return(
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View>
             <TypeText>메모</TypeText>
             <InputWrap>
@@ -258,7 +361,7 @@ const Bath = ({info}) => {
                 value={text}
                 onChangeText={setText}
                 placeholder="내용을 입력하세요"
-                placeholderTextColor="#888"
+                placeholderTextColor="#d9d9d9"
                 multiline={true} /* 여러 줄 입력을 허용 */
             />
             </InputWrap>
@@ -268,6 +371,7 @@ const Bath = ({info}) => {
             </CompleteBtn>
 
         </View>
+        </TouchableWithoutFeedback>
 
     );
 }
@@ -282,6 +386,7 @@ const Walk = ({info}) => {
     }, [text]);
 
     return(
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View>
             <TypeText>메모</TypeText>
             <InputWrap>
@@ -289,7 +394,7 @@ const Walk = ({info}) => {
                 value={text}
                 onChangeText={setText}
                 placeholder="내용을 입력하세요"
-                placeholderTextColor="#888"
+                placeholderTextColor="#d9d9d9"
                 multiline={true} /* 여러 줄 입력을 허용 */
             />
             </InputWrap>
@@ -299,6 +404,7 @@ const Walk = ({info}) => {
             </CompleteBtn>
 
         </View>
+        </TouchableWithoutFeedback>
 
     );
 }
@@ -330,7 +436,7 @@ const TypeText = styled.Text`
 const InputWrap = styled.View`
     width : 95%;
     height : 200px;
-    margin : 10px;
+    margin : 20px 0;
     align-self : center;
     border: 1px solid #989898;
     border-radius : 10px;
@@ -338,6 +444,7 @@ const InputWrap = styled.View`
 `;
 const InputMemo = styled.TextInput`
   width : 100%;
+  height : 100%;
   font-size: 15px;
   color: black;
 `;
@@ -349,7 +456,8 @@ const CompleteBtn = styled.TouchableOpacity`
     border-radius : 10px;
     justify-content : center;
     align-items : center;
-    margin : 10px;
+    margin-top : 10px;
+    margin-bottom : 30px;
 `;
 const CompleText = styled.Text`
     font-size:20px;
@@ -358,10 +466,10 @@ const CompleText = styled.Text`
 `;
 const RowView = styled.View`
     width : 100%;
-    height : 40px;
     display : flex;
     flex-direction : row;
     align-items : center;
+    margin : 5px 0 ;
 `;
 const Component = styled.Text`
     font-size : 20px;
@@ -383,3 +491,45 @@ const BtnImg = styled.Image`
     width : 100%;
     height : 100%;
 `;
+const InputKg = styled.TextInput`
+    font-weight : bold;
+    font-size : 20px;
+    align-items: center;
+    margin-right : 10px;
+`;
+
+const ColorBtn = styled.TouchableOpacity`
+    width :30px;
+    height:30px;
+    border : ${({ selected }) => (selected ? '3px solid #139989' : '1px solid #B3B3B3')};
+    border-radius : 50px;
+    margin : 10px 10px 10px 0;
+    background-color : ${props=>props.color || "white"};
+`;
+const StatusBtnWrap = styled.View`
+    width : 50px;
+    margin-right : 15px;
+`
+const StatusBtn = styled.TouchableOpacity`
+    width : 50px;
+    height : 50px;
+    border : ${({ selected }) => (selected ? '3px solid #139989' : '1px solid #B3B3B3')};
+    border-radius : 50px;
+    margin : 10px 10px 0 0;
+    justify-content : center;
+    align-items : center;
+`;
+const StatusImg = styled.Image`
+    width :85%;
+    height : 85%;
+    resize-mode : cover;
+`
+const StatusText = styled.Text`
+    text-align : center;
+    font-size : 12px;
+    margin : 5px 0;
+`;
+const ColorImg = styled.Image`
+    width : 100%;
+    height : 100%;
+`
