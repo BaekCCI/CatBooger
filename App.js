@@ -4,7 +4,7 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import Home from './screen/home';
+import Home from './screen/Home/home';
 import Hospital from './screen/Hospital';
 import Counseling from './screen/Counseling/Counsel';
 import Comunity from './screen/Comunity';
