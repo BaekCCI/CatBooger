@@ -1,16 +1,17 @@
 import React from 'react';
 import { StyleSheet, StatusBar, SafeAreaView, Text, TouchableOpacity, Image  } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import Home from './screen/home';
 import Hospital from './screen/Hospital';
-import Counseling from './screen/Counseling';
+import Counseling from './screen/Counseling/Counsel';
 import Comunity from './screen/Comunity';
 import CommunityPost from './screen/CommunityPost';
 import Menu from './screen/Menu';
 import HospitalDetail from './screen/HospitalDetail';
+import DoctorDetail from './screen/Counseling/DoctorDetail';
 
 const HomeStack = createNativeStackNavigator();
 const HospitalStack = createNativeStackNavigator();
@@ -30,22 +31,7 @@ function HospitalStackScreen() {
   return (
     <HospitalStack.Navigator screenOptions={commonHeader}>
       <HospitalStack.Screen name="Hospital" component={Hospital} />
-      <HospitalStack.Screen 
-        name="HospitalDetail" 
-        component={HospitalDetail} 
-        options={{
-          headerRight: () => (
-            <TouchableOpacity onPress={() => alert('알림 클릭됨')}>
-              <Image 
-                source={require('./assets/alert.png')} 
-                style={{ width: 27, height: 27, marginRight: 10 }} 
-              />
-            </TouchableOpacity>
-          ),
-          headerTitle: '', 
-          headerBackTitleVisible: false,
-        }}
-      />
+      <HospitalStack.Screen name="HospitalDetail" component={HospitalDetail} />
     </HospitalStack.Navigator>
   );
 }
@@ -54,6 +40,7 @@ function CounselingStackScreen() {
   return (
     <CounselingStack.Navigator screenOptions={commonHeader}>
       <CounselingStack.Screen name="Counseling" component={Counseling} />
+      <CounselingStack.Screen name="DoctorDetail" component={DoctorDetail} />
     </CounselingStack.Navigator>
   );
 }
@@ -155,7 +142,7 @@ function MyTabs() {
             </Text>
           );
         },
-        tabBarActiveTintColor: 'tomato',
+        tabBarActiveTintColor: '#0089AB',
         tabBarInactiveTintColor: 'gray',
       })}
     >
@@ -171,7 +158,7 @@ function MyTabs() {
 export default function App() {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <NavigationContainer>
+      <NavigationContainer theme={navTheme}>
         <MyTabs />
       </NavigationContainer>
     </SafeAreaView>
@@ -183,10 +170,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 });
+const navTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: 'white',
+  },
+};
