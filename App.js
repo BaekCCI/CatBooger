@@ -49,7 +49,7 @@ function ComunityStackScreen() {
   return (
     <ComunityStack.Navigator screenOptions={commonHeader}>
       <ComunityStack.Screen name="Comunity" component={Comunity} />
-      <ComunityStack.Screen name="CommunityContentWindow" component={CommunityPost} />
+      <ComunityStack.Screen name="CommunityPost" component={CommunityPost} />
     </ComunityStack.Navigator>
   );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, Touchable, TouchableOpacity, Image } from "react-native";
 import styled from "styled-components";
 import { HorizontalLine, LikeTag, ScrapeTag } from "./CommunityCommonStyles.jsx";
 
@@ -34,57 +34,82 @@ const Comments = [
   },
 ];
 
+/**이미지 데이터 */
+commentIcon = require('../../assets/community/comment_icon.png')
+
 const CommunityPost = () => {
+  /**댓글 쓰기 버튼에 해당하는 태그 */
+  const WriteCommentButton = () => {
+    return(
+      <TouchableOpacity
+      onPress={()=>alert("댓글 쓰기 창")}
+      style={{
+        position:'absolute', 
+        bottom:20, right:20, 
+        backgroundColor:'#ffffff90',
+        flexDirection:'row', 
+        justifyContent:'space-around', 
+        borderWidth:1, 
+        borderRadius:5, 
+        padding : 1}}
+        >
+        <Image source={commentIcon} style={{width:40,height:40}}/>
+      </TouchableOpacity>
+    )
+  }
   return (
-    <ScrollView backgroundColor='white'>
-      <Post>
-        <Title>{PostData.title}</Title>
-        <HorizontalLine />
-        <PostContent>{PostData.content}</PostContent>
+    <View>
 
-        <View style={{
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <PostImg source={PostData.img} />
-        </View>
+      <ScrollView backgroundColor='white'>
+        <Post>
+          <Title>{PostData.title}</Title>
+          <HorizontalLine />
+          <PostContent>{PostData.content}</PostContent>
 
-        <TagsContainer>
-          {PostData.tags.map((tag, index) => (
-            <Tag key={index}>{'#' + tag}</Tag>
+          <View style={{
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <PostImg source={PostData.img} />
+          </View>
+
+          <TagsContainer>
+            {PostData.tags.map((tag, index) => (
+              <Tag key={index}>{'#' + tag}</Tag>
+            ))}
+          </TagsContainer>
+          <PostUnderContainer>
+            <PostUnderLeftContainer>
+              <ProfileNickName>{PostData.profileNickName}</ProfileNickName>
+              <PostedTime>{PostData.postTime}</PostedTime>
+            </PostUnderLeftContainer>
+            <PostUnderRightContainer>
+              <LikeTag likeNumber={PostData.likeNumber}/>
+              <ScrapeTag scrapeNumber={PostData.scrapeNumber}/>
+            </PostUnderRightContainer>
+          </PostUnderContainer>
+
+        </Post>
+        <HorizontalLine style={{
+          height: 10,
+          backgroundColor: '#92B5B1'
+        }} />
+
+        <CommentsContainer>
+          <CommentsContainerTitle>{'댓글 ' + Comments.length}</CommentsContainerTitle>
+          <HorizontalLine />
+          {Comments.map((comment, index) => (
+            <Comment key={index}>
+              <ProfileNickName>{comment.profileNickName}</ProfileNickName>
+              <CommentText>{comment.content}</CommentText>
+              <PostedTime>{comment.postTime}</PostedTime>
+              <HorizontalLine />
+            </Comment>
           ))}
-        </TagsContainer>
-        <PostUnderContainer>
-          <PostUnderLeftContainer>
-            <ProfileNickName>{PostData.profileNickName}</ProfileNickName>
-            <PostedTime>{PostData.postTime}</PostedTime>
-          </PostUnderLeftContainer>
-          <PostUnderRightContainer>
-            <LikeTag likeNumber={PostData.likeNumber}/>
-            <ScrapeTag scrapeNumber={PostData.scrapeNumber}/>
-          </PostUnderRightContainer>
-        </PostUnderContainer>
-
-      </Post>
-      <HorizontalLine style={{
-        height: 10,
-        backgroundColor: '#92B5B1'
-      }} />
-
-      <CommentsContainer>
-        <CommentsContainerTitle>{'댓글 ' + Comments.length}</CommentsContainerTitle>
-        <HorizontalLine />
-        {Comments.map((comment, index) => (
-          <Comment key={index}>
-            <ProfileNickName>{comment.profileNickName}</ProfileNickName>
-            <CommentText>{comment.content}</CommentText>
-            <PostedTime>{comment.postTime}</PostedTime>
-            <HorizontalLine />
-          </Comment>
-        ))}
-      </CommentsContainer>
-
-    </ScrollView>
+        </CommentsContainer>
+      </ScrollView>
+        <WriteCommentButton/>
+    </View>
   );
 };
 
@@ -108,8 +133,7 @@ const PostContent = styled.Text`
 
 /**--게시물에 등록된 사진을 담을 태그--*/
 const PostImg = styled.Image`
-  border: 2px solid black;
-  resize-mode: cover;
+  border: 1px solid #78787850;
   width : 100px;
   height : 100px
 `;
