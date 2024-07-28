@@ -4,11 +4,13 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import Home from './screen/home';
+import Home from './screen/Home/home';
+import RecordDialog from './screen/Home/RecordDialog'
 import Hospital from './screen/Hospital';
 import Counseling from './screen/Counseling/Counsel';
 import Comunity from './screen/Comunity';
-import Menu from './screen/Menu';
+import CommunityPost from './screen/CommunityPost';
+import Menu from './screen/Menu/Menu';
 import HospitalDetail from './screen/HospitalDetail';
 import DoctorDetail from './screen/Counseling/DoctorDetail';
 
@@ -22,6 +24,7 @@ function HomeStackScreen() {
   return (
     <HomeStack.Navigator screenOptions={commonHeader}>
       <HomeStack.Screen name="Home" component={Home} />
+      <HomeStack.Screen name="RecordDialog" component={RecordDialog} />
     </HomeStack.Navigator>
   );
 }
@@ -48,6 +51,7 @@ function ComunityStackScreen() {
   return (
     <ComunityStack.Navigator screenOptions={commonHeader}>
       <ComunityStack.Screen name="Comunity" component={Comunity} />
+      <ComunityStack.Screen name="CommunityContentWindow" component={CommunityPost} />
     </ComunityStack.Navigator>
   );
 }
