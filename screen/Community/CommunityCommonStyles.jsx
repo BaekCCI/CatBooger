@@ -17,7 +17,7 @@ export const LikeTag = ({ likeNumber }) => {
       flexDirection: 'row',
       alignItems: 'center',
     }}>
-      <Image source={require('../assets/community/like_logo.png')} style = {{width : 17, height : 17}}/>
+      <Image source={require('../../assets/community/like_logo.png')} style = {{width : 17, height : 17}}/>
       <Text>
         {likeNumber}
       </Text>
@@ -32,7 +32,7 @@ export const ScrapeTag = ({ scrapeNumber }) => {
       flexDirection: 'row',
       alignItems: 'center',
     }}>
-      <Image source={require('../assets/community/scrape_logo.png')} style = {{width : 15, height : 15}}/>
+      <Image source={require('../../assets/community/scrape_logo.png')} style = {{width : 15, height : 15}}/>
       <Text>
         {scrapeNumber}
       </Text>
