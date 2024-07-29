@@ -1,7 +1,8 @@
-import React from 'react';
-import { SafeAreaView, ScrollView, View, Text, TextInput, Image } from 'react-native';
+import React, { useState } from 'react';
+import { SafeAreaView, ScrollView, View, Text, TextInput, Image, FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import MapView, { Marker } from 'react-native-maps';
 
 const hospitals = [
   {
@@ -9,40 +10,78 @@ const hospitals = [
     status: '진료중',
     address: '전주시 덕진구 송천중앙로 213',
     image: 'https://via.placeholder.com/75', // 실제 이미지 URL로 대체하세요
+    latitude: 37.78830,
+    longitude: -122.4324,
   },
   {
-    name: '올리몰스 동물메디컬센터',
+    name: '올리몰스 동물메디컬센터22',
     status: '진료 종료',
     address: '전주시 덕진구 송천중앙로 213',
     image: 'https://via.placeholder.com/75', // 실제 이미지 URL로 대체하세요
+    latitude: 37.78825,
+    longitude: -122.4324,
   },
   // 필요에 따라 병원 객체를 더 추가하세요
 ];
 
-const Hospital = ({navigation}) => {
+const Hospital = ({ navigation }) => {
+  const [showMap, setShowMap] = useState(false);
+
   const onPress = () => navigation.navigate('HospitalDetail');
+  const toggleView = () => setShowMap(!showMap);
+
+  const renderHospitalItem = ({ item }) => (
+    <HospitalCard key={item.name} onPress={onPress}>
+      <HospitalImage source={{ uri: item.image }} />
+      <HospitalInfo>
+        <HospitalName>{item.name}</HospitalName>
+        <HospitalStatus>{item.status}</HospitalStatus>
+        <HospitalAddress>{item.address}</HospitalAddress>
+      </HospitalInfo>
+    </HospitalCard>
+  );
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Container>
         <Header>
           <SearchInput placeholder="병원을 검색하세요" />
-          <MapButton>
-            <Icon name="map-outline" size={24} color="#000" />
+          <MapButton onPress={toggleView}>
+            <Icon name={showMap ? "list-outline" : "map-outline"} size={24} color="#000" />
           </MapButton>
         </Header>
-        <Title>근처 동물병원</Title>
-        <ScrollView>
-          {hospitals.map((hospital, index) => (
-            <HospitalCard key={index} onPress={onPress} >
-              <HospitalImage source={{ uri: hospital.image }} />
-              <HospitalInfo>
-                <HospitalName>{hospital.name}</HospitalName>
-                <HospitalStatus>{hospital.status}</HospitalStatus>
-                <HospitalAddress>{hospital.address}</HospitalAddress>
-              </HospitalInfo>
-            </HospitalCard>
-          ))}
-        </ScrollView>
+        {showMap ? (
+          <MapView
+            style={{ flex: 1 }}
+            initialRegion={{
+              latitude: 37.78825,
+              longitude: -122.4324,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          >
+            {hospitals.map((hospital, index) => (
+              <Marker
+                key={index}
+                coordinate={{
+                  latitude: hospital.latitude,
+                  longitude: hospital.longitude,
+                }}
+                title={hospital.name}
+                description={hospital.address}
+              />
+            ))}
+          </MapView>
+        ) : (
+          <>
+            <Title>근처 동물병원</Title>
+            <FlatList
+              data={hospitals}
+              renderItem={renderHospitalItem}
+              keyExtractor={item => item.name}
+            />
+          </>
+        )}
       </Container>
     </SafeAreaView>
   );
