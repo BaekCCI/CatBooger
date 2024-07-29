@@ -337,8 +337,8 @@ const Community = ({ navigation }) => {
   /**글쓰기 버튼에 해당하는 태그 */
   const WritePostButton = () => {
     return(
-      <TouchableOpacity
-      onPress={() => alert("글쓰기 창")}
+      <TouchableOpacity 
+      onPress={MoveToWritingPost}
       style={{
         position:'absolute', 
         bottom:20, right:20, 
@@ -356,6 +356,7 @@ const Community = ({ navigation }) => {
   
   /**-------------------------------커뮤니티 화면-------------------------------*/
   const MoveToPost = () => navigation.navigate('CommunityPost');
+  const MoveToWritingPost = () => navigation.navigate('CommunityWritingPost')
   return (
     <SafeAreaView style={{flex:1}}>
       <ScrollView style={{ backgroundColor: 'white'}}>
