@@ -45,7 +45,7 @@ const TitleInputContainer = styled.View`
   `;
   /**제목 입력창에 해당하는 태그 */
   const TitleInput = styled.TextInput`
-  font-size : 18;
+  font-size : 18px;
   `
   
 /**글 태그 선택창을 담는 태그 */
