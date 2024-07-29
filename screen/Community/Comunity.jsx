@@ -2,40 +2,7 @@ import React, { useState } from "react";
 import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, SafeAreaView, Alert, Pressable, TextInput } from "react-native";
 import styled from "styled-components/native";
 import { HorizontalLine, LikeTag, ScrapeTag } from "./CommunityCommonStyles.jsx";
-
-// 게시물 데이터
-const Posts = [
-  {
-    title: "개시물 제목",
-    content: "게시물 내용",
-    img: null,
-    tags: ["강아지", "간식", "일상"],
-    profileNickName: "글쓴이 닉네임",
-    postTime: "게시 시간",
-    likeNumber: '좋아요 수',
-    scrapeNumber: '스크랩 수'
-  },
-  {
-    title: "사실 우리집 고양이 킬러임영웅 콘서트",
-    content: "레옹이 아니라 냐옹이라는 유명한 킬러임 지금도 황태밀수 사업에서 손때고 짜져있으라고 권총으로 협박받고이써 ㅠㅠ 대충 더 추가적인 텍스트 야라라랍",
-    img: { uri: "https://ac-p1.namu.la/20240528sac/48a02548e24db4bade8089a58d4b34244c48cfd0436b894097ec670bdcfd9bac.jpg?expires=1722017549&key=ZnAk61LlLLP9Qb30HFTLhA&type=orig" },
-    tags: ["고양이", "QnA"],
-    profileNickName: "괴문서맵게하는집",
-    postTime: "2024-05-28 19:17:11",
-    likeNumber: 13,
-    scrapeNumber: 8
-  },
-  {
-    title: "사실 우리집 고양이 킬러임",
-    content: "레옹이 아니라 냐옹이라는 유명한 킬러임 지금도 황태밀수 사업에서 손때고 짜져있으라고 권총으로 협박받고이써 ㅠㅠ",
-    img: null,
-    tags: ["강아지"],
-    profileNickName: "괴문서맵게하는집",
-    postTime: "2024-05-28 19:17:11",
-    likeNumber: 13,
-    scrapeNumber: 8
-  }
-];
+import {Posts} from './CommunityCommonData.jsx'
 
 /**이미지 데이터 */
 xIcon = require('../../assets/community/x_icon.png');
@@ -85,7 +52,7 @@ const Community = ({ navigation }) => {
       
       {/**커뮤니티 검색 버튼을담는 태그*/}
       <View style={{ flexDirection: 'row', gap: 10 }}>
-        <TouchableOpacity onPress={openSearching}>
+        <TouchableOpacity onPress={isSearchingBoxOpened ? closeSearching : openSearching}>
           <Image source={require('../../assets/community/search_logo.png')} style={{ width: 25, height: 25 }} />
         </TouchableOpacity>
       {/**커뮤니티 필터 버튼을 담는 태그*/}
@@ -152,25 +119,28 @@ const Community = ({ navigation }) => {
   const filteredPosts = filterPosts();
 
   /**게시물을 렌더링하는 함수 */
-  const PostsTag = (postData) => {
+  const PostsTag = (postsData) => {
     // 선택된 태그를 가져옴
     const selectedAnimalTags = getSelectedTags(animalTags);
     const selectedCategoryTags = getSelectedTags(categoryTags);
     // 게시물을 필터링함
-    const filteredPosts = filterPosts(Posts, selectedAnimalTags, selectedCategoryTags);
+    const filteredPosts = filterPosts(postsData, selectedAnimalTags, selectedCategoryTags);
     return (
       filteredPosts.map((postData, index) => (
         <Post key={index}>
-          <StyledButton onPress={MoveToPost} style={{flexDirection:'row', alignItems:'center', gap: 5}}>
+          <StyledButton onPress={() => MoveToPost(postData)} style={{flexDirection:'row', alignItems:'center', gap: 5}}>
             <View style={{flex:3}}>
-              <PostTitle numberOfLines={1} ellipsizeMode="tail">
-                {postData.tags.includes("QnA")? 
+                  <PostTitle numberOfLines={1} ellipsizeMode="tail">
+                  {postData.tags.includes("QnA")
+                  ? 
                     <Text >Q. {postData.title}</Text>
-                : <Text>{postData.title}</Text>}
-              </PostTitle>
-              <PostContent numberOfLines={2} ellipsizeMode="tail">{postData.content}</PostContent>
-              <TagsContainer>
-                {postData.tags.map((tag, index) => (
+                  : 
+                    <Text>{postData.title}</Text>}
+                  </PostTitle>
+ 
+                  <PostContent numberOfLines={2} ellipsizeMode="tail">{postData.content}</PostContent>
+                  <TagsContainer>
+                  {postData.tags.map((tag, index) => (
                   <Tag key={index}>{'#' + tag}</Tag>
                 ))}
               </TagsContainer>
@@ -190,40 +160,49 @@ const Community = ({ navigation }) => {
   };
 
   /**검색 모달창의 열고 닫음에 대한 State*/
-  const [isSearchingOpened, setIsSearchingOpened] = useState(false);
+  const [isSearchingBoxOpened, setIsSearchingBoxOpened] = useState(false);
   /**검색 모달창을 여는 함수 */
-  const  openSearching = () => setIsSearchingOpened(true);
+  const  openSearching = () => setIsSearchingBoxOpened(true);
   /**검색 모달창을 닫는 함수 */
-  const  closeSearching = () => setIsSearchingOpened(false);
-  /** 검색 모달창에 대한 태그 */
-  const SearchingModalTag = () => {
+  const  closeSearching = () => setIsSearchingBoxOpened(false);
+  /** 검색창 대한 모든 정보를 담은 태그 */
+  const SearchingBox = () => {
     return (
-      <Modal
-        visible={isSearchingOpened}
-        onRequestClose={closeSearching}
-        transparent={true}
-        animationType="fade"
-      >
-        <Pressable
-          style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-          onPress={closeSearching}
-        >
-          <Pressable
-            style={{ backgroundColor: 'white', width: '70%', height: '80%' }}
-          >
-            <TouchableOpacity onPress={closeSearching}>
-              <Text>
-                검색창 닫기
-              </Text>
-            </TouchableOpacity>
-          </Pressable>
-        </Pressable>
-      </Modal>
+      isSearchingBoxOpened 
+      ?
+        <View style={{position:'absolute', bottom : 0, width : '100%'}}>
+          <View style={{borderWidth : 1, borderRadius : 5, backgroundColor:'#ffffffed'}}>
+            <TextInput placeholder="게시물 검색" autoFocus={true} multiline={true}></TextInput>
+          </View>
+        </View>
+      : null
+
+      // <Modal
+      //   visible={isSearchingOpened}
+      //   onRequestClose={closeSearching}
+      //   transparent={true}
+      //   animationType="fade"
+      // >
+      //   <Pressable
+      //     style={{
+      //       backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      //       flex: 1,
+      //       alignItems: 'center',
+      //       justifyContent: 'center'
+      //     }}
+      //     onPress={closeSearching}
+      //   >
+      //     <Pressable
+      //       style={{ backgroundColor: 'white', width: '70%', height: '80%' }}
+      //     >
+      //       <TouchableOpacity onPress={closeSearching}>
+      //         <Text>
+      //           검색창 닫기
+      //         </Text>
+      //       </TouchableOpacity>
+      //     </Pressable>
+      //   </Pressable>
+      // </Modal>
     )
   }
 
@@ -355,7 +334,7 @@ const Community = ({ navigation }) => {
   }
   
   /**-------------------------------커뮤니티 화면-------------------------------*/
-  const MoveToPost = () => navigation.navigate('CommunityPost');
+  const MoveToPost = (data) => navigation.navigate('CommunityPost', {postData : data});
   const MoveToWritingPost = () => navigation.navigate('CommunityWritingPost')
   return (
     <SafeAreaView style={{flex:1}}>
@@ -367,14 +346,14 @@ const Community = ({ navigation }) => {
           <HorizontalLine />
           <CommunityTagsContainer />
 
-          <PostsTag postData={filteredPosts}/>
+          <PostsTag postsData={filteredPosts}/>
 
-          <SearchingModalTag />
           <FilterModalTag />
         </CommunityContainer>
       </ScrollView>
 
       <WritePostButton/>
+      <SearchingBox/>
     </SafeAreaView>
   );
 };
@@ -382,6 +361,7 @@ const Community = ({ navigation }) => {
 const CommunityContainer = styled.View`
   border-radius: 5px;
   margin: 15px;
+  flex : 1;
 `;
 
 const StyledButton = styled.TouchableOpacity`
