@@ -10,7 +10,7 @@ import styled from "styled-components";
 import { useNavigation } from "@react-navigation/native";
 
 import { ref, set, get, child } from "firebase/database";
-import { db } from "../../firebaseConfig";
+import { database } from "../../firebaseConfig";
 
 export default function Home() {
   const [modalVisible, setIsModalVisible] = useState(false);
@@ -25,25 +25,23 @@ export default function Home() {
     setIsModalVisible(!modalVisible);
   };
 
-  const createSchedule = async (userId, scheduleId, scheduleData) => {
-    try {
-      await db().ref(`/calendar/${scheduleId}`).set({ scheduleData });
-      console.log("Schedule added successfully.");
-    } catch (error) {
-      console.error("Error adding schedule:", error);
-    }
-  };
+  useEffect(() => {
+    const checkConnection = async () => {
+      try {
+        const dbRef = ref(database, ".info/connected");
+        const snapshot = await get(dbRef);
+        if (snapshot.val() === true) {
+          console.log("Firebase 연결 성공");
+        } else {
+          console.log("Firebase 연결 실패");
+        }
+      } catch (error) {
+        console.error("Firebase 연결 오류:", error);
+      }
+    };
 
-  const userId = "user1"; // 사용자 ID
-  const scheduleId = "schedule20240801"; // 새로운 일정의 고유 ID
-  const scheduleData = {
-    date: new Date().toISOString(), // 현재 날짜 및 시간 (ISO 8601 형식)
-    memo: "Meeting with team",
-    notificationTime: new Date().toISOString(), // 알림 시간 (예: 현재 시간)
-    title: "Team Meeting",
-  };
-
-  createSchedule(userId, scheduleId, scheduleData);
+    checkConnection();
+  }, []);
 
   return (
     <BackGround source={require("../../assets/Home/HomeBG.png")}>
