@@ -126,26 +126,30 @@ const Community = ({ navigation }) => {
     const selectedCategoryTags = getSelectedTags(categoryTags);
     // 게시물을 필터링함
     const filteredPosts = filterPosts(postsData, selectedAnimalTags, selectedCategoryTags);
+
+    // 필터링한 게시물들을 보여줌
     return (
       filteredPosts.map((postData, index) => (
         <Post key={index}>
           <StyledButton onPress={() => MoveToPost(postData)} style={{flexDirection:'row', alignItems:'center', gap: 5}}>
             <View style={{flex:3}}>
-                  <PostTitle numberOfLines={1} ellipsizeMode="tail">
-                  {postData.tags.includes("QnA")
-                  ? 
-                    <Text >Q. {postData.title}</Text>
-                  : 
-                    <Text>{postData.title}</Text>}
-                  </PostTitle>
+              <PostTitle numberOfLines={1} ellipsizeMode="tail">
+              {postData.tags.includes("QnA")
+              ? 
+                <Text >Q. {postData.title}</Text>
+              : 
+                <Text>{postData.title}</Text>}
+              </PostTitle>
 
-                  <PostContent numberOfLines={2} ellipsizeMode="tail">{postData.content}</PostContent>
-                  <TagsContainer>
-                  {postData.tags.map((tag, index) => (
-                  <Tag key={index}>{'#' + tag}</Tag>
+              <PostContent numberOfLines={2} ellipsizeMode="tail">{postData.content}</PostContent>
+
+              <TagsContainer>
+                {postData.tags.map((tag, index) => (
+                <Tag key={index}>{'#' + tag}</Tag>
                 ))}
               </TagsContainer>
-              <PostUnderContent>
+
+              <PostUnderContent style={{justifyContent : 'space-between'}}>
                 <NickNameText>{postData.profileNickName}</NickNameText>
                 <View style={{flexDirection:'row', gap : 5, top : 1.5}}>
                   <LikeTag likeNumber={postData.likeNumber} />
@@ -156,6 +160,7 @@ const Community = ({ navigation }) => {
 
             {postData.img !== null ? <PostImg source={postData.img}/> : null}
           </StyledButton>
+
           <HorizontalLine />
         </Post>
       ))
@@ -185,13 +190,15 @@ const Community = ({ navigation }) => {
                   width : '95%'}}>
             <ScrollView>
               <TextInput 
+              value = {searchingText}
               placeholder="게시물 검색" autoFocus={true} multiline={true} 
               style={{height : 40}}>
               </TextInput>
             </ScrollView>
 
             <SearchingInputCompleteButton 
-              onPress={() => alert("검색 완료!")}>
+              onPress={() => setSearchingText()}
+              >
               <Text style={{fontWeight:'bold'}}>
                 검색
               </Text>
@@ -338,13 +345,14 @@ const Post = styled.View`
 `;
 
 const PostTitle = styled.Text`
-  font-size: 17px;
-`;
+  font-size: 18px;
+  font-weight : bold
+  `;
 
 const PostContent = styled.Text`
-  font-size: 13px;
-  color: #787878;
-  margin: 5px 0px;
+  font-size: 14px;
+  color: gray;
+  margin : 4px 0;
 `;
 
 /**--게시물에 등록된 사진을 담을 태그--*/
@@ -365,7 +373,7 @@ const PostUnderContent = styled.View`
 const NickNameText = styled.Text`
   flex-wrap: wrap;
   text-align: center;
-  font-size: 13px;
+  font-size: 14px;
 `;
 
 const FilterContainer = styled.Pressable`
@@ -391,8 +399,8 @@ const TagsContainer = styled.View`
 /**--한 게시물 태그의 텍스트를 담을 태그--*/
 const Tag = styled.Text`
   color: #139989;
-  font-size: 13px;
-  margin-right: 5px;
+  font-size: 12px;
+  margin-right: 10px;
   line-height: 20px;
 `;
 
@@ -408,5 +416,6 @@ const SearchingInputCompleteButton = styled.TouchableOpacity`
     justify-content:center;
     align-items:center;
 `
+
 
 export default Community;
