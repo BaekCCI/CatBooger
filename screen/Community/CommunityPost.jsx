@@ -4,7 +4,7 @@ import { useRoute } from '@react-navigation/native';
 import styled from "styled-components";
 import { HorizontalLine, LikeTag, ScrapeTag } from "./CommunityCommonStyles.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {originPosts, setOriginPosts} from './CommunityCommonData.jsx'
+import {Posts, originPosts, setOriginPosts} from './CommunityCommonData.jsx'
 
 /**이미지 데이터 */
 commentIcon = require('../../assets/community/comment_icon.png')

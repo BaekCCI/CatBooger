@@ -1,8 +1,4 @@
-import { useState } from "react";
-
 // 게시물 데이터
-export const [originPosts, setOriginPosts] = useState(Posts);
-
 export const Posts = [
   { 
     id : 1,
