@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, SafeAreaView, Alert, Pressable, TextInput } from "react-native";
 import styled from "styled-components/native";
 import { HorizontalLine, LikeTag, ScrapeTag } from "./CommunityCommonStyles.jsx";
-import {Posts} from './CommunityCommonData.jsx'
+import {Posts, originPosts, setOriginPosts} from './CommunityCommonData.jsx'
 
 /**이미지 데이터 */
 xIcon = require('../../assets/community/x_icon.png');
@@ -165,44 +165,26 @@ const Community = ({ navigation }) => {
   const  openSearching = () => setIsSearchingBoxOpened(true);
   /**검색 모달창을 닫는 함수 */
   const  closeSearching = () => setIsSearchingBoxOpened(false);
+  /**검색창에서 입력한 내용에 대한 State */
+  const [searchingText, setSearchingText] = useState("")
+
   /** 검색창 대한 모든 정보를 담은 태그 */
   const SearchingBox = () => {
     return (
       isSearchingBoxOpened 
       ?
-        <View style={{position:'absolute', bottom : 0, width : '100%'}}>
-          <View style={{borderWidth : 1, borderRadius : 5, backgroundColor:'#ffffffed'}}>
-            <TextInput placeholder="게시물 검색" autoFocus={true} multiline={true}></TextInput>
+        <View style={{
+          position:'absolute', bottom : 0, width : '100%',
+          width : '100%', borderTopWidth : 3, backgroundColor : '#ffffff', borderColor : '#c2c2c25c'}}>
+          <View style={{paddingLeft : 5 ,margin : 10,borderWidth : 2, borderRadius : 10 , backgroundColor:'#ffffffed', margin : 10}}>
+            <TextInput 
+            value={searchingText}
+            onChangeText={(newText) => {setSearchingText(newText)}}
+            placeholder="게시물 검색" autoFocus={true} multiline={true} 
+            style={{height : 40}}></TextInput>
           </View>
         </View>
       : null
-
-      // <Modal
-      //   visible={isSearchingOpened}
-      //   onRequestClose={closeSearching}
-      //   transparent={true}
-      //   animationType="fade"
-      // >
-      //   <Pressable
-      //     style={{
-      //       backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      //       flex: 1,
-      //       alignItems: 'center',
-      //       justifyContent: 'center'
-      //     }}
-      //     onPress={closeSearching}
-      //   >
-      //     <Pressable
-      //       style={{ backgroundColor: 'white', width: '70%', height: '80%' }}
-      //     >
-      //       <TouchableOpacity onPress={closeSearching}>
-      //         <Text>
-      //           검색창 닫기
-      //         </Text>
-      //       </TouchableOpacity>
-      //     </Pressable>
-      //   </Pressable>
-      // </Modal>
     )
   }
 

@@ -4,6 +4,7 @@ import { useRoute } from '@react-navigation/native';
 import styled from "styled-components";
 import { HorizontalLine, LikeTag, ScrapeTag } from "./CommunityCommonStyles.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {originPosts, setOriginPosts} from './CommunityCommonData.jsx'
 
 /**이미지 데이터 */
 commentIcon = require('../../assets/community/comment_icon.png')
@@ -37,35 +38,41 @@ const CommunityPost = () => {
       isWriteCommentOpened 
       ? 
       <CommentWritingContainer>
-            <CommentWritingButton
-            onPress={CloseWriteComment}
-            style={{
-              backgroundColor:'#0004ff90',
-            }}
-              >
-              <Image source={commentIcon} style={{width:40,height:40}}/>
-            </CommentWritingButton>
+        <CommentWritingButton
+        onPress={CloseWriteComment}
+        style={{
+          backgroundColor:'#6495ED90',
+          right : 10,
+          bottom : 5
+          }}
+          >
+            <Image source={commentIcon} style={{width:40,height:40}}/>
+        </CommentWritingButton>
+        
+        <View style={{width : '100%', borderTopWidth : 3, backgroundColor : '#ffffff', borderColor : '#c2c2c25c'}}>
+          <CommentWritingBox
+              flexDirection="row"
+              style = {{width : '95%', alignSelf : 'center'}}>
+              <ScrollView >
+                <TextInput multiline={true} autoFocus={true} placeholder="댓글 작성" style={{height:40}} />
+              </ScrollView>
 
-            <CommentWritingBox
-                flexDirection="row">
+              <CommentSendButton 
+              onPress={() => alert("댓글 등록!")}>
+              <Text style={{fontWeight:'bold'}}>
+                등록
+              </Text>
+              </CommentSendButton>
+          </CommentWritingBox>
+        </View>
 
-                <ScrollView >
-                  <TextInput multiline={true} autoFocus={true} placeholder="댓글 작성" style={{height:40}} />
-                </ScrollView>
-
-                  <CommentSendButton 
-                  onPress={() => alert("댓글 등록!")}>
-                    <Image source={sendCommentIcon} resizeMode="contain" style={{width:25, height:25}}/>
-                  </CommentSendButton>
-
-            </CommentWritingBox>
       </CommentWritingContainer>
       :
         <CommentWritingButton
         onPress={OpenWriteComment}
         style={{
           position:'absolute', 
-          bottom:20, right:20, 
+          bottom:10, right:10, 
           backgroundColor:'#ffffff90'}}>
 
           
@@ -148,7 +155,7 @@ const PostContent = styled.Text`
 /**--게시물에 등록된 사진을 담을 태그--*/
 const PostImg = styled.Image`
   width : 100%;
-  height : 400;
+  height : 400px;
 `;
 
 /**----게시물의 모든 태그들을 담을 컨테이너----*/
@@ -221,7 +228,6 @@ const CommentWritingContainer = styled.View`
   position : absolute;
   bottom : 0;
   width : 100%;
-  gap : 10px;
 `
 /**게시물 댓글 쓰기 버튼에 해당하는 태그 */
 const CommentWritingButton = styled.TouchableOpacity`
@@ -233,21 +239,23 @@ const CommentWritingButton = styled.TouchableOpacity`
 
 /**게시물 댓글 쓰기를 활성화 시켰을 때 나오는 댓글 쓰기창에 해당하는 태그*/
 const CommentWritingBox = styled.View`
+    margin : 10px;
     flex: 1px; 
-    border-width : 1px; 
-    border-radius: 5px; 
-    background-color: #ffffffeb; 
+    border-width : 2px; 
+    border-radius: 10px; 
+    background-color: #fafafaeb; 
     padding-left: 5px;
 `;
 
 /**게시물 댓글 쓰기 완료 버튼에 해당하는 태그 */
 const CommentSendButton = styled.TouchableOpacity`
-    width:50px;
-    height:30px; 
-    background-color: #0004ff90; 
+    margin : 5px;
+    margin-right : 10px;
+    width : 40px;
+    height: 30px;
+    background-color: #6495ED90; 
     border-radius:5px; 
     border-width:1px;
-    margin:5px;
     justify-content:center;
     align-items:center;
 `

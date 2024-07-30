@@ -1,6 +1,11 @@
+import { useState } from "react";
+
 // 게시물 데이터
+export const [originPosts, setOriginPosts] = useState(Posts);
+
 export const Posts = [
-  {
+  { 
+    id : 1,
     title: "게시물 제목",
     content: "게시물 내용",
     img: null,
@@ -17,7 +22,8 @@ export const Posts = [
       }
     ]
   },
-  {
+  { 
+    id : 2,
     title: "게시물 제목",
     content: "게시물 내용",
     img: null,
@@ -34,7 +40,8 @@ export const Posts = [
       }
     ]
   },
-  {
+  { 
+    id : 3,
     title: "사실 우리집 고양이 킬러임영웅 콘서트",
     content: "레옹이 아니라 냐옹이라는 유명한 킬러임 지금도 황태밀수 사업에서 손때고 짜져있으라고 권총으로 협박받고이써 ㅠㅠ 대충 더 추가적인 텍스트 야라라랍",
     img: { uri: "https://ac-p1.namu.la/20240528sac/48a02548e24db4bade8089a58d4b34244c48cfd0436b894097ec670bdcfd9bac.jpg?expires=1722017549&key=ZnAk61LlLLP9Qb30HFTLhA&type=orig" },
@@ -83,7 +90,8 @@ export const Posts = [
       },
     ]
   },
-  {
+  { 
+    id : 4,
     title: "사실 우리집 고양이 킬러임",
     content: "레옹이 아니라 냐옹이라는 유명한 킬러임 지금도 황태밀수 사업에서 손때고 짜져있으라고 권총으로 협박받고이써 ㅠㅠ",
     img: null,
