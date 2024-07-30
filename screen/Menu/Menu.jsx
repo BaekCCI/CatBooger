@@ -3,13 +3,13 @@ import { SafeAreaView, ScrollView, View, Text, TouchableOpacity } from 'react-na
 import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const MenuScreen = () => {
+const MenuScreen = ({navigation}) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <Container>
         <Header>
         <HeaderTitle>고양이 코딱지</HeaderTitle>
-        <IconWrapper>
+        <IconWrapper onPress={() => navigation.navigate('ChangeProfile')}>
         <Icon name="settings-outline" size={32} color="#000" />
         </IconWrapper>
         </Header>
@@ -17,11 +17,11 @@ const MenuScreen = () => {
           <Section>
             <SectionHeader>
             </SectionHeader>
-            <MenuItem>
+            <MenuItem onPress={() => navigation.navigate('PetManagement')}>
               <MenuText>반려동물 관리</MenuText>
               <Icon name="chevron-forward-outline" size={24} color="#000" />
             </MenuItem>
-            <MenuItem>
+            <MenuItem onPress={() => navigation.navigate('SharedParenting')}>
               <MenuText>공동 육아</MenuText>
               <Icon name="chevron-forward-outline" size={24} color="#000" />
             </MenuItem>
@@ -30,7 +30,7 @@ const MenuScreen = () => {
             <SectionHeader>
               <SectionTitle>커뮤니티</SectionTitle>
             </SectionHeader>
-            <MenuItem>
+            <MenuItem onPress={() => navigation.navigate('PostManagement')}>
               <MenuText>작성 글 관리</MenuText>
               <Icon name="chevron-forward-outline" size={24} color="#000" />
             </MenuItem>
@@ -39,19 +39,19 @@ const MenuScreen = () => {
             <SectionHeader>
               <SectionTitle>상담</SectionTitle>
             </SectionHeader>
-            <MenuItem>
+            <MenuItem onPress={() => navigation.navigate('ConsultationHistory')}>
               <MenuText>나의 상담 내역</MenuText>
               <Icon name="chevron-forward-outline" size={24} color="#000" />
             </MenuItem>
-            <MenuItem>
+            <MenuItem onPress={() => navigation.navigate('OwnedConsultations')}>
               <MenuText>보유한 상담권</MenuText>
               <Icon name="chevron-forward-outline" size={24} color="#000" />
             </MenuItem>
-            <MenuItem>
+            <MenuItem onPress={() => navigation.navigate('PaymentMethods')}>
               <MenuText>결제 수단 관리</MenuText>
               <Icon name="chevron-forward-outline" size={24} color="#000" />
             </MenuItem>
-            <MenuItem>
+            <MenuItem onPress={() => navigation.navigate('VetCertification')}>
               <MenuText>수의사 인증</MenuText>
               <Icon name="chevron-forward-outline" size={24} color="#000" />
             </MenuItem>
@@ -83,7 +83,7 @@ const HeaderTitle = styled.Text`
   font-weight: bold;
 `;
 
-const IconWrapper = styled.View`
+const IconWrapper = styled.TouchableOpacity`
   padding-top: 4%;
 `;
 
