@@ -44,7 +44,7 @@ export default function Home() {
   return (
     <BackGround source={require("../../assets/Home/HomeBG.png")}>
       <StyledView>
-        <CalendarBtn>
+        <CalendarBtn onPress={() => navigation.navigate('Calendars')}>
           <CalendarImg source={require("../../assets/Home/CalendarIcon.png")} />
         </CalendarBtn>
         <DogBtn>
