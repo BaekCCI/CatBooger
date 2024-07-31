@@ -13,7 +13,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Home from "./screen/Home/home";
 import RecordDialog from "./screen/Home/RecordDialog";
-import Calendars from "./screen/Home/calendars"
+import Calendars from "./screen/Home/calendars";
 import Hospital from "./screen/Hospital";
 import Counseling from "./screen/Counseling/Counsel";
 import Comunity from "./screen/Community/Comunity";
