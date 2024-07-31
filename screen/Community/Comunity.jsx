@@ -1,25 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, SafeAreaView, Alert, Pressable, TextInput } from "react-native";
+import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, SafeAreaView, Alert, Pressable, TextInput, PanResponder } from "react-native";
 import styled from "styled-components/native";
-import { HorizontalLine, LikeTag, ScrapeTag } from "./CommunityCommonStyles.jsx";
-import {Posts, originPosts, setOriginPosts} from './CommunityCommonData.jsx'
+import { HorizontalLine } from "./CommunityCommonStyles.jsx";
+import {Posts, initialAnimalTags, initialCategoryTags} from './CommunityCommonData.jsx'
 
 const Community = ({ navigation }) => {
   /**이미지 데이터 */
   xIcon = require('../../assets/community/x_icon.png');
   penIcon = require('../../assets/community/pen_icon.png');
-  
-  // 태그 데이터
-  const initialAnimalTags = [
-    { name: "강아지", isSelected: false },
-    { name: "고양이", isSelected: false },
-  ];
-  const initialCategoryTags = [
-    { name: "QnA", isSelected: false },
-    { name: "건강", isSelected: false },
-    { name: "간식", isSelected: false },
-    { name: "일상", isSelected: false },
-  ];
   
   const [animalTags, setAnimalTags] = useState(initialAnimalTags);
   const [categoryTags, setCategoryTags] = useState(initialCategoryTags);
@@ -46,28 +34,37 @@ const Community = ({ navigation }) => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingLeft : 5,
-      paddingRight : 5,
+      paddingLeft : '1%',
+      paddingRight : '1%',
     }}>
       {/**커뮤니티 제목을 담는 태그 */}
       <Text style={{fontSize: 25, fontWeight:'bold'}}>커뮤니티</Text>
       
       {/**커뮤니티 검색 버튼을담는 태그*/}
-      <View style={{ flexDirection: 'row', gap: 10, top : 5 }}>
-        <TouchableOpacity onPress={isSearchingBoxOpened ? closeSearching : openSearching}>
+      <View style={{ flexDirection: 'row', gap: 10, top : 5}}>
+        <TouchableOpacity 
+        style = 
+        {{
+          backgroundColor : isSearchingBoxOpened ? "#4580ff88" : null,
+          borderRadius : isSearchingBoxOpened ? 5 : null,
+        }}
+        onPress={isSearchingBoxOpened ? closeSearching : openSearching}
+        >
           <Image source={require('../../assets/community/search_logo.png')} style={{ width: 25, height: 25 }} />
         </TouchableOpacity>
       {/**커뮤니티 필터 버튼을 담는 태그*/}
         <TouchableOpacity onPress={OpenFilter}>
-          <Image source={require('../../assets/community/filter_logo.png')} style={{ width: 25, height: 25 }} />
+          <Image source={require('../../assets/community/filter_logo.png')} 
+          style={{ width: 25, height: 25 }} />
         </TouchableOpacity>
       </View>
     </View>
   );
 
+  const Tags = animalTags.concat(categoryTags)
   /**커뮤니티 창에서 태그를 띄우는 부분을 담는 태그*/
   const CommunityTagsContainer = () => (
-    <View style={{ gap: 3, flexDirection: 'row', flexWrap: 'wrap'}}>
+    <View style={{ gap: 3, flexDirection: 'row', flexWrap: 'wrap', marginTop : 10, marginLeft : 5, marginRight : 5}}>
       {/**동물 태그들을 띄우는 태그 */}
       <View style={{ flexDirection: "row", gap: 5 }}>
         {animalTags.map((tag, index) => (
@@ -119,6 +116,37 @@ const Community = ({ navigation }) => {
   /**필터링된 게시물 데이터를 반환 */
   const filteredPosts = filterPosts();
 
+  /**좋아요의 개수를 표시할 태그*/
+  const LikeTag = ({ likeNumber }) => {
+    return (
+      <View style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}>
+        <Image source={require('../../assets/community/like_logo.png')} style = {{width : 15, height : 15}}/>
+        <Text style={{fontSize : 15}}>
+          {" " + likeNumber + "     "}
+        </Text>
+      </View>
+    );
+  };
+
+  /**스크랩의 개수를 표시할 태그 */
+  const ScrapeTag = ({ scrapeNumber }) => {
+    return (
+      <View style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop : '1%'
+      }}>
+        <Image source={require('../../assets/community/scrape_logo.png')} style = {{width : 15, height : 15}}/>
+        <Text style={{fontSize : 15}}>
+          {" " + scrapeNumber}
+        </Text>
+      </View>
+    );
+  };
+
   /**게시물을 렌더링하는 함수 */
   const CommunityPosts = (postsData) => {
     // 선택된 태그를 가져옴
@@ -131,16 +159,18 @@ const Community = ({ navigation }) => {
     return (
       filteredPosts.map((postData, index) => (
         <Post key={index}>
-          <StyledButton onPress={() => MoveToPost(postData)} style={{flexDirection:'row', alignItems:'center', gap: 5}}>
+          <StyledButton onPress={() => MoveToPost(postData)} style={{flexDirection:'row', alignItems:'center', gap : 5}}>
             <View style={{flex:3}}>
-              <PostTitle numberOfLines={1} ellipsizeMode="tail">
-              {postData.tags.includes("QnA")
-              ? 
-                <Text >Q. {postData.title}</Text>
-              : 
-                <Text>{postData.title}</Text>}
-              </PostTitle>
-
+              <View style={{marginBottom : '3%'}}>
+                <PostTitle numberOfLines={1} ellipsizeMode="tail">
+                {postData.tags.includes("QnA")
+                ? 
+                  <Text >Q. {postData.title}</Text>
+                : 
+                  <Text>{postData.title}</Text>}
+                </PostTitle>
+              </View>
+              
               <PostContent numberOfLines={2} ellipsizeMode="tail">{postData.content}</PostContent>
 
               <TagsContainer>
@@ -149,16 +179,16 @@ const Community = ({ navigation }) => {
                 ))}
               </TagsContainer>
 
-              <PostUnderContent style={{justifyContent : 'space-between'}}>
+              <PostUnderContent>
                 <NickNameText>{postData.profileNickName}</NickNameText>
-                <View style={{flexDirection:'row', gap : 5, top : 1.5}}>
+                <View style={{flexDirection:'row', gap : 3, top : 1.5}}>
                   <LikeTag likeNumber={postData.likeNumber} />
                   <ScrapeTag scrapeNumber={postData.scrapeNumber} />
                 </View>
               </PostUnderContent>
             </View>
 
-            {postData.img !== null ? <PostImg source={postData.img}/> : null}
+            {postData.img !== "" ? <PostImg source={postData.img}/> : null}
           </StyledButton>
 
           <HorizontalLine />
@@ -175,7 +205,7 @@ const Community = ({ navigation }) => {
   const  closeSearching = () => setIsSearchingBoxOpened(false);
   /**검색창에서 입력한 내용에 대한 State */
   const [searchingText, setSearchingText] = useState("")
-
+  
   /** 검색창 대한 모든 정보를 담은 태그 */
   const SearchingBox = () => {
     return (
@@ -192,12 +222,13 @@ const Community = ({ navigation }) => {
               <TextInput 
               value = {searchingText}
               placeholder="게시물 검색" autoFocus={true} multiline={true} 
+              onTextInput={(newText) => setSearchingText(newText)}
               style={{height : 40}}>
               </TextInput>
             </ScrollView>
 
             <SearchingInputCompleteButton 
-              onPress={() => setSearchingText()}
+              onPress={() => alert("검색 완료!")}
               >
               <Text style={{fontWeight:'bold'}}>
                 검색
@@ -286,20 +317,27 @@ const Community = ({ navigation }) => {
   /**글쓰기 버튼에 해당하는 태그 */
   const WritePostButton = () => {
     return(
-      <TouchableOpacity 
-      onPress={MoveToWritingPost}
-      style={{
-        position:'absolute', 
-        bottom:20, right:20, 
-        backgroundColor:'#ffffff90',
-        flexDirection:'row', 
-        justifyContent:'space-around', 
-        borderWidth:1, 
-        borderRadius:5, 
-        padding : 1}}
-        >
-        <Image source={penIcon} style={{width:40,height:40}}/>
-      </TouchableOpacity>
+        <View style={{alignItems : 'center'}}>
+          <TouchableOpacity 
+          onPress={MoveToWritingPost}
+          style={{
+            position:'absolute', 
+            bottom : 20,
+            backgroundColor:'#ffffff',
+            flexDirection:'row', 
+            justifyContent:'space-around', 
+            borderWidth:1,
+            borderColor : "#8585856c",
+            borderRadius:25,
+            width : '20%'
+            }}
+            >
+            {/* <Image source={penIcon} style={{width:33,height:33}}/> */}
+            <Text>
+              글쓰기
+            </Text>
+          </TouchableOpacity>
+        </View>
     )
   }
   
@@ -307,19 +345,24 @@ const Community = ({ navigation }) => {
   const MoveToPost = (data) => navigation.navigate('CommunityPost', {postData : data});
   const MoveToWritingPost = () => navigation.navigate('CommunityWritingPost')
   return (
-      <View>
-        <SafeAreaView >
+      <View style={{flex : 1}}>
+        <SafeAreaView style={{flex : 1}}>
           <ScrollView style={{ backgroundColor: 'white'}} stickyHeaderIndices={[1]}>
             <StatusBar/>
 
-            <View style={{backgroundColor:'white', elevation : 10, padding : 10, justifyContent : 'center'}}>
+            <View style=
+            {{
+              backgroundColor:'white', marginLeft : '5%', marginRight : '5%', paddingTop : '5%',
+              justifyContent : 'center'
+            }}>
               <CommunityTopContainer />
+              <HorizontalLine style={{marginBottom : 0, marginTop : '2%'}}/>
               <CommunityTagsContainer />
             </View>
 
             <CommunityContainer>
 
-              <CommunityPosts postsData={filteredPosts}/>
+            <CommunityPosts postsData={filteredPosts}/>
 
               <FilterModalTag />
             </CommunityContainer>
@@ -341,7 +384,7 @@ const StyledButton = styled.TouchableOpacity`
 `;
 
 const Post = styled.View`
-  margin: 0px 10px;
+  margin : 0 1%;
 `;
 
 const PostTitle = styled.Text`
@@ -352,7 +395,6 @@ const PostTitle = styled.Text`
 const PostContent = styled.Text`
   font-size: 14px;
   color: gray;
-  margin : 4px 0;
 `;
 
 /**--게시물에 등록된 사진을 담을 태그--*/
@@ -367,7 +409,7 @@ const PostImg = styled.Image`
 const PostUnderContent = styled.View`
   flex-direction: row;
   align-items: center;
-  gap: 10px;
+  gap : 10px;
 `;
 
 const NickNameText = styled.Text`

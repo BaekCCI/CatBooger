@@ -2,7 +2,7 @@ import React, { useState, useSyncExternalStore } from "react";
 import { View, ScrollView, Touchable, TouchableOpacity, Image, Modal,Text,TextInput} from "react-native";
 import { useRoute } from '@react-navigation/native';
 import styled from "styled-components";
-import { HorizontalLine, LikeTag, ScrapeTag } from "./CommunityCommonStyles.jsx";
+import { HorizontalLine} from "./CommunityCommonStyles.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {Posts, originPosts, setOriginPosts} from './CommunityCommonData.jsx'
 
@@ -15,9 +15,9 @@ const CommunityPost = () => {
   const { postData } = route.params;
 
   /**게시글 사진을 담는 태그 */
-  const PostImgContainer = () => {
+  const PostImgContainer = () => {  
     return(
-      postData.img === null ?  null : 
+      postData.img === "" ?  null : 
       <View style={{
         alignItems: 'center',
         justifyContent: 'center'
@@ -73,13 +73,42 @@ const CommunityPost = () => {
         style={{
           position:'absolute', 
           bottom:10, right:10, 
-          backgroundColor:'#ffffff90'}}>
+          backgroundColor:'#ffffffdc'}}>
 
           
           <Image source={commentIcon} style={{width:40,height:40}} />
         </CommentWritingButton>
     )
   }
+    /**좋아요의 개수를 표시할 태그*/
+  const LikeTag = ({ likeNumber }) => {
+    return (
+      <View style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}>
+        <Image source={require('../../assets/community/like_logo.png')} style = {{width : 23, height : 23}}/>
+        <Text style={{fontSize : 16}}>
+          {" " + likeNumber + "     "}
+        </Text>
+      </View>
+    );
+  };
+
+  /**스크랩의 개수를 표시할 태그 */
+  const ScrapeTag = ({ scrapeNumber }) => {
+    return (
+      <View style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}>
+        <Image source={require('../../assets/community/scrape_logo.png')} style = {{width : 23, height : 23}}/>
+        <Text style={{fontSize : 16}}>
+          {"" + scrapeNumber + " "}
+        </Text>
+      </View>
+    );
+  };
 
   /**--------------------Post창의 메인 화면--------------------*/
   return (
@@ -98,6 +127,7 @@ const CommunityPost = () => {
               <Tag key={index}>{'#' + tag}</Tag>
             ))}
           </TagsContainer>
+          
           <PostUnderContainer>
             <PostUnderLeftContainer>
               <ProfileNickName>{postData.profileNickName}</ProfileNickName>
@@ -112,19 +142,21 @@ const CommunityPost = () => {
 
         <HorizontalLine style={{
           height: 10,
-          backgroundColor: '#92B5B1'
+          backgroundColor: '#a6cbc6'
         }} />
 
         <CommentsContainer>
           <CommentsContainerTitle>{'댓글 ' + postData.comments.length}</CommentsContainerTitle>
           <HorizontalLine />
           {postData.comments.map((comment, index) => (
-            <Comment key={index}>
-              <ProfileNickName>{comment.profileNickName}</ProfileNickName>
-              <CommentText>{comment.content}</CommentText>
-              <PostedTime>{comment.postTime}</PostedTime>
+            <View key={index}>
+              <Comment>
+                <ProfileNickName>{comment.profileNickName}</ProfileNickName>
+                <CommentText>{comment.content}</CommentText>
+                <CommentPostedTime>{comment.postTime}</CommentPostedTime>
+              </Comment>
               <HorizontalLine />
-            </Comment>
+            </View>
           ))}
         </CommentsContainer>
       </ScrollView>
@@ -143,19 +175,20 @@ const Post = styled.View`
 
 /**--게시물의 제목을 담는 태그--*/
 const PostTitle = styled.Text`
-  font-size: 20px;
+  font-size: 23px;
+  font-weight: bold;
 `;
 
 /**--게시물의 내용을 담을 태그--*/
 const PostContent = styled.Text`
-  font-size: 15px;
-  margin-bottom: 10px;
+  font-size: 16px;
 `;
 
 /**--게시물에 등록된 사진을 담을 태그--*/
 const PostImg = styled.Image`
   width : 100%;
-  height : 400px;
+  height : 200px;
+  margin-top : 10px;
 `;
 
 /**----게시물의 모든 태그들을 담을 컨테이너----*/
@@ -168,7 +201,7 @@ const TagsContainer = styled.View`
 /**--한 게시물 태그의 텍스트를 담을 태그--*/
 const Tag = styled.Text`
   color: #139989;
-  font-size: 13px;
+  font-size: 14px;
   margin-right: 5px;
   line-height: 20px;
 `;
@@ -186,20 +219,25 @@ const PostUnderLeftContainer = styled.View`
 
 /**프로필의 닉네임을 담을 태그 */
 const ProfileNickName = styled.Text`
-  font-size: 13px;
+  font-size: 15px;
 `;
 
 /**게시물이 등록된 시간을 담을 태그 */
 const PostedTime = styled.Text`
-  font-size: 13px;
+  font-size: 15px;
   color: grey;
 `;
+
+/**게시물에 등록된 댓글의 게시시간을 담는 태그 */
+const CommentPostedTime = styled.Text`
+  font-size: 10px;
+  color: grey;
+`
 
 /**--게시물 아랫쪽 태그의 오른쪽 내용을 담을 태그--*/
 const PostUnderRightContainer = styled.View`
   align-items: flex-end;
   flex-direction: row;
-  gap : 5px
 `;
 
 /**------게시물의 댓글을 담을 태그------*/
@@ -210,11 +248,12 @@ const CommentsContainer = styled.View`
 const CommentsContainerTitle = styled.Text`
   margin: 5px 20px;
   font-size: 20px;
+  font-weight : bold;
 `;
 
 /**----게시물의 댓글의 정보를 담을 태그----*/
 const Comment = styled.View`
-  margin: 0px 20px;
+  margin : 0 5%;
 `;
 
 /**--게시물의 댓글 내용을 담을 태그--*/
