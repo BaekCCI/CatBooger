@@ -42,15 +42,7 @@ export default function Home() {
         }
       );
 
-      //   const snapshot = await get(dbRef);
-      //   if (snapshot.val() === true) {
-      //     console.log("Firebase 연결 성공");
-      //   } else {
-      //     console.log("Firebase 연결 실패");
-      //   }
-      // } catch (error) {
-      //   console.error("Firebase 연결 오류:", error);
-      // }
+
     };
 
     checkConnection();

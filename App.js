@@ -12,7 +12,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Login from './screen/login'
-import KakaoLoginRedirect from './screen/login'
+import {KakaoLoginRedirect} from './screen/login'
 import Home from "./screen/Home/home";
 import RecordDialog from "./screen/Home/RecordDialog";
 import Calendars from "./screen/Home/calendars"
@@ -132,9 +132,10 @@ function MenuStackScreen() {
 
 function LoginStackScreen() {
   return (
-    <LoginStack.Navigator screenOptions={commonHeader}>
+    <LoginStack.Navigator>
       <LoginStack.Screen name="Login" component={Login} />
       <LoginStack.Screen name="KakaoLoginRedirect" component={KakaoLoginRedirect} />
+      <LoginStack.Screen name="Home" component={Home} />
     </LoginStack.Navigator>
   );
 }
@@ -261,7 +262,8 @@ export default function App() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <NavigationContainer theme={navTheme}>
-        <MyTabs />
+        {/* <MyTabs /> */}
+        <LoginStackScreen />
       </NavigationContainer>
     </SafeAreaView>
   );
