@@ -1,9 +1,53 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { auth, firestore } from './../../firebaseConfig'
 
 const MenuScreen = ({navigation}) => {
+  // const [nickname, setNickname] = useState('');
+
+  // useEffect(() => {
+  //   const fetchUserNickname = async () => {
+  //     const user = auth().currentUser;
+  //     if (user) {
+  //       const userDoc = await firestore().collection('users').doc(user.uid).get();
+  //       if (userDoc.exists) {
+  //         setNickname(userDoc.data().nickname);
+  //       }
+  //     }
+  //   };
+
+  //   fetchUserNickname();
+  // }, []);
+  
+  // 로그인 구현 후 파이어베이스 연결 함수
+
+  const handleLogout = () => {
+    Alert.alert(
+      "로그아웃",
+      "로그아웃 하시겠습니까?",
+      [
+        {
+          text: "취소",
+          style: "cancel"
+        },
+        {
+          text: "네",
+          onPress: async () => {
+            try {
+              await auth().signOut();
+              navigation.navigate('Login'); // 로그아웃 후 로그인 화면으로 이동
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  };
+  
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <Container>
@@ -56,7 +100,7 @@ const MenuScreen = ({navigation}) => {
               <Icon name="chevron-forward-outline" size={24} color="#000" />
             </MenuItem>
           </Section>
-          <LogoutButton>
+          <LogoutButton onPress={handleLogout}>
             <LogoutText>로그아웃</LogoutText>
           </LogoutButton>
         </ScrollView>
