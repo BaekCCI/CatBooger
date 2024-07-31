@@ -322,20 +322,23 @@ const Community = ({ navigation }) => {
           onPress={MoveToWritingPost}
           style={{
             position:'absolute', 
-            bottom : 20,
+            bottom : 10,
             backgroundColor:'#ffffff',
             flexDirection:'row', 
             justifyContent:'space-around', 
             borderWidth:1,
             borderColor : "#8585856c",
-            borderRadius:25,
-            width : '20%'
+            borderRadius: 50,
+            width : '25%',
             }}
             >
             {/* <Image source={penIcon} style={{width:33,height:33}}/> */}
-            <Text>
-              글쓰기
-            </Text>
+            <View style={{paddingTop : '4%', marginBottom : '7%', flexDirection : 'row'}}>
+              <Image source={penIcon} style={{width:20,height:20, marginRight : '13%'}}/> 
+                <Text style={{fontWeight : 'bold'}}>
+                  글 쓰기
+                </Text>
+            </View>
           </TouchableOpacity>
         </View>
     )
