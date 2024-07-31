@@ -9,7 +9,7 @@ import {
 import styled from "styled-components";
 import { useNavigation } from "@react-navigation/native";
 
-import { ref, set, get, child } from "firebase/database";
+import { ref, set, get, child, onValue } from "firebase/database";
 import { database } from "../../firebaseConfig";
 
 export default function Home() {
@@ -27,17 +27,30 @@ export default function Home() {
 
   useEffect(() => {
     const checkConnection = async () => {
-      try {
+      // try {
         const dbRef = ref(database, ".info/connected");
-        const snapshot = await get(dbRef);
-        if (snapshot.val() === true) {
-          console.log("Firebase 연결 성공");
-        } else {
-          console.log("Firebase 연결 실패");
+
+        onValue(dbRef, (snapshot)=> {
+          const isConnected = snapshot.val();
+          if (isConnected === true) {
+            console.log("Firebase 연결 성공");
+          } else {
+            console.log("Firebase 연결 실패");
+          }
+        }, (error) => {
+          console.error("Firebase 연결 오류: ", error);
         }
-      } catch (error) {
-        console.error("Firebase 연결 오류:", error);
-      }
+      );
+
+      //   const snapshot = await get(dbRef);
+      //   if (snapshot.val() === true) {
+      //     console.log("Firebase 연결 성공");
+      //   } else {
+      //     console.log("Firebase 연결 실패");
+      //   }
+      // } catch (error) {
+      //   console.error("Firebase 연결 오류:", error);
+      // }
     };
 
     checkConnection();
