@@ -168,7 +168,6 @@ const Kg = ({info}) => {
         setIsModified(text !== '' || (kg !== 0 && kg !==''));
     }, [text, kg]);
 
-
     return(
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View>
