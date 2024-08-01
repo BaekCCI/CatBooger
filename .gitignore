@@ -2,6 +2,7 @@
 
 # dependencies
 node_modules/
+/Back/__pycache__/
 
 # Expo
 .expo/
@@ -33,3 +34,9 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+
+.env
+/Back/serviceAccountKey.json
+/Back/kakao_config.py
+
