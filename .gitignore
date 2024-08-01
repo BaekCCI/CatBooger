@@ -35,6 +35,8 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+
 .env
 /Back/serviceAccountKey.json
 /Back/kakao_config.py
+

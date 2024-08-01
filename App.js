@@ -159,7 +159,7 @@ const commonHeader = {
 function MyTabs() {
   return (
     <Tab.Navigator
-    initialRouteName="HomeTab"
+      initialRouteName="HomeTab"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused }) => {
           let iconName;
