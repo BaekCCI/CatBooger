@@ -9,7 +9,7 @@ import {
 import styled from "styled-components";
 import { useNavigation } from "@react-navigation/native";
 
-import { ref, set, get, child } from "firebase/database";
+import { ref, set, get, child, onValue } from "firebase/database";
 import { database } from "../../firebaseConfig";
 
 export default function Home() {
@@ -34,22 +34,43 @@ export default function Home() {
     navigation.navigate("RecordDialog", { info: '산책' });
     setWalkModal(false);
   };
+  
   /*
-  useEffect(() => {
-    const addSchedule = () => {
-      const scheduleRef = ref(database, "calendar/scheduleId1");
-      set(scheduleRef, {
-        date: "2024-12-31T23:59:59Z",
-        memo: "New Year's Eve Party",
-        notificationTime: "2024-12-31T20:00:00Z",
-        title: "End of Year Celebration",
-      })
-        .then(() => console.log("일정 추가 성공!"))
-        .catch((error) => console.error("일정 추가 실패:", error));
-    };
+//   useEffect(() => {
+// <<<<<<< login
+//     const checkConnection = async () => {
+//       // try {
+//         const dbRef = ref(database, ".info/connected");
 
-    addSchedule();
-  }, []);
+//         onValue(dbRef, (snapshot)=> {
+//           const isConnected = snapshot.val();
+//           if (isConnected === true) {
+//             console.log("Firebase 연결 성공");
+//           } else {
+//             console.log("Firebase 연결 실패");
+//           }
+//         }, (error) => {
+//           console.error("Firebase 연결 오류: ", error);
+//         }
+//       );
+
+
+// =======
+//     const addSchedule = () => {
+//       const scheduleRef = ref(database, "calendar/scheduleId1");
+//       set(scheduleRef, {
+//         date: "2024-12-31T23:59:59Z",
+//         memo: "New Year's Eve Party",
+//         notificationTime: "2024-12-31T20:00:00Z",
+//         title: "End of Year Celebration",
+//       })
+//         .then(() => console.log("일정 추가 성공!"))
+//         .catch((error) => console.error("일정 추가 실패:", error));
+// >>>>>>> master
+//     };
+
+//     addSchedule();
+//   }, []);
 */
   return (
     <BackGround source={require("../../assets/Home/HomeBG.png")}>
