@@ -11,8 +11,8 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import Login from './screen/login'
-import {KakaoLoginRedirect} from './screen/login'
+import Login from './screen/LoginKakao'
+import {KakaoLoginRedirect} from './screen/LoginKakao'
 import Home from "./screen/Home/home";
 import RecordDialog from "./screen/Home/RecordDialog";
 import Calendars from "./screen/Home/calendars"
