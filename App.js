@@ -133,9 +133,9 @@ function MenuStackScreen() {
 function LoginStackScreen() {
   return (
     <LoginStack.Navigator>
-      <LoginStack.Screen name="Login" component={Login} />
-      <LoginStack.Screen name="KakaoLoginRedirect" component={KakaoLoginRedirect} />
-      <LoginStack.Screen name="Home" component={Home} />
+      <LoginStack.Screen name="Login" component={Login} options={{headerShown:false}}/>
+      <LoginStack.Screen name="KakaoLoginRedirect" component={KakaoLoginRedirect} options={{headerShown:false}}/>
+      <LoginStack.Screen name="MyTabs" component={MyTabs} screenOptions={commonHeader} options={{headerShown:false}}/>
     </LoginStack.Navigator>
   );
 }
@@ -159,6 +159,7 @@ const commonHeader = {
 function MyTabs() {
   return (
     <Tab.Navigator
+    initialRouteName="HomeTab"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused }) => {
           let iconName;
