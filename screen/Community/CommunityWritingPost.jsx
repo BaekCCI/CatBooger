@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, ScrollView, TextInput, Image, TouchableOpacity, Alert } from 'react-native';
 import styled from 'styled-components';
 import { HorizontalLine } from './CommunityCommonStyles';
-import { initialAnimalTags, initialCategoryTags } from './CommunityCommonData';
+import { initialAnimalTags, initialCategoryTags, PostsContext, PostsProvider } from './CommunityCommonData';
 import * as ImagePicker from 'expo-image-picker'
 
 const CommunityWritingPost = () => {
+  const {Posts, AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
+
   const [animalTags, setAnimalTags] = useState(initialAnimalTags);
   const [categoryTags, setCategoryTags] = useState(initialCategoryTags);
 
@@ -187,7 +189,9 @@ const CommunityWritingPost = () => {
 
       </WritingPostContainer>
       <PostSendButton 
-        onPress={() => alert("게시물 등록!")}>
+        onPress={() => {
+          alert("게시물 등록!")
+          }}>
         <Text style={{lineHeight : 18}}>
           등록
         </Text>
@@ -200,6 +204,14 @@ const CommunityWritingPost = () => {
 const WritingPostContainer = styled.ScrollView`
   margin : 20px;
 `;
+
+const CommunityWritingPostsWithPostsProvider = () => (
+    <PostsProvider>
+      <CommunityWritingPost/>
+    </PostsProvider>
+)
+
+export default CommunityWritingPostsWithPostsProvider;
 
 /**제목창에 해당하는 부분을 담는 태그 */
 const TitleInputContainer = styled.View`
@@ -226,7 +238,8 @@ const ContentsInputContainer = styled.View`
   border-radius : 7px;
   padding : 5px;
   margin : 10px 0;
-`
+  `
+
 
 /**글 내용 작성창에 이미지 등록 부분을 담는 태그 */
 const ContentsImageInputContainer = styled.View`
@@ -258,5 +271,3 @@ const buttonStyle = {
   padding: 10,
   borderRadius: 5,
 };
-
-export default CommunityWritingPost;

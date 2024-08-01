@@ -1,3 +1,5 @@
+import { createContext, useState } from "react";
+
 // 태그 데이터
 export const initialAnimalTags = [
   { name: "강아지", isSelected: false },
@@ -12,7 +14,7 @@ export const initialCategoryTags = [
 ];
 
 // 게시물 데이터
-export const Posts = [
+const initialPosts = [
   { 
     id : 1,
     title: "게시물 제목",
@@ -133,3 +135,27 @@ export const Posts = [
     ]
   }
 ];
+
+export const PostsContext = createContext();
+
+export const PostsProvider = ({ children }) => {
+  const [Posts, setPosts] = useState(initialPosts);
+
+  const AddPost = (newPost) => {
+    setPosts(prevPosts => [...prevPosts, { ...newPost, id: prevPosts.length + 1 }]);
+  };
+
+  const UpdatePost = (id, updatedPost) => {
+    setPosts(prevPosts => prevPosts.map(post => post.id === id ? { ...post, ...updatedPost } : post));
+  };
+
+  const DeletePost = (id) => {
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== id));
+  };
+
+  return (
+    <PostsContext.Provider value={{ Posts, AddPost, UpdatePost, DeletePost }}>
+      {children}
+    </PostsContext.Provider>
+  );
+};

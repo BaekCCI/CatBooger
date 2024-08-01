@@ -1,10 +1,12 @@
-import React, { useState, useSyncExternalStore } from "react";
+import React, { useContext, useState, useSyncExternalStore } from "react";
 import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, SafeAreaView, Alert, Pressable, TextInput, PanResponder } from "react-native";
 import styled from "styled-components/native";
 import { HorizontalLine } from "./CommunityCommonStyles.jsx";
-import {Posts, initialAnimalTags, initialCategoryTags} from './CommunityCommonData.jsx'
+import {PostsContext, PostsProvider, initialAnimalTags, initialCategoryTags} from './CommunityCommonData.jsx'
 
 const Community = ({ navigation }) => {
+  const {Posts, AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
+
   /**이미지 데이터 */
   xIcon = require('../../assets/community/x_icon.png');
   penIcon = require('../../assets/community/pen_icon.png');
@@ -384,6 +386,14 @@ const Community = ({ navigation }) => {
   );
 };
 
+const CommunityWithPostsProvider = ({ navigation }) => (
+  <PostsProvider>
+    <Community navigation={navigation} />
+  </PostsProvider>
+);
+
+export default CommunityWithPostsProvider;
+
 const CommunityContainer = styled.View`
   border-radius: 5px;
   margin: 15px;
@@ -468,6 +478,3 @@ const SearchingInputCompleteButton = styled.TouchableOpacity`
     justify-content:center;
     align-items:center;
 `
-
-
-export default Community;
