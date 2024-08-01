@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ImageBackground,
-  Modal,
-  TouchableWithoutFeedback,
-} from "react-native";
+import {View,Text,ImageBackground,Modal,TouchableWithoutFeedback, TouchableHighlight, StyleSheet } from "react-native";
 import styled from "styled-components";
 import { useNavigation } from "@react-navigation/native";
+import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
 
 import { ref, set, get, child, onValue } from "firebase/database";
 import { database } from "../../firebaseConfig";
@@ -15,6 +10,7 @@ import { database } from "../../firebaseConfig";
 export default function Home() {
   const [modalVisible, setIsModalVisible] = useState(false);
   const [walkModal, setWalkModal] = useState(false);
+  const [isWalkStart, setIsWalkStart] = useState(false);
 
   const navigation = useNavigation();
 
@@ -34,6 +30,10 @@ export default function Home() {
     navigation.navigate("RecordDialog", { info: '산책' });
     setWalkModal(false);
   };
+  const handleStartWalk=()=>{
+    setIsWalkStart(true);
+    setWalkModal(false);
+  }
   
   /*
 //   useEffect(() => {
@@ -75,9 +75,14 @@ export default function Home() {
   return (
     <BackGround source={require("../../assets/Home/HomeBG.png")}>
       <StyledView>
+        <RowView>
         <CalendarBtn onPress={() => navigation.navigate('Calendars')}>
           <CalendarImg source={require("../../assets/Home/CalendarIcon.png")} />
         </CalendarBtn>
+        {isWalkStart && (
+          <TimerView/>
+        )}
+        </RowView>
         <DogBtn>
           <DogImg source={require("../../assets/Home/DogHouse.png")} />
         </DogBtn>
@@ -177,7 +182,7 @@ export default function Home() {
                 </AddWalkBtn>
               </RowView>
               <StartMsg>주인님 산책해요!</StartMsg>
-              <StartBtn>
+              <StartBtn onPress={handleStartWalk}>
                 <StartBtnTxt>기록 시작하기</StartBtnTxt>
               </StartBtn>
             </WalkModalView>
@@ -188,6 +193,50 @@ export default function Home() {
     </BackGround>
   );
 }
+const TimerView=()=>{
+  const [start,setStart] = useState(false);
+  const [savedTime, setSavedTime] = useState();
+
+  const toggleStopwatch=()=>{
+    setStart(!start);
+    setSavedTime(getTime());
+  }
+  const [time, setTime] = useState("00:00:00:00");
+
+  const getTime = () => {
+    return time;
+  };
+
+  return (
+    <View>
+      <TouchableHighlight onPress={toggleStopwatch}>
+      <Stopwatch
+        start={start}
+        options={options}
+        getTime={(time) => {
+          setTime(time);
+        }}
+      />
+      </TouchableHighlight>
+      <Text>산책중...{savedTime}</Text>
+    </View>
+  );
+}
+const options = {
+  container: {
+    justifyContent : 'center',
+    alignItems : 'center',
+    backgroundColor : 'rgba(0,0,0,0.5)',
+    borderRadius : 10,
+    padding : 10,
+    width : 120,
+  },
+  text: {
+    fontSize: 18,
+    color: '#FFF',
+  }
+};
+
 const WalkModalView = styled.View`
   width : 100%;
   height: 220px;
