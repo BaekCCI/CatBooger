@@ -34,29 +34,27 @@ export default function Home() {
     navigation.navigate("RecordDialog", { info: '산책' });
     setWalkModal(false);
   };
-
+  /*
   useEffect(() => {
-    const checkConnection = async () => {
-      try {
-        const dbRef = ref(database, ".info/connected");
-        const snapshot = await get(dbRef);
-        if (snapshot.val() === true) {
-          console.log("Firebase 연결 성공");
-        } else {
-          console.log("Firebase 연결 실패");
-        }
-      } catch (error) {
-        console.error("Firebase 연결 오류:", error);
-      }
+    const addSchedule = () => {
+      const scheduleRef = ref(database, "calendar/scheduleId1");
+      set(scheduleRef, {
+        date: "2024-12-31T23:59:59Z",
+        memo: "New Year's Eve Party",
+        notificationTime: "2024-12-31T20:00:00Z",
+        title: "End of Year Celebration",
+      })
+        .then(() => console.log("일정 추가 성공!"))
+        .catch((error) => console.error("일정 추가 실패:", error));
     };
 
-    checkConnection();
+    addSchedule();
   }, []);
-
+*/
   return (
     <BackGround source={require("../../assets/Home/HomeBG.png")}>
       <StyledView>
-        <CalendarBtn>
+        <CalendarBtn onPress={() => navigation.navigate('Calendars')}>
           <CalendarImg source={require("../../assets/Home/CalendarIcon.png")} />
         </CalendarBtn>
         <DogBtn>

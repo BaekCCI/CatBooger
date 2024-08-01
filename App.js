@@ -13,6 +13,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import Home from "./screen/Home/home";
 import RecordDialog from "./screen/Home/RecordDialog";
+import Calendars from "./screen/Home/calendars"
 import Hospital from "./screen/Hospital";
 import Counseling from "./screen/Counseling/Counsel";
 import Comunity from "./screen/Community/Comunity";
@@ -41,6 +42,7 @@ function HomeStackScreen() {
     <HomeStack.Navigator screenOptions={commonHeader}>
       <HomeStack.Screen name="Home" component={Home} />
       <HomeStack.Screen name="RecordDialog" component={RecordDialog} />
+      <HomeStack.Screen name="Calendars" component={Calendars} />
     </HomeStack.Navigator>
   );
 }
