@@ -216,12 +216,12 @@ const Community = ({ navigation }) => {
       isSearchingBoxOpened 
       ?
         <View style={{
-          position:'absolute', bottom : 0, width : '100%',
-          borderTopWidth : 3, backgroundColor : '#ffffff', borderColor : '#c2c2c25c'}}>
+          width : '100%',
+          backgroundColor : '#ffffff', borderColor : '#c2c2c25c'}}>
           <View 
-          style={{paddingLeft : 5 ,margin : 10,borderWidth : 2, borderRadius : 10 , 
+          style={{paddingLeft : 5 ,margin : 10,borderWidth : 2, borderRadius : 5 , 
                   backgroundColor:'#ffffffed', margin : 10, flexDirection : 'row', 
-                  width : '95%'}}>
+                  width : '100%', alignSelf : 'center'}}>
                     
             <ScrollView>
               <TextInput 
@@ -367,6 +367,7 @@ const Community = ({ navigation }) => {
               <CommunityTopContainer />
               <HorizontalLine style={{marginBottom : 0, marginTop : '2%'}}/>
               <CommunityTagsContainer />
+              <SearchingBox/>
             </View>
 
             <CommunityContainer>
@@ -378,7 +379,7 @@ const Community = ({ navigation }) => {
           </ScrollView>
         </SafeAreaView>
           <WritePostButton/>
-          <SearchingBox/>
+
       </View>
   );
 };
