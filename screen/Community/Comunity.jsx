@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useSyncExternalStore } from "react";
 import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, SafeAreaView, Alert, Pressable, TextInput, PanResponder } from "react-native";
 import styled from "styled-components/native";
 import { HorizontalLine } from "./CommunityCommonStyles.jsx";
@@ -27,7 +27,6 @@ const Community = ({ navigation }) => {
     setCategoryTags(resetCategoryTags);
   };
   
-
   /**커뮤니티의 상단 부분을 담는 태그 */
   const CommunityTopContainer = () => (
     <View style={{
@@ -102,9 +101,12 @@ const Community = ({ navigation }) => {
   const filterPosts = () => {
     const selectedAnimalTags = getSelectedTags(animalTags);
     const selectedCategoryTags = getSelectedTags(categoryTags);
+
+    const titleFilteredPosts = SearchingText ? Posts.filter(post => post.title.includes(SearchingText)) : Posts
+
     // 모든 태그가 비활성화된 경우 모든 게시물을 반환
     if (selectedAnimalTags.length === 0 && selectedCategoryTags.length === 0) {
-      return Posts;
+      return titleFilteredPosts;
     }
 
     // 활성화된 태그와 일치하는 게시물을 필터링
@@ -203,11 +205,13 @@ const Community = ({ navigation }) => {
   const  openSearching = () => setIsSearchingBoxOpened(true);
   /**검색 모달창을 닫는 함수 */
   const  closeSearching = () => setIsSearchingBoxOpened(false);
-  /**검색창에서 입력한 내용에 대한 State */
-  const [searchingText, setSearchingText] = useState("")
-  
+  const [SearchingText, setSearchingText] = useState("")
+
   /** 검색창 대한 모든 정보를 담은 태그 */
   const SearchingBox = () => {
+    /**검색창에서 입력한 내용에 대한 State */
+    const [tempSearchingText, setTempSearchingText] = useState(SearchingText)
+
     return (
       isSearchingBoxOpened 
       ?
@@ -218,17 +222,19 @@ const Community = ({ navigation }) => {
           style={{paddingLeft : 5 ,margin : 10,borderWidth : 2, borderRadius : 10 , 
                   backgroundColor:'#ffffffed', margin : 10, flexDirection : 'row', 
                   width : '95%'}}>
+                    
             <ScrollView>
               <TextInput 
-              value = {searchingText}
-              placeholder="게시물 검색" autoFocus={true} multiline={true} 
-              onTextInput={(newText) => setSearchingText(newText)}
+              value={tempSearchingText}
+              placeholder="게시물 검색" 
+              autoFocus={true} 
+              onChangeText={(newText) => setTempSearchingText(newText)}
               style={{height : 40}}>
               </TextInput>
             </ScrollView>
 
             <SearchingInputCompleteButton 
-              onPress={() => alert("검색 완료!")}
+              onPress={() => setSearchingText(tempSearchingText)}
               >
               <Text style={{fontWeight:'bold'}}>
                 검색
