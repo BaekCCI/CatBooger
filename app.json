@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "blackBean",
-    "slug": "blackBean",
+    "slug": "blackbean-lo-rujxf7fsf6xv5x7vm",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,6 +22,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-build-properties"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "1f540345-05ce-48fe-95c3-80f5010c1662"
+      }
+    },
+    "owner": "eunye"
   }
 }

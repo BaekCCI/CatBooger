@@ -11,6 +11,8 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
+import Login from './screen/LoginKakao'
+import {KakaoLoginRedirect} from './screen/LoginKakao'
 import Home from "./screen/Home/home";
 import RecordDialog from "./screen/Home/RecordDialog";
 import Calendars from "./screen/Home/calendars"
@@ -36,6 +38,8 @@ const HospitalStack = createNativeStackNavigator();
 const CounselingStack = createNativeStackNavigator();
 const ComunityStack = createNativeStackNavigator();
 const MenuStack = createNativeStackNavigator();
+
+const LoginStack = createNativeStackNavigator();
 
 function HomeStackScreen() {
   return (
@@ -123,6 +127,16 @@ function MenuStackScreen() {
         options={{ title: "수의사 인증" }}
       />
     </MenuStack.Navigator>
+  );
+}
+
+function LoginStackScreen() {
+  return (
+    <LoginStack.Navigator>
+      <LoginStack.Screen name="Login" component={Login} options={{headerShown:false}}/>
+      <LoginStack.Screen name="KakaoLoginRedirect" component={KakaoLoginRedirect} options={{headerShown:false}}/>
+      <LoginStack.Screen name="MyTabs" component={MyTabs} screenOptions={commonHeader} options={{headerShown:false}}/>
+    </LoginStack.Navigator>
   );
 }
 
@@ -249,7 +263,8 @@ export default function App() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <NavigationContainer theme={navTheme}>
-        <MyTabs />
+        {/* <MyTabs /> */}
+        <LoginStackScreen />
       </NavigationContainer>
     </SafeAreaView>
   );

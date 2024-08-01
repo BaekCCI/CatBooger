@@ -74,7 +74,6 @@ const CommunityPost = () => {
           position:'absolute', 
           bottom:10, right:10, 
           backgroundColor:'#ffffffdc'}}>
-
           
           <Image source={commentIcon} style={{width:40,height:40}} />
         </CommentWritingButton>
