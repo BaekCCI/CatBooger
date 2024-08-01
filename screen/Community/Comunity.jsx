@@ -161,7 +161,7 @@ const Community = ({ navigation }) => {
         <Post key={index}>
           <StyledButton onPress={() => MoveToPost(postData)} style={{flexDirection:'row', alignItems:'center', gap : 5}}>
             <View style={{flex:3}}>
-              <View style={{marginBottom : '3%'}}>
+              <View style={{marginBottom : '1%'}}>
                 <PostTitle numberOfLines={1} ellipsizeMode="tail">
                 {postData.tags.includes("QnA")
                 ? 
@@ -333,8 +333,8 @@ const Community = ({ navigation }) => {
             }}
             >
             {/* <Image source={penIcon} style={{width:33,height:33}}/> */}
-            <View style={{paddingTop : '4%', marginBottom : '7%', flexDirection : 'row'}}>
-              <Image source={penIcon} style={{width:20,height:20, marginRight : '13%'}}/> 
+            <View style={{paddingTop : '4%', marginBottom : '5%', flexDirection : 'row'}}>
+              <Image source={penIcon} style={{width:20,height:20, marginRight : '5%', marginTop : '2%'}}/> 
                 <Text style={{fontWeight : 'bold'}}>
                   글 쓰기
                 </Text>
