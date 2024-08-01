@@ -36,7 +36,6 @@ export default function RecordDialog(){
                 <Title>{info}</Title>
                 <ReLoadBtn onPress={handleReset}>
                     <ReLoadImg source={require('../../assets/Home/reLoadIcon.png')}/>
-                    
                 </ReLoadBtn>
             </TitleWrap>
             <Line/>
@@ -112,7 +111,7 @@ const Feed = ({info}) => {
             <InputMemo
                 value={text}
                 onChangeText={setText}
-                placeholder="내용을 입력하세요"
+                placeholder="예)사료 200g 급여"
                 placeholderTextColor="#888"
                 multiline={true} /* 여러 줄 입력을 허용 */
             />
@@ -144,7 +143,7 @@ const Medicine = ({info}) => {
             <InputMemo
                 value={text}
                 onChangeText={setText}
-                placeholder="내용을 입력하세요"
+                placeholder="예)처방약(오전)"
                 placeholderTextColor="#888"
                 multiline={true} /* 여러 줄 입력을 허용 */
             />
@@ -191,7 +190,7 @@ const Kg = ({info}) => {
             <InputMemo
                 value={text}
                 onChangeText={setText}
-                placeholder="내용을 입력하세요"
+                placeholder="예)점점 살이 빠지는 것 같음"
                 placeholderTextColor="#888"
                 multiline={true} /* 여러 줄 입력을 허용 */
             />
@@ -362,7 +361,7 @@ const Vaccine = ({info}) => {
             <InputMemo
                 value={text}
                 onChangeText={setText}
-                placeholder="내용을 입력하세요"
+                placeholder="예)관경병 예방접종"
                 placeholderTextColor="#888"
                 multiline={true} /* 여러 줄 입력을 허용 */
             />
@@ -394,8 +393,8 @@ const Bath = ({info}) => {
             <InputMemo
                 value={text}
                 onChangeText={setText}
-                placeholder="내용을 입력하세요"
-                placeholderTextColor="#d9d9d9"
+                placeholder="예)양치함"
+                placeholderTextColor="#888"
                 multiline={true} /* 여러 줄 입력을 허용 */
             />
             </InputWrap>

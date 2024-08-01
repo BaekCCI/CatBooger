@@ -14,6 +14,7 @@ import { database } from "../../firebaseConfig";
 
 export default function Home() {
   const [modalVisible, setIsModalVisible] = useState(false);
+  const [walkModal, setWalkModal] = useState(false);
 
   const navigation = useNavigation();
 
@@ -21,8 +22,17 @@ export default function Home() {
     setIsModalVisible(!modalVisible);
   };
   const handleDialog = (info) => {
-    navigation.navigate("RecordDialog", { info });
-    setIsModalVisible(!modalVisible);
+    if(info==='산책'){
+      setIsModalVisible(!modalVisible);
+      setWalkModal(!walkModal);
+    }else{
+      navigation.navigate("RecordDialog", { info });
+      setIsModalVisible(!modalVisible);
+    }
+  };
+  const handleWalk = () => {
+    navigation.navigate("RecordDialog", { info: '산책' });
+    setWalkModal(false);
   };
 
   useEffect(() => {
@@ -129,10 +139,91 @@ export default function Home() {
           </ModalBack>
         </TouchableWithoutFeedback>
       </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={walkModal}
+        onRequestClose={() => setWalkModal(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setWalkModal(false)}>
+        <ModalBack>
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <WalkModalView>
+              <RowView>
+                <BackBtn onPress={() => setWalkModal(false)}>
+                  <BackImg source={require('../../assets/Home/ArrowLeft.png')}/>
+                </BackBtn>
+                <AddWalkBtn onPress={handleWalk}>
+                  <AddWaltTxt>+ 기록 추가</AddWaltTxt>
+                </AddWalkBtn>
+              </RowView>
+              <StartMsg>주인님 산책해요!</StartMsg>
+              <StartBtn>
+                <StartBtnTxt>기록 시작하기</StartBtnTxt>
+              </StartBtn>
+            </WalkModalView>
+          </TouchableWithoutFeedback>
+        </ModalBack>
+      </TouchableWithoutFeedback>
+      </Modal>
     </BackGround>
   );
 }
-
+const WalkModalView = styled.View`
+  width : 100%;
+  height: 220px;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  margin: auto;
+  padding: 10px;
+  shadow-color: #000;
+  shadow-offset: 0 2px;
+  shadow-opacity: 0.25;
+  shadow-radius: 3.84px;
+  elevation: 5;
+`;
+const RowView = styled.View`
+  flex-direction : row;
+  align-items : center;
+  width : 100%;
+  justify-content: space-between;
+  margin-bottom : 20px;
+`;
+const BackBtn = styled.TouchableOpacity`
+  width : 40px;
+  height : 40px;
+  align-self : flex-start;
+`;
+const BackImg = styled.Image`
+  width : 100%;
+  height : 100%;
+`;
+const AddWalkBtn = styled.TouchableOpacity`
+  margin-right : 10px;
+`;
+const AddWaltTxt =styled.Text`
+  color : #2F6AB0;
+  font-size : 16px;
+`;
+const StartMsg = styled.Text`
+  font-size : 25px;
+  font-weight : bold;
+`;
+const StartBtn = styled.TouchableOpacity`
+  background-color : #F6D663;
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4);
+  elevation: 5;
+  margin-top : 25px;
+  justify-content : center;
+  padding : 10px 20px;
+`;
+const StartBtnTxt = styled.Text`
+  color : white;
+  font-size : 20px;
+  font-weight : bold;
+  text-align : center;
+`
 const ModalBack = styled.View`
   flex: 1;
 `;
