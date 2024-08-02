@@ -63,7 +63,7 @@ export function KakaoLoginRedirect({ navigation, route }) {
         .get(`http://172.30.1.20:5000/oauth?code=${code}`)
         .then((getRes) => {
           console.log("login successful: ", getRes.data.id);
-          //getRes.data를 넘겨주고 싶어요.... 이게 userid인데....
+          //getRes.data를 넘겨주고 싶어요.... 이게 userid인데....git
           navigation.navigate('MyTabs', {
             userId: getRes.data.id, 
           });

@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ImageBackground,
-  Modal,
-  TouchableWithoutFeedback,
-} from "react-native";
+import {View,Text,ImageBackground,Modal,TouchableWithoutFeedback, TouchableHighlight, StyleSheet } from "react-native";
 import styled from "styled-components";
 import { useNavigation } from "@react-navigation/native";
+import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
 
 import { ref, set, get, child, onValue } from "firebase/database";
 import { database } from "../../firebaseConfig";
@@ -15,7 +10,7 @@ import { database } from "../../firebaseConfig";
 export default function Home() {
   const [modalVisible, setIsModalVisible] = useState(false);
   const [walkModal, setWalkModal] = useState(false);
-
+  const [isWalkStart, setIsWalkStart] = useState(false);
   const navigation = useNavigation();
 
   const handleModal = () => {
@@ -31,9 +26,13 @@ export default function Home() {
     }
   };
   const handleWalk = () => {
-    navigation.navigate("RecordDialog", { info: '산책' });
+    navigation.navigate("WalkRecord", { info: '산책', time: '00:00:00' });
     setWalkModal(false);
   };
+  const handleStartWalk=()=>{
+    setIsWalkStart(true);
+    setWalkModal(false);
+  }
   
   /*
 //   useEffect(() => {
@@ -75,9 +74,14 @@ export default function Home() {
   return (
     <BackGround source={require("../../assets/Home/HomeBG.png")}>
       <StyledView>
+        <RowView>
         <CalendarBtn onPress={() => navigation.navigate('Calendars')}>
           <CalendarImg source={require("../../assets/Home/CalendarIcon.png")} />
         </CalendarBtn>
+        {isWalkStart && (
+          <TimerView setIsWalkStart={setIsWalkStart}/>
+        )}
+        </RowView>
         <DogBtn>
           <DogImg source={require("../../assets/Home/DogHouse.png")} />
         </DogBtn>
@@ -177,7 +181,7 @@ export default function Home() {
                 </AddWalkBtn>
               </RowView>
               <StartMsg>주인님 산책해요!</StartMsg>
-              <StartBtn>
+              <StartBtn onPress={handleStartWalk}>
                 <StartBtnTxt>기록 시작하기</StartBtnTxt>
               </StartBtn>
             </WalkModalView>
@@ -188,6 +192,101 @@ export default function Home() {
     </BackGround>
   );
 }
+const TimerView=({ setIsWalkStart })=>{
+  const [start,setStart] = useState(true);
+  const [time, setTime] = useState("00:00:00");
+  const [finishRecord, setFinishRecord]=useState(false);
+  const navigation = useNavigation();
+
+  const toggleStopwatch=()=>{
+    setStart(!start);
+    setFinishRecord(!finishRecord);
+
+  }
+  const handleModal =()=>{
+    setFinishRecord(!finishRecord);
+    navigation.navigate("WalkRecord", { info: '산책', time: time });
+    setIsWalkStart(false);
+  }
+  const handleCancel =()=>{
+    setIsWalkStart(false);
+  }
+
+  return (
+    <View>
+      <TouchableHighlight onPress={toggleStopwatch}>
+        <Stopwatch
+          start={start}
+          options={options}
+          getTime={(time) => {
+            setTime(time);
+          }}
+        />
+      </TouchableHighlight>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={finishRecord}
+        onRequestClose={toggleStopwatch}
+      >
+        <TouchableWithoutFeedback onPress={toggleStopwatch}>
+        <ModalBack>
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <FinishModalView>
+              <AddWalkBtn marginBottom='5px;' alignSelf='flex-end' onPress={handleCancel}>
+                <AddWaltTxt>기록 취소하기</AddWaltTxt>
+              </AddWalkBtn>
+              <StartMsg size = '22px'>산책을 종료하시겠습니까?</StartMsg>
+              <RowView justifyContent='center'>
+                <FinishBtn backgroundColor='#C0C0C0' onPress={toggleStopwatch}>
+                  <StartBtnTxt size='18px'>뒤로가기</StartBtnTxt>
+                </FinishBtn>
+                <FinishBtn onPress={handleModal}>
+                  <StartBtnTxt size='18px'>종료하기</StartBtnTxt>
+                </FinishBtn>
+                </RowView>
+            </FinishModalView>
+          </TouchableWithoutFeedback>
+        </ModalBack>
+      </TouchableWithoutFeedback>
+      </Modal>
+    </View>
+    
+  );
+}
+const options = {
+  container: {
+    justifyContent : 'center',
+    alignItems : 'center',
+    backgroundColor : 'rgba(0,0,0,0.4)',
+    borderRadius : 10,
+    padding : 10,
+    width : 120,
+  },
+  text: {
+    fontSize: 18,
+    color: '#FFF',
+  }
+};
+const FinishModalView=styled.View`
+  width : 85%;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  margin: auto;
+  border-radius : 10px;
+  padding : 20px 5px 10px 5px;
+  shadow-color: #000;
+  shadow-offset: 0 2px;
+  shadow-opacity: 0.25;
+  shadow-radius: 3.84px;
+  elevation: 5;
+`;
+const FinishBtn = styled.TouchableOpacity`
+  background-color : ${(props)=>props.backgroundColor || '#139989'};
+  padding : 10px 20px;
+  border-radius : 10px;
+  margin : 20px 10px 0 10px;
+`;
 const WalkModalView = styled.View`
   width : 100%;
   height: 220px;
@@ -205,7 +304,7 @@ const RowView = styled.View`
   flex-direction : row;
   align-items : center;
   width : 100%;
-  justify-content: space-between;
+  justify-content: ${(props)=> props.justifyContent || 'space-between'};
   margin-bottom : 20px;
 `;
 const BackBtn = styled.TouchableOpacity`
@@ -219,13 +318,15 @@ const BackImg = styled.Image`
 `;
 const AddWalkBtn = styled.TouchableOpacity`
   margin-right : 10px;
+  margin-bottom : ${(props)=>props.marginBottom || '0'};
+  align-self : ${(props)=>props.alignSelf || 'auto'};
 `;
 const AddWaltTxt =styled.Text`
   color : #2F6AB0;
   font-size : 16px;
 `;
 const StartMsg = styled.Text`
-  font-size : 25px;
+  font-size : ${(props)=> props.size || '25px'};
   font-weight : bold;
 `;
 const StartBtn = styled.TouchableOpacity`
@@ -239,7 +340,7 @@ const StartBtn = styled.TouchableOpacity`
 `;
 const StartBtnTxt = styled.Text`
   color : white;
-  font-size : 20px;
+  font-size : ${(props)=>props.size || '20px'};
   font-weight : bold;
   text-align : center;
 `

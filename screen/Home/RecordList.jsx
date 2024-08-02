@@ -12,7 +12,6 @@ const RecordList = ({ userId, date }) => {
       const userRef = database().ref(`checklists/${userId}`);
       userRef.once('value', snapshot => {
         const data = snapshot.val();
-        console.log("Fetched data:", data); // 로그 추가
         if (data) {
           const allRecords = [];
 
@@ -29,7 +28,6 @@ const RecordList = ({ userId, date }) => {
             }
           });
 
-          console.log("Records for the date:", allRecords); // 로그 추가
           setRecords(allRecords);
         }
       });

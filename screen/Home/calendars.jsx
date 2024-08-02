@@ -74,7 +74,9 @@ const CalendarScreen = ({userId}) => {
   const handleTimeConfirm = (time) => {
     const hours = time.getHours();
     const minutes = time.getMinutes();
-    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}`;
     setNewSchedule({ ...newSchedule, time: formattedTime });
     hideTimePicker();
   };
@@ -85,7 +87,11 @@ const CalendarScreen = ({userId}) => {
         <Calendar
           onDayPress={onDayPress}
           markedDates={{
-            [selectedDate]: { selected: true, marked: true, selectedColor: 'blue' },
+            [selectedDate]: {
+              selected: true,
+              marked: true,
+              selectedColor: "blue",
+            },
           }}
         />
         {selectedDate ? (
@@ -126,7 +132,15 @@ const CalendarScreen = ({userId}) => {
               <TextInput
                 placeholder="일정 제목"
                 value={newSchedule.title}
-                onChangeText={(text) => setNewSchedule({ ...newSchedule, title: text })}
+                onChangeText={(text) =>
+                  setNewSchedule({ ...newSchedule, title: text })
+                }
+                style={styles.input}
+              />
+              <TextInput
+                placeholder="메모"
+                value={newSchedule.memo}
+                onChangeText={(text) => setNewSchedule({ ...newSchedule, memo: text })}
                 style={styles.input}
               />
               <TextInput
@@ -273,11 +287,11 @@ const ModalButtonText = styled.Text`
 
 const styles = StyleSheet.create({
   input: {
-    width: '100%',
+    width: "100%",
     padding: 10,
     marginVertical: 5,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 5,
   },
 });
