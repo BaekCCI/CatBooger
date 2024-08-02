@@ -33,42 +33,45 @@ const Community = ({ navigation }) => {
   /**커뮤니티의 상단 부분을 담는 태그 */
   const CommunityTopContainer = () => (
     <View style={{
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingLeft : '1%',
-      paddingRight : '1%',
-    }}>
-      {/**커뮤니티 제목을 담는 태그 */}
-      <Text style={{fontSize: 25, fontWeight:'bold'}}>커뮤니티</Text>
-      
-      {/**커뮤니티 검색 버튼을담는 태그*/}
-      <View style={{ flexDirection: 'row', gap: 10, top : 5}}>
-        <TouchableOpacity 
-        style = 
-        {{
-          backgroundColor : isSearchingBoxOpened ? "#4580ff88" : null,
-          borderRadius : isSearchingBoxOpened ? 5 : null,
-        }}
-        onPress={isSearchingBoxOpened ? closeSearching : openSearching}
-        >
-          <Image source={require('../../assets/community/search_logo.png')} style={{ width: 25, height: 25 }} />
-        </TouchableOpacity>
-      {/**커뮤니티 필터 버튼을 담는 태그*/}
-        <TouchableOpacity onPress={OpenFilter}>
-          <Image source={require('../../assets/community/filter_logo.png')} 
-          style={{ width: 25, height: 25 }} />
-        </TouchableOpacity>
+        paddingLeft : '4%',
+        paddingRight : '4%',}}>
+      <View style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+        {/**커뮤니티 제목을 담는 태그 */}
+        <Text style={{fontSize: 25, fontWeight:'bold'}}>커뮤니티</Text>
+        
+        {/**커뮤니티 검색 버튼을담는 태그*/}
+        <View style={{ flexDirection: 'row', gap: 10, top : 5}}>
+          <TouchableOpacity 
+          style = 
+          {{
+            backgroundColor : isSearchingBoxOpened ? "#4580ff88" : null,
+            borderRadius : isSearchingBoxOpened ? 5 : null,
+          }}
+          onPress={isSearchingBoxOpened ? closeSearching : openSearching}
+          >
+            <Image source={require('../../assets/community/search_logo.png')} style={{ width: 25, height: 25 }} />
+          </TouchableOpacity>
+        {/**커뮤니티 필터 버튼을 담는 태그*/}
+          <TouchableOpacity onPress={OpenFilter}>
+            <Image source={require('../../assets/community/filter_logo.png')} 
+            style={{ width: 25, height: 25 }} />
+          </TouchableOpacity>
+        </View>
       </View>
+        <HorizontalLine style={{marginBottom : 0, marginTop : '2%'}}/>
     </View>
   );
 
   const Tags = animalTags.concat(categoryTags)
   /**커뮤니티 창에서 태그를 띄우는 부분을 담는 태그*/
   const CommunityTagsContainer = () => (
-    <View style={{ gap: 3, flexDirection: 'row', flexWrap: 'wrap', marginTop : 10, marginLeft : 5, marginRight : 5}}>
+    <View style={{ gap: 3, flexDirection: 'row', flexWrap: 'wrap', marginLeft : 5, marginRight : 5}}>
       {/**동물 태그들을 띄우는 태그 */}
-      <View style={{ flexDirection: "row", gap: 5 }}>
+      <View style={{ flexDirection: "row", gap: 5, marginTop : 5 }}>
         {animalTags.map((tag, index) => (
           tag.isSelected && (
             <TouchableOpacity key={index} onPress={() => SelectTag(animalTags, setAnimalTags, index)}>
@@ -82,7 +85,7 @@ const Community = ({ navigation }) => {
       </View>
 
       {/**카테고리 태그들을 띄우는 태그 */}
-      <View style={{ flexDirection: "row", gap: 5}}>
+      <View style={{ flexDirection: "row", gap: 5, marginTop : 5}}>
         {categoryTags.map((tag, index) => (
           tag.isSelected && (
             <TouchableOpacity key={index} onPress={() => SelectTag(categoryTags, setCategoryTags, index)}>
@@ -128,7 +131,7 @@ const Community = ({ navigation }) => {
       }}>
         <Image source={require('../../assets/community/like_logo.png')} style = {{width : 15, height : 15}}/>
         <Text style={{fontSize : 15}}>
-          {" " + likeNumber + "     "}
+          {" " + likeNumber + "  "}
         </Text>
       </View>
     );
@@ -159,7 +162,7 @@ const Community = ({ navigation }) => {
     return (
       filteredPosts.map((postData, index) => (
         <Post key={index}>
-          <StyledButton onPress={() => MoveToPost(postData.id)} style={{flexDirection:'row', alignItems:'center', gap : 5}}>
+          <PostButton onPress={() => MoveToPost(postData.id)} style={{flexDirection:'row', alignItems:'center', gap : 5}}>
             <View style={{flex:3}}>
               <View style={{marginBottom : '1%'}}>
                 <PostTitle numberOfLines={1} ellipsizeMode="tail">
@@ -187,11 +190,8 @@ const Community = ({ navigation }) => {
                 </View>
               </PostUnderContent>
             </View>
-
             {postData.img !== "" ? <PostImg source={postData.img}/> : null}
-          </StyledButton>
-
-          <HorizontalLine />
+          </PostButton>
         </Post>
       ))
     );
@@ -353,19 +353,18 @@ const Community = ({ navigation }) => {
   const MoveToWritingPost = () => navigation.navigate('CommunityWritingPost')
   return (
       <View style={{flex : 1}}>
-        <SafeAreaView>
+        <SafeAreaView style={{flex : 1}}>
           <ScrollView style={{ backgroundColor: 'white'}} stickyHeaderIndices={[1]}>
             <StatusBar/>
 
             <View style=
             {{
-              backgroundColor:'white', marginLeft : '5%', marginRight : '5%', paddingTop : '5%',
+              backgroundColor:'white', paddingTop : '5%',
               justifyContent : 'center'
             }}>
               <CommunityTopContainer />
-              <HorizontalLine style={{marginBottom : 0, marginTop : '2%'}}/>
-              <CommunityTagsContainer />
               <SearchingBox/>
+              <CommunityTagsContainer />
             </View>
 
             <CommunityContainer>
@@ -396,11 +395,20 @@ const CommunityContainer = styled.View`
   flex : 1;
 `;
 
-const StyledButton = styled.TouchableOpacity`
+const PostButton = styled.TouchableOpacity`
 `;
 
-const Post = styled.View`
-  margin : 0 1%;
+const Post = styled.View.attrs({
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.84,
+  elevation: 4,
+})`
+  padding: 5%;
+  margin: 1% 0;
+  background-color: white;
+  border-radius: 10px;
 `;
 
 const PostTitle = styled.Text`
