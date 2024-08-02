@@ -8,7 +8,7 @@ const chatData = [
   { id: '3', name: '홍길동', status: '상담종료' },
 ];
 
-const ChatListScreen = ({ navigation }) => {
+const ChatList = ({ navigation }) => {
   const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate('Chatting', { chatId: item.id, name: item.name })}>
       <Image source={{ uri: 'https://via.placeholder.com/50' }} style={styles.avatar} />
@@ -73,4 +73,4 @@ const StatusText = styled.Text`
   color: white;
 `;
 
-export default ChatListScreen;
+export default ChatList;

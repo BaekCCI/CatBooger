@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import styled from 'styled-components/native';
 
-const ChatDetailScreen = () => {
+const Chatting = () => {
   const [messages, setMessages] = useState([
     { id: '1', text: '보여?', time: '오후 22:26', sender: 'other' },
     { id: '2', text: '진짜 돼?', time: '오후 22:26', sender: 'me' },
@@ -76,7 +76,7 @@ const MessageContainer = styled.View`
 const MessageBubble = styled.View`
   background-color: ${props => (props.sender === 'me' ? 'rgba(92, 196, 184, 0.5)' : '#E0E0E0')};
   padding: 2.7%;
-  border-radius: 1%;
+  border-radius: 5px;
   max-width: 70%;
 `;
 
@@ -102,7 +102,7 @@ const InputContainer = styled.View`
 const SendButton = styled.TouchableOpacity`
   background-color: rgba(92, 196, 184, 0.7);
   padding: 3%;
-  border-radius: 2%;
+  border-radius: 5px;
   justify-content: center;
   align-items: center;
   margin-left: 3%;
@@ -124,4 +124,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatDetailScreen;
+export default Chatting;
