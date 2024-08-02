@@ -11,6 +11,9 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
+import Main from './screen/Main';
+import AddAnimal from './screen/AddAnimal';
+
 import Login from './screen/LoginKakao'
 import {KakaoLoginRedirect} from './screen/LoginKakao'
 import Home from "./screen/Home/home";
@@ -131,7 +134,10 @@ function MenuStackScreen() {
     </MenuStack.Navigator>
   );
 }
-
+/* 시작화면
+  <LoginStack.Screen name="Main" component={Main} options={{headerShown:false}}/>
+  <LoginStack.Screen name="AddAnimal" component={AddAnimal} options={{headerShown:false}}/>
+*/
 function LoginStackScreen() {
   return (
     <LoginStack.Navigator>
