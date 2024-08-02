@@ -1,13 +1,35 @@
 import React , {useState, useEffect} from 'react';
-import { View, Keyboard,Text, Modal, TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native';
+import { View, Keyboard,Text, Modal, TouchableOpacity, TouchableWithoutFeedback, Button, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import RNPickerSelect from 'react-native-picker-select';
 
 export default function WalkRecord(){
     const navigation = useNavigation();
     const route = useRoute();
     const { info } = route.params;
     const {time} = route.params;
+
+    const [selectedHour, setSelectedHour] = useState(null);
+    const [selectedMinute, setSelectedMinute] = useState(null);
+    const [selectedSecond, setSelectedSecond] = useState(null);
+  
+    // useEffect를 사용하여 초기 값을 설정
+    useEffect(() => {
+      if (time) {
+        const [hours, minutes, seconds] = time.split(':').map(Number);
+        setSelectedHour(hours);
+        setSelectedMinute(minutes);
+        setSelectedSecond(seconds);
+      }
+    }, [time]);
+
+    const hours = Array.from({ length: 24 }, (v, k) => ({ label: String(k).padStart(2, '0'), value: k }));
+    const minutes = Array.from({ length: 60 }, (v, k) => ({ label: String(k).padStart(2, '0'), value: k }));
+    const seconds = Array.from({ length: 60 }, (v, k) => ({ label: String(k).padStart(2, '0'), value: k }));
+  
+  
+  
 
     const [text, setText] = useState('');
     const [isModified, setIsModified] = useState(false);
@@ -21,12 +43,44 @@ export default function WalkRecord(){
     return (
         <StyledView>
             <TitleWrap>
-                <Title>{info}, {time}</Title>
+                <Title>{info}</Title>
                 <ReLoadBtn>
                     <ReLoadImg source={require('../../assets/Home/reLoadIcon.png')}/>
                 </ReLoadBtn>
             </TitleWrap>
             <Line/>
+            <TypeText>사료 추가</TypeText>
+            <RowView>
+                <RNPickerSelect
+                    onValueChange={(value) => setSelectedHour(value)}
+                    items={hours}
+                    placeholder={{ label: 'Hour', value: null }}
+                    value={selectedHour}
+                    style={pickerSelectStyles}
+                />
+                <Component>시간</Component>
+
+
+                <RNPickerSelect
+                    onValueChange={(value) => setSelectedMinute(value)}
+                    items={minutes}
+                    placeholder={{ label: 'Minute', value: null }}
+                    value={selectedMinute}
+                    style={pickerSelectStyles}
+                />
+                <Component>분</Component>
+
+                <RNPickerSelect
+                    onValueChange={(value) => setSelectedSecond(value)}
+                    items={seconds}
+                    placeholder={{ label: 'Second', value: null }}
+                    value={selectedSecond}
+                    style={pickerSelectStyles}
+                />
+                <Component>초</Component>
+            </RowView>
+
+
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View>
             <TypeText>메모</TypeText>
@@ -50,6 +104,34 @@ export default function WalkRecord(){
       );
 
 }
+
+const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+      fontSize: 16,
+      fontWeight : 'bold',
+      paddingVertical: 12,
+      paddingHorizontal: 10,
+      borderWidth: 1,
+      borderColor: 'gray',
+      borderRadius: 4,
+      color: 'black',
+      paddingRight: 30,
+      textAlign: 'center',
+    },
+    inputAndroid: {
+      fontSize: 16,
+      paddingVertical: 12,
+      paddingHorizontal: 10,
+      borderWidth: 1,
+      borderColor: 'gray',
+      borderRadius: 4,
+      color: 'black',
+      paddingRight: 30,
+      marginBottom: 20,
+      width: 200,
+      textAlign: 'center',
+    },
+  });
 
 
 const StyledView = styled.View`
