@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { View, Text, ScrollView, TextInput, Image, TouchableOpacity, Alert } from 'react-native';
 import styled from 'styled-components';
 import { HorizontalLine } from './CommunityCommonStyles';
@@ -10,6 +10,9 @@ const CommunityWritingPost = () => {
 
   const [animalTags, setAnimalTags] = useState(initialAnimalTags);
   const [categoryTags, setCategoryTags] = useState(initialCategoryTags);
+
+  const titleInputRef = useRef('');
+  const contentInputRef = useRef('');
 
   const SelectTag = (tags, setTags, index) => {
     const updatedTags = tags.map((tag, i) =>
@@ -124,86 +127,123 @@ const CommunityWritingPost = () => {
     }
   }
 
+  /**제목 쓰기란에 해당하는 태그*/
+  const TitleInputContainerTag = () => {
+    return(
+      <View>
+        <TitleInputContainer>
+          <TitleInput 
+          multiline={true}
+          placeholder="제목 입력"
+          onChangeText={(newText) => {titleInputRef.current = newText}}
+          />
+          <HorizontalLine style={{marginTop : 0, marginBottom : 0}}/>
+        </TitleInputContainer>
+      </View>
+    )
+  }
+
+  /**이미지 등록란에 해당하는 태그*/
+  const ImageInputContainerTag = () => {
+    return(
+      <ContentsImageInputContainer>
+        {imageUrl ? (
+          <View>
+              <Image
+                source={{uri: imageUrl}} 
+                style={{width: '100%', height: 300, resizeMode: 'contain', alignSelf: 'center'}}>
+              </Image>
+
+                <CancelImage onPress={() => setImageUrl("")}>
+                  <Text style={{fontWeight : '600', fontSize : 20}}>
+                    X
+                  </Text>
+                </CancelImage>
+          </View>
+        ) : (
+          <Text style={{textAlign: 'center', fontWeight : 'bold', fontSize : 16}}>이미지 등록</Text>
+        )}
+
+      <View style={{flexDirection: 'row', justifyContent: 'space-around', marginVertical: 10}}>
+        <TouchableOpacity onPress={() => getImage(false)} style={buttonStyle}>
+          <Text>갤러리에서 선택</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => getImage(true)} style={buttonStyle}>
+          <Text>카메라로 촬영</Text>
+        </TouchableOpacity>
+      </View>
+      
+    </ContentsImageInputContainer>
+    )
+  }
+
+  /**글 내용 작성란에 해당하는 태그 */
+  const ContentsInputContainerTag = () => {
+    return(
+      <ContentsInputContainer>
+        <ContentsInput 
+        onChangeText = {(newText) => {contentInputRef.current = newText}}
+        multiline={true}
+        placeholder="글내용 작성"/>
+      </ContentsInputContainer>
+    )
+  }
+
+  /**서버 상에 게시물을 등록하는 기능 */
+  const RegisterPost = () => {
+    const selectedAnimalTags = animalTags.filter((tag) => tag.isSelected);
+    const selectedCategoryTags = categoryTags.filter((tag) => tag.isSelected);
+    const selectedTags = selectedAnimalTags.concat(selectedCategoryTags);
+
+    AddPost({
+      title : titleInputRef.current,
+      content : contentInputRef.current,
+      img : {uri : imageUrl},
+      tags : selectedTags,
+      profileNickName: "대충 닉네임",
+      postTime: "대충 등록된 시간",
+      likeNumber: 0,
+      scrapeNumber: 0,
+      comments : []
+    })
+
+    titleInputRef.current = "";
+    contentInputRef.current = "";
+    setImageUrl("")
+
+    const resetAnimalTags = animalTags.map((tag) => ({ ...tag, isSelected: false }));
+    setAnimalTags(resetAnimalTags);
+
+    const resetCategoryTags = categoryTags.map((tag) => ({ ...tag, isSelected: false }));
+    setCategoryTags(resetCategoryTags);
+  }
+
   return (
     <View style={{flex : 1}}>
       <WritingPostContainer>
-          <View>
-            <TitleInputContainer>
-              <TitleInput 
-              multiline={true}
-              placeholder="제목 입력"
-              />
-              <HorizontalLine style={{marginTop : 0, marginBottom : 0}}/>
-            </TitleInputContainer>
-          </View>
-          
+          <TitleInputContainerTag/>
+
           <SelectTagsContainer>
               <Tags/>
           </SelectTagsContainer>
 
-          <ScrollView>
-            {/* 이미지 등록 컨테이너 */}
-            <ContentsImageInputContainer>
-                {imageUrl ? (
-                  <View>
-                      <Image
-                        source={{uri: imageUrl}} 
-                        style={{width: '100%', height: 300, resizeMode: 'contain', alignSelf: 'center'}}>
-
-                      </Image>
-                        <TouchableOpacity onPress={() => setImageUrl("")} 
-                        style=
-                        {{
-                        height : 30, width : 30, 
-                        backgroundColor : '#dbdbdb75', position : 'absolute',
-                        alignItems : 'center', justifyContent : 'center',
-                        borderWidth : 1, borderRadius : 5
-                        }}>
-                        <Text style={{fontWeight : '600', fontSize : 20}}>
-                          X
-                        </Text>
-
-                        </TouchableOpacity>
-                  </View>
-                ) : (
-                  <Text style={{textAlign: 'center', fontWeight : 'bold', fontSize : 16}}>이미지 등록</Text>
-                )}
-
-              <View style={{flexDirection: 'row', justifyContent: 'space-around', marginVertical: 10}}>
-                <TouchableOpacity onPress={() => getImage(false)} style={buttonStyle}>
-                  <Text>갤러리에서 선택</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => getImage(true)} style={buttonStyle}>
-                  <Text>카메라로 촬영</Text>
-                </TouchableOpacity>
-              </View>
-            </ContentsImageInputContainer>
-
-            <ContentsInputContainer>
-              <ContentsInput 
-              multiline={true}
-              placeholder="글내용 작성"/>
-            </ContentsInputContainer>
-
-          </ScrollView>
+          <ImageInputContainerTag/>
+          <ContentsInputContainerTag/>
 
       </WritingPostContainer>
+
+      {Posts.map((post)=> <Text>{ post.id + ". " + post.title + "\n"}</Text>)}
+      
       <PostSendButton 
-        onPress={() => {
-          alert("게시물 등록!")
-          }}>
+        onPress={() => {RegisterPost()}}>
         <Text style={{lineHeight : 18}}>
           등록
         </Text>
       </PostSendButton>
+
     </View>
   );
 };
-
-/** 글쓰기 창의 모든 내용을 담는 태그*/
-const WritingPostContainer = styled.ScrollView`
-  margin : 20px;
-`;
 
 const CommunityWritingPostsWithPostsProvider = () => (
     <PostsProvider>
@@ -212,6 +252,12 @@ const CommunityWritingPostsWithPostsProvider = () => (
 )
 
 export default CommunityWritingPostsWithPostsProvider;
+
+/** 글쓰기 창의 모든 내용을 담는 태그*/
+const WritingPostContainer = styled.ScrollView`
+  margin : 20px;
+`;
+
 
 /**제목창에 해당하는 부분을 담는 태그 */
 const TitleInputContainer = styled.View`
@@ -271,3 +317,14 @@ const buttonStyle = {
   padding: 10,
   borderRadius: 5,
 };
+
+const CancelImage  = styled.TouchableOpacity`
+  height : 30px; 
+  width : 30px; 
+  align-items : center;
+  justify-content : center;
+  background-color : #dbdbdb75;
+  position : absolute;
+  border-width : 1px;
+  border-radius : 5px;
+`

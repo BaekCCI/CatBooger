@@ -5,6 +5,7 @@ import { HorizontalLine } from "./CommunityCommonStyles.jsx";
 import {PostsContext, PostsProvider, initialAnimalTags, initialCategoryTags} from './CommunityCommonData.jsx'
 
 const Community = ({ navigation }) => {
+  /**커뮤니티 공용 데이터 */
   const {Posts, AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
 
   /**이미지 데이터 */
@@ -110,15 +111,13 @@ const Community = ({ navigation }) => {
     if (selectedAnimalTags.length === 0 && selectedCategoryTags.length === 0) {
       return titleFilteredPosts;
     }
-
+    
     // 활성화된 태그와 일치하는 게시물을 필터링
     return Posts.filter(post =>
       post.tags.some(tag => selectedAnimalTags.includes(tag) || selectedCategoryTags.includes(tag))
     );
   };
 
-  /**필터링된 게시물 데이터를 반환 */
-  const filteredPosts = filterPosts();
 
   /**좋아요의 개수를 표시할 태그*/
   const LikeTag = ({ likeNumber }) => {
@@ -152,18 +151,15 @@ const Community = ({ navigation }) => {
   };
 
   /**게시물을 렌더링하는 함수 */
-  const CommunityPosts = (postsData) => {
-    // 선택된 태그를 가져옴
-    const selectedAnimalTags = getSelectedTags(animalTags);
-    const selectedCategoryTags = getSelectedTags(categoryTags);
+  const CommunityPosts = () => {
     // 게시물을 필터링함
-    const filteredPosts = filterPosts(postsData, selectedAnimalTags, selectedCategoryTags);
+    const filteredPosts = filterPosts();
 
     // 필터링한 게시물들을 보여줌
     return (
       filteredPosts.map((postData, index) => (
         <Post key={index}>
-          <StyledButton onPress={() => MoveToPost(postData)} style={{flexDirection:'row', alignItems:'center', gap : 5}}>
+          <StyledButton onPress={() => MoveToPost(postData.id)} style={{flexDirection:'row', alignItems:'center', gap : 5}}>
             <View style={{flex:3}}>
               <View style={{marginBottom : '1%'}}>
                 <PostTitle numberOfLines={1} ellipsizeMode="tail">
@@ -337,13 +333,13 @@ const Community = ({ navigation }) => {
             borderWidth:1,
             borderColor : "#8585856c",
             borderRadius: 50,
-            width : '25%',
+            width : '28%',
             }}
             >
             {/* <Image source={penIcon} style={{width:33,height:33}}/> */}
             <View style={{paddingTop : '4%', marginBottom : '5%', flexDirection : 'row'}}>
-              <Image source={penIcon} style={{width:20,height:20, marginRight : '5%', marginTop : '2%'}}/> 
-                <Text style={{fontWeight : 'bold'}}>
+              <Image source={penIcon} style={{width:22,height:22, marginRight : '5%', marginTop : '2%'}}/> 
+                <Text style={{fontWeight : 'bold', fontSize : 16}}>
                   글 쓰기
                 </Text>
             </View>
@@ -353,11 +349,11 @@ const Community = ({ navigation }) => {
   }
   
   /**-------------------------------커뮤니티 화면-------------------------------*/
-  const MoveToPost = (data) => navigation.navigate('CommunityPost', {postData : data});
+  const MoveToPost = (postDataId) => navigation.navigate('CommunityPost', {postDataId : postDataId});
   const MoveToWritingPost = () => navigation.navigate('CommunityWritingPost')
   return (
       <View style={{flex : 1}}>
-        <SafeAreaView style={{flex : 1}}>
+        <SafeAreaView>
           <ScrollView style={{ backgroundColor: 'white'}} stickyHeaderIndices={[1]}>
             <StatusBar/>
 
@@ -374,7 +370,7 @@ const Community = ({ navigation }) => {
 
             <CommunityContainer>
 
-            <CommunityPosts postsData={filteredPosts}/>
+            <CommunityPosts/>
 
               <FilterModalTag />
             </CommunityContainer>
