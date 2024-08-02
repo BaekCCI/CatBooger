@@ -67,6 +67,7 @@ export default function WalkRecord(){
                     placeholder={{}}
                     value={selectedHour}
                     style={pickerSelectStyles}
+                    useNativeAndroidPickerStyle={false}
                 />
                 <Component>시간</Component>
 
@@ -77,6 +78,7 @@ export default function WalkRecord(){
                     placeholder={{}}
                     value={selectedMinute}
                     style={pickerSelectStyles}
+                    useNativeAndroidPickerStyle={false} 
                 />
                 <Component>분</Component>
 
@@ -86,6 +88,7 @@ export default function WalkRecord(){
                     placeholder={{}}
                     value={selectedSecond}
                     style={pickerSelectStyles}
+                    useNativeAndroidPickerStyle={false} 
                 />
                 <Component>초</Component>
             </RowView>
