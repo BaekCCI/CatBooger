@@ -6,6 +6,9 @@ import { initialAnimalTags, initialCategoryTags, PostsContext, PostsProvider } f
 import * as ImagePicker from 'expo-image-picker'
 
 const CommunityWritingPost = () => {
+  const cameraIcon = require("../../assets/community/camera_icon.png");
+  const galleryIcon = require("../../assets/community/gallery_icon.png")
+
   const {Posts, AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
 
   const [animalTags, setAnimalTags] = useState(initialAnimalTags);
@@ -24,7 +27,7 @@ const CommunityWritingPost = () => {
   const Tags = () => {
     return(
       <View>
-        <View style={{flexDirection:'row', gap : 5, margin : 10}}>
+        <View style={{flexDirection:'row', gap : 5, marginBottom : 5}}>
           <Text style={{fontSize : 15, fontWeight:'bold'}}>
             동물 :
           </Text>
@@ -44,9 +47,8 @@ const CommunityWritingPost = () => {
           ))}
         </View>
         
-        <HorizontalLine style={{marginBottom : 0, marginTop : 0}}/>
 
-        <View style={{flexDirection:'row', gap : 5, margin : 10}}>
+        <View style={{flexDirection:'row', gap : 5}}>
           <Text style={{fontSize : 15, fontWeight:'bold'}}>
             카테고리 :
           </Text>
@@ -166,10 +168,10 @@ const CommunityWritingPost = () => {
 
       <View style={{flexDirection: 'row', justifyContent: 'space-around', marginVertical: 10}}>
         <TouchableOpacity onPress={() => getImage(false)} style={buttonStyle}>
-          <Text>갤러리에서 선택</Text>
+          <Image source={galleryIcon} style={{resizeMode:'contain', width : 50, height : 50}}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => getImage(true)} style={buttonStyle}>
-          <Text>카메라로 촬영</Text>
+          <Image source={cameraIcon} style={{resizeMode:'contain', width : 50, height : 50}}/>
         </TouchableOpacity>
       </View>
       
@@ -184,7 +186,7 @@ const CommunityWritingPost = () => {
         <ContentsInput 
         onChangeText = {(newText) => {contentInputRef.current = newText}}
         multiline={true}
-        placeholder="글내용 작성"/>
+        placeholder={"글내용 작성"}/>
       </ContentsInputContainer>
     )
   }
@@ -221,20 +223,23 @@ const CommunityWritingPost = () => {
   return (
     <View style={{flex : 1}}>
       <WritingPostContainer>
-          <TitleInputContainerTag/>
-
           <SelectTagsContainer>
-              <Tags/>
+            <Tags/>
           </SelectTagsContainer>
 
+          <TitleInputContainerTag/>
+
           <ImageInputContainerTag/>
+
+          <HorizontalLine style={{marginTop : 0, marginBottom : 0}}/>
+
           <ContentsInputContainerTag/>
 
       </WritingPostContainer>
 
       <PostSendButton 
         onPress={() => {RegisterPost()}}>
-        <Text style={{lineHeight : 18}}>
+        <Text style={{fontSize : 14, fontWeight : 'bold'}}>
           등록
         </Text>
       </PostSendButton>
@@ -259,9 +264,8 @@ const WritingPostContainer = styled.ScrollView`
 
 /**제목창에 해당하는 부분을 담는 태그 */
 const TitleInputContainer = styled.View`
-  border : 1px solid #787878;
+  /* border : 1px solid #787878; */
   border-radius : 7px;
-  padding : 5px;
   `;
 
 /**제목 입력창에 해당하는 태그 */
@@ -271,14 +275,14 @@ font-size : 18px;
   
 /**글 태그 선택창을 담는 태그 */
 const SelectTagsContainer = styled.View`
-  border : 1px solid #787878;
+  /* border : 1px solid #787878; */
+  margin-bottom : 2%;
   border-radius : 7px;
-  margin : 10px 0;
 `
 
 /**글 내용 작성창에 해당하는 부분을 담는 태그 */
 const ContentsInputContainer = styled.View`
-  border : 1px solid #787878;
+  /* border : 1px solid #787878; */
   border-radius : 7px;
   padding : 5px;
   margin : 10px 0;
@@ -287,7 +291,7 @@ const ContentsInputContainer = styled.View`
 
 /**글 내용 작성창에 이미지 등록 부분을 담는 태그 */
 const ContentsImageInputContainer = styled.View`
-  border : 1px solid #787878;
+  /* border : 1px solid #787878; */
   border-radius : 7px;
   padding : 5px;
 `
@@ -297,23 +301,23 @@ const ContentsInput = styled.TextInput`
 
 /**게시물 작성 완료 버튼에 해당하는 태그 */
 const PostSendButton = styled.TouchableOpacity`
-    width:50px;
-    height:30px; 
     background-color: #6495ED90; 
-    border-radius:5px; 
+    border-radius: 10px; 
     border-width:1px;
-    margin:5px;
+    padding : 5px 10px;
+    padding-bottom : 7px;
     justify-content:center;
     align-items:center;
     position : absolute;
-    bottom : 5px;
-    right : 20px;
+    bottom : 2%;
+    right : 4%;
 `
 
 const buttonStyle = {
-  backgroundColor: '#6495ED90',
+  // backgroundColor: '#6495ED90',
   padding: 10,
   borderRadius: 5,
+  borderWidth : 1
 };
 
 const CancelImage  = styled.TouchableOpacity`

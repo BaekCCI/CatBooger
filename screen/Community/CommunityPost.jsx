@@ -159,7 +159,7 @@ const CommunityPost = () => {
 
         <HorizontalLine style={{
           height: 10,
-          backgroundColor: '#a6cbc6'
+          backgroundColor: '#96d3cb'
         }} />
 
         <CommentsContainer>
