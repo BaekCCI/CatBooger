@@ -26,8 +26,6 @@ export default function RecordDialog(){
                 return <Vaccine info={info} key={key}/>;
             case '목욕':
                 return <Bath info={info} key={key}/>;  
-            case '산책':
-            return <Walk info={info} key={key}/>;  
         }
     }
     return (
