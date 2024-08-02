@@ -40,3 +40,4 @@ yarn-error.*
 /Back/serviceAccountKey.json
 /Back/kakao_config.py
 
+firebaseConfig.js

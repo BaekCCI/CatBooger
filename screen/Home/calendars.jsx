@@ -1,9 +1,24 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, Modal, StyleSheet } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import styled from 'styled-components/native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+
+import React, { useState, useEffect } from "react";
+import {
+  SafeAreaView,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  Modal,
+  StyleSheet,
+} from "react-native";
+import { Calendar } from "react-native-calendars";
+import styled from "styled-components/native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import RecordList from './RecordList';
+
+
+import { initializeApp } from "firebase/app";
+import { ref, set, get, child, onValue } from "firebase/database";
+import { database } from "../../firebaseConfig";
 
 const initialSchedules = {
   '2024-08-01': [
@@ -17,9 +32,10 @@ const initialSchedules = {
   // 추가 일정 데이터
 };
 
-const CalendarScreen = ({userId}) => {
-  const [selectedDate, setSelectedDate] = useState('');
-  const [schedules, setSchedules] = useState(initialSchedules);
+
+const CalendarScreen = () => {
+  const [selectedDate, setSelectedDate] = useState("");
+  //const [schedules, setSchedules] = useState(initialSchedules);
   const [modalVisible, setModalVisible] = useState(false);
   const [newSchedule, setNewSchedule] = useState({ time: '', title: '', memo: '' });
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
@@ -29,6 +45,30 @@ const CalendarScreen = ({userId}) => {
     setSelectedDate(day.dateString);
     setExpandedScheduleId(null);
   };
+
+  const [schedules, setSchedules] = useState({});
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchBathingEvents = async () => {
+      try {
+        const userId = "userId1"; // 실제 사용자 ID로 대체
+        const response = await fetch(
+          `http://172.30.1.96:5001/get_bathing_events/${userId}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Bathing events data:", data);
+        } else {
+          console.error("Failed to fetch bathing events:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching bathing events:", error);
+      }
+    };
+
+    fetchBathingEvents();
+  }, []);
 
   const renderScheduleItem = ({ item }) => (
     <View>
@@ -55,6 +95,7 @@ const CalendarScreen = ({userId}) => {
       if (!updatedSchedules[selectedDate]) {
         updatedSchedules[selectedDate] = [];
       }
+
       const newId = Math.max(...Object.values(schedules).flat().map(schedule => schedule.id)) + 1;
       updatedSchedules[selectedDate].push({ ...newSchedule, id: newId, icon: '🐾' });
       setSchedules(updatedSchedules);
