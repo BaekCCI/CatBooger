@@ -55,6 +55,11 @@ const Feed = ({info}) => {
         setIsModified(text !== '' || bobCount !== 0 || waterCount !== 0);
     }, [text, bobCount, waterCount]);
 
+    //완료 버튼 동작 (bobCount, waterCount, text 변수 저장해야함)
+    const handleComplete=()=>{
+            
+    }
+
     const handleCount=(type)=>{
         switch(type){
             case 'BobPlus':
@@ -114,7 +119,7 @@ const Feed = ({info}) => {
                 multiline={true} /* 여러 줄 입력을 허용 */
             />
             </InputWrap>
-            <CompleteBtn disabled={!isModified} isModified={isModified}>
+            <CompleteBtn disabled={!isModified} isModified={isModified} onPress={handleComplete}>
                 <CompleText >완료하기</CompleText>
 
             </CompleteBtn>
@@ -134,6 +139,12 @@ const Medicine = ({info}) => {
         setIsModified(text !== '');
     }, [text]);
 
+    //완료 버튼 동작 (text 변수 저장해야함)
+    const handleComplete=()=>{
+            
+    }
+    
+
     return(
         <View>
             <TypeText>메모</TypeText>
@@ -146,7 +157,7 @@ const Medicine = ({info}) => {
                 multiline={true} /* 여러 줄 입력을 허용 */
             />
             </InputWrap>
-            <CompleteBtn disabled={!isModified} isModified={isModified}>
+            <CompleteBtn disabled={!isModified} isModified={isModified} onPress={handleComplete}>
                 <CompleText >완료하기</CompleText>
 
             </CompleteBtn>
@@ -165,6 +176,12 @@ const Kg = ({info}) => {
         // Check if there are any changes in the input or counts
         setIsModified(text !== '' || (kg !== 0 && kg !==''));
     }, [text, kg]);
+
+    //완료 버튼 동작 (kg, text 변수 저장해야함)
+    const handleComplete=()=>{
+            
+    }
+
 
     return(
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -192,7 +209,7 @@ const Kg = ({info}) => {
                 multiline={true} /* 여러 줄 입력을 허용 */
             />
             </InputWrap>
-            <CompleteBtn disabled={!isModified} isModified={isModified}>
+            <CompleteBtn disabled={!isModified} isModified={isModified} onPress={handleComplete}>
                 <CompleText >완료하기</CompleText>
 
             </CompleteBtn>
@@ -234,6 +251,12 @@ const Poop = ({info}) => {
     const handlePeeColor=(color)=>{
         setPeeColor(color);
     }
+
+    //완료 버튼 동작 ( poopColor, poopStatus, peeColor, text 변수 저장해야함)
+    const handleComplete=()=>{
+            
+    }
+
 
     return(
         <ScrollView>
@@ -331,7 +354,7 @@ const Poop = ({info}) => {
                     multiline={true} /* 여러 줄 입력을 허용 */
                 />
             </InputWrap>
-            <CompleteBtn disabled={!isModified} isModified={isModified}>
+            <CompleteBtn disabled={!isModified} isModified={isModified} onPress={handleComplete}>
                 <CompleText >완료하기</CompleText>
             </CompleteBtn>
         </View>
@@ -350,6 +373,13 @@ const Vaccine = ({info}) => {
         setIsModified(text !== '');
     }, [text]);
 
+    //완료 버튼 동작 (text 변수 저장해야함)
+    const handleComplete=()=>{
+            
+    }
+
+
+
     return(
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View>
@@ -363,7 +393,7 @@ const Vaccine = ({info}) => {
                 multiline={true} /* 여러 줄 입력을 허용 */
             />
             </InputWrap>
-            <CompleteBtn disabled={!isModified} isModified={isModified}>
+            <CompleteBtn disabled={!isModified} isModified={isModified} onPress={handleComplete}>
                 <CompleText >완료하기</CompleText>
 
             </CompleteBtn>
@@ -382,6 +412,13 @@ const Bath = ({info}) => {
         setIsModified(text !== '');
     }, [text]);
 
+    //완료 버튼 동작 (text 변수 저장해야함)
+    const handleComplete=()=>{
+            
+    }
+
+
+
     return(
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View>
@@ -395,7 +432,7 @@ const Bath = ({info}) => {
                 multiline={true} /* 여러 줄 입력을 허용 */
             />
             </InputWrap>
-            <CompleteBtn disabled={!isModified} isModified={isModified}>
+            <CompleteBtn disabled={!isModified} isModified={isModified} onPress={handleComplete}>
                 <CompleText >완료하기</CompleText>
 
             </CompleteBtn>
@@ -405,40 +442,6 @@ const Bath = ({info}) => {
 
     );
 }
-
-const Walk = ({info}) => {
-    const [text, setText] = useState('');
-    const [isModified, setIsModified] = useState(false);
-
-    useEffect(() => {
-        // Check if there are any changes in the input or counts
-        setIsModified(text !== '');
-    }, [text]);
-
-    return(
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View>
-            <TypeText>메모</TypeText>
-            <InputWrap>
-            <InputMemo
-                value={text}
-                onChangeText={setText}
-                placeholder="내용을 입력하세요"
-                placeholderTextColor="#d9d9d9"
-                multiline={true} /* 여러 줄 입력을 허용 */
-            />
-            </InputWrap>
-            <CompleteBtn disabled={!isModified} isModified={isModified}>
-                <CompleText >완료하기</CompleText>
-
-            </CompleteBtn>
-
-        </View>
-        </TouchableWithoutFeedback>
-
-    );
-}
-
 
 const StyledView = styled.View`
     width : 85%;

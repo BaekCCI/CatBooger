@@ -10,6 +10,9 @@ export default function WalkRecord(){
     const { info } = route.params;
     const {time} = route.params;
 
+    const [text, setText] = useState('');
+    const [saveTime, setSaveTime] = useState('00:00:00');
+
     const [selectedHour, setSelectedHour] = useState(null);
     const [selectedMinute, setSelectedMinute] = useState(null);
     const [selectedSecond, setSelectedSecond] = useState(null);
@@ -28,33 +31,40 @@ export default function WalkRecord(){
     const minutes = Array.from({ length: 60 }, (v, k) => ({ label: String(k).padStart(2, '0'), value: k }));
     const seconds = Array.from({ length: 60 }, (v, k) => ({ label: String(k).padStart(2, '0'), value: k }));
   
-  
-  
 
-    const [text, setText] = useState('');
     const [isModified, setIsModified] = useState(false);
-    
+    //완료 버튼 활성화 여부    
     useEffect(() => {
-        // Check if there are any changes in the input or counts
-        setIsModified(text !== '');
-    }, [text]);
+        setIsModified(text !== '' || (selectedHour!==0 || selectedMinute!==0 || selectedSecond!==0));
+    }, [text, selectedHour, selectedMinute, selectedSecond]);
     
+    const handleReset=()=>{
+        setSelectedHour(0);
+        setSelectedMinute(0);
+        setSelectedSecond(0);
+        setText('');
+    }
+
+    //완료 버튼 동작 (saveTime, text 변수 저장해야함)
+    const handleComplete=()=>{
+        setSaveTime(`${selectedHour}:${selectedMinute}:${selectedSecond}`);
+    }
 
     return (
         <StyledView>
             <TitleWrap>
                 <Title>{info}</Title>
-                <ReLoadBtn>
+                <ReLoadBtn onPress={handleReset}>
                     <ReLoadImg source={require('../../assets/Home/reLoadIcon.png')}/>
                 </ReLoadBtn>
             </TitleWrap>
             <Line/>
-            <TypeText>사료 추가</TypeText>
+            <TypeText>산책 시간</TypeText>
             <RowView>
                 <RNPickerSelect
                     onValueChange={(value) => setSelectedHour(value)}
                     items={hours}
-                    placeholder={{ label: 'Hour', value: null }}
+                    placeholder={{}}
                     value={selectedHour}
                     style={pickerSelectStyles}
                 />
@@ -64,7 +74,7 @@ export default function WalkRecord(){
                 <RNPickerSelect
                     onValueChange={(value) => setSelectedMinute(value)}
                     items={minutes}
-                    placeholder={{ label: 'Minute', value: null }}
+                    placeholder={{}}
                     value={selectedMinute}
                     style={pickerSelectStyles}
                 />
@@ -73,13 +83,13 @@ export default function WalkRecord(){
                 <RNPickerSelect
                     onValueChange={(value) => setSelectedSecond(value)}
                     items={seconds}
-                    placeholder={{ label: 'Second', value: null }}
+                    placeholder={{}}
                     value={selectedSecond}
                     style={pickerSelectStyles}
                 />
                 <Component>초</Component>
             </RowView>
-
+            <Line/>
 
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View>
@@ -93,9 +103,8 @@ export default function WalkRecord(){
                 multiline={true} /* 여러 줄 입력을 허용 */
             />
             </InputWrap>
-            <CompleteBtn disabled={!isModified} isModified={isModified}>
+            <CompleteBtn disabled={!isModified} isModified={isModified} onPress={handleComplete}>
                 <CompleText >완료하기</CompleText>
-
             </CompleteBtn>
 
         </View>
@@ -107,29 +116,22 @@ export default function WalkRecord(){
 
 const pickerSelectStyles = StyleSheet.create({
     inputIOS: {
-      fontSize: 16,
-      fontWeight : 'bold',
-      paddingVertical: 12,
-      paddingHorizontal: 10,
-      borderWidth: 1,
-      borderColor: 'gray',
-      borderRadius: 4,
-      color: 'black',
-      paddingRight: 30,
-      textAlign: 'center',
+        fontSize: 20,
+        fontWeight : 'bold',
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        color: 'gray',
+        textAlign: 'center',
+        marginRight : 5,
     },
     inputAndroid: {
-      fontSize: 16,
-      paddingVertical: 12,
-      paddingHorizontal: 10,
-      borderWidth: 1,
-      borderColor: 'gray',
-      borderRadius: 4,
-      color: 'black',
-      paddingRight: 30,
-      marginBottom: 20,
-      width: 200,
-      textAlign: 'center',
+        fontSize: 20,
+        fontWeight : 'bold',
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        color: 'gray',
+        textAlign: 'center',
+        marginRight : 5,
     },
   });
 
