@@ -154,8 +154,16 @@ export const PostsProvider = ({ children }) => {
     setPosts(prevPosts => prevPosts.filter(post => post.id !== id));
   };
 
+  const AddComment = (id, profileNickName, content, postTime) => {
+    setPosts(prevPosts => prevPosts.map(post => post.id === id ?
+      {...post, comments : [{profileNickName : profileNickName, content : content, postTime : postTime}, ...post.comments]}
+      :
+      post
+    ))
+  }
+
   return (
-    <PostsContext.Provider value={{ Posts, AddPost, UpdatePost, DeletePost }}>
+    <PostsContext.Provider value={{ Posts, AddPost, UpdatePost, DeletePost, AddComment }}>
       {children}
     </PostsContext.Provider>
   );

@@ -191,8 +191,8 @@ const CommunityWritingPost = () => {
 
   /**서버 상에 게시물을 등록하는 기능 */
   const RegisterPost = () => {
-    const selectedAnimalTags = animalTags.filter((tag) => tag.isSelected);
-    const selectedCategoryTags = categoryTags.filter((tag) => tag.isSelected);
+    const selectedAnimalTags = (animalTags.filter((tag) => tag.isSelected)).map((selectedTag) => selectedTag.name);
+    const selectedCategoryTags = (categoryTags.filter((tag) => tag.isSelected)).map((selectedTag) => selectedTag.name);
     const selectedTags = selectedAnimalTags.concat(selectedCategoryTags);
 
     AddPost({
@@ -232,8 +232,6 @@ const CommunityWritingPost = () => {
 
       </WritingPostContainer>
 
-      {Posts.map((post)=> <Text>{ post.id + ". " + post.title + "\n"}</Text>)}
-      
       <PostSendButton 
         onPress={() => {RegisterPost()}}>
         <Text style={{lineHeight : 18}}>

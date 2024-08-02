@@ -1,4 +1,4 @@
-import React, { useContext, useState, useSyncExternalStore } from "react";
+import React, { useContext, useRef, useState, useSyncExternalStore } from "react";
 import { View, ScrollView, Touchable, TouchableOpacity, Image, Modal,Text,TextInput} from "react-native";
 import { useRoute } from '@react-navigation/native';
 import styled from "styled-components";
@@ -12,11 +12,13 @@ sendCommentIcon = require('../../assets/community/send_comment_icon.png')
 
 const CommunityPost = () => {
   /**커뮤니티 공용 데이터 */
-  const {Posts, AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
+  const {Posts, AddPost, UpdatePost, DeletePost, AddComment} = useContext(PostsContext)
 
   const route = useRoute();
   const { postDataId } = route.params;
   const postData = Posts[postDataId]
+
+  const inputCommentRef = useRef("");
 
   /**게시글 사진을 담는 태그 */
   const PostImgContainer = () => {  
@@ -35,6 +37,12 @@ const CommunityPost = () => {
   const [isWriteCommentOpened, setIsWriteCommentOpened] = useState(false);
   const OpenWriteComment = () => setIsWriteCommentOpened(true);
   const CloseWriteComment = () => setIsWriteCommentOpened(false);
+
+  /**댓글 등록할 때의 기능을 담은 함수 (매개변수 : 게시물 ID, 댓글 쓴 사람 닉네임, 댓글 내용, 댓글 등록 시간*/
+  const RegisterComment = (postId, NickName, content, date) => {
+    AddComment(postId, NickName, content, date);
+    setIsWriteCommentOpened(false);
+  }
 
   /**댓글 쓰기 버튼에 해당하는 태그 */
   const WriteCommentButton = () => {
@@ -58,11 +66,14 @@ const CommunityPost = () => {
               flexDirection="row"
               style = {{width : '95%', alignSelf : 'center'}}>
               <ScrollView >
-                <TextInput multiline={true} autoFocus={true} placeholder="댓글 작성" style={{height:40}} />
+                <TextInput 
+                onChangeText={(newText) => {inputCommentRef.current = newText}}
+                multiline={true} autoFocus={true} placeholder="댓글 작성" 
+                style={{height:40}} />
               </ScrollView>
 
               <CommentSendButton 
-              onPress={() => alert("댓글 등록!")}>
+              onPress={() => {RegisterComment(postDataId, "대충 닉네임", inputCommentRef.current, Date())}}>
               <Text style={{fontWeight:'bold'}}>
                 등록
               </Text>
