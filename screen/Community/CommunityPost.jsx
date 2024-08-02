@@ -1,18 +1,24 @@
-import React, { useState, useSyncExternalStore } from "react";
+import React, { useContext, useRef, useState, useSyncExternalStore } from "react";
 import { View, ScrollView, Touchable, TouchableOpacity, Image, Modal,Text,TextInput} from "react-native";
 import { useRoute } from '@react-navigation/native';
 import styled from "styled-components";
 import { HorizontalLine} from "./CommunityCommonStyles.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {Posts, originPosts, setOriginPosts} from './CommunityCommonData.jsx'
+import {initialPosts, originPosts, PostsContext, PostsProvider, setOriginPosts} from './CommunityCommonData.jsx'
 
 /**이미지 데이터 */
 commentIcon = require('../../assets/community/comment_icon.png')
 sendCommentIcon = require('../../assets/community/send_comment_icon.png')
 
 const CommunityPost = () => {
+  /**커뮤니티 공용 데이터 */
+  const {Posts, AddPost, UpdatePost, DeletePost, AddComment} = useContext(PostsContext)
+
   const route = useRoute();
-  const { postData } = route.params;
+  const { postDataId } = route.params;
+  const postData = Posts[postDataId]
+
+  const inputCommentRef = useRef("");
 
   /**게시글 사진을 담는 태그 */
   const PostImgContainer = () => {  
@@ -31,6 +37,12 @@ const CommunityPost = () => {
   const [isWriteCommentOpened, setIsWriteCommentOpened] = useState(false);
   const OpenWriteComment = () => setIsWriteCommentOpened(true);
   const CloseWriteComment = () => setIsWriteCommentOpened(false);
+
+  /**댓글 등록할 때의 기능을 담은 함수 (매개변수 : 게시물 ID, 댓글 쓴 사람 닉네임, 댓글 내용, 댓글 등록 시간*/
+  const RegisterComment = (postId, NickName, content, date) => {
+    AddComment(postId, NickName, content, date);
+    setIsWriteCommentOpened(false);
+  }
 
   /**댓글 쓰기 버튼에 해당하는 태그 */
   const WriteCommentButton = () => {
@@ -54,11 +66,14 @@ const CommunityPost = () => {
               flexDirection="row"
               style = {{width : '95%', alignSelf : 'center'}}>
               <ScrollView >
-                <TextInput multiline={true} autoFocus={true} placeholder="댓글 작성" style={{height:40}} />
+                <TextInput 
+                onChangeText={(newText) => {inputCommentRef.current = newText}}
+                multiline={true} autoFocus={true} placeholder="댓글 작성" 
+                style={{height:40}} />
               </ScrollView>
 
               <CommentSendButton 
-              onPress={() => alert("댓글 등록!")}>
+              onPress={() => {RegisterComment(postDataId, "대충 닉네임", inputCommentRef.current, Date())}}>
               <Text style={{fontWeight:'bold'}}>
                 등록
               </Text>
@@ -82,37 +97,41 @@ const CommunityPost = () => {
     /**좋아요의 개수를 표시할 태그*/
   const LikeTag = ({ likeNumber }) => {
     return (
-      <View style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}>
-        <Image source={require('../../assets/community/like_logo.png')} style = {{width : 23, height : 23}}/>
-        <Text style={{fontSize : 16}}>
-          {" " + likeNumber + "     "}
-        </Text>
-      </View>
+      <TouchableOpacity onPress={() => {UpdatePost(postDataId, {...postData, likeNumber : likeNumber + 1})}}>
+        <View style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+          <Image source={require('../../assets/community/like_logo.png')} style = {{width : 23, height : 23}}/>
+          <Text style={{fontSize : 16}}>
+            {" " + likeNumber + "     "}
+          </Text>
+        </View>
+      </TouchableOpacity>
     );
   };
 
   /**스크랩의 개수를 표시할 태그 */
   const ScrapeTag = ({ scrapeNumber }) => {
     return (
-      <View style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}>
-        <Image source={require('../../assets/community/scrape_logo.png')} style = {{width : 23, height : 23}}/>
-        <Text style={{fontSize : 16}}>
-          {"" + scrapeNumber + " "}
-        </Text>
-      </View>
+      <TouchableOpacity onPress={() => {UpdatePost(postDataId, {...postData, scrapeNumber : scrapeNumber + 1})}}>
+        <View style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+          <Image source={require('../../assets/community/scrape_logo.png')} style = {{width : 23, height : 23}}/>
+          <Text style={{fontSize : 16}}>
+            {"" + scrapeNumber + " "}
+          </Text>
+        </View>
+      </TouchableOpacity>
     );
   };
 
   /**--------------------Post창의 메인 화면--------------------*/
   return (
-    <View style={{flex : 1}}>
-      <ScrollView backgroundColor='white'>
+    <View style={{flex : 1}}> 
+      <ScrollView backgroundColor='white' style={{flex : 1}}>
         <Post>
           <PostTitle>{postData.title}</PostTitle>
           <HorizontalLine />
@@ -120,7 +139,6 @@ const CommunityPost = () => {
           <PostContent>{postData.content}</PostContent>
 
           <PostImgContainer/>
-
           <TagsContainer>
             {postData.tags.map((tag, index) => (
               <Tag key={index}>{'#' + tag}</Tag>
@@ -141,7 +159,7 @@ const CommunityPost = () => {
 
         <HorizontalLine style={{
           height: 10,
-          backgroundColor: '#a6cbc6'
+          backgroundColor: '#96d3cb'
         }} />
 
         <CommentsContainer>
@@ -165,7 +183,14 @@ const CommunityPost = () => {
   );
 };
 
-export default CommunityPost;
+const CommunityPostWithPostProvider = () => (
+  <PostsProvider>
+    <CommunityPost/>
+  </PostsProvider>
+)
+
+
+export default CommunityPostWithPostProvider;
 
 /**------게시물의 기본 내용을 담을 태그------*/
 const Post = styled.View`

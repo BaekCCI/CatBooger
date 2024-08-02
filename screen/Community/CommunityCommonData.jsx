@@ -1,3 +1,5 @@
+import { createContext, useState } from "react";
+
 // 태그 데이터
 export const initialAnimalTags = [
   { name: "강아지", isSelected: false },
@@ -12,9 +14,9 @@ export const initialCategoryTags = [
 ];
 
 // 게시물 데이터
-export const Posts = [
+const initialPosts = [
   { 
-    id : 1,
+    id : 0,
     title: "게시물 제목",
     content: "게시물 내용",
     img: "",
@@ -32,7 +34,7 @@ export const Posts = [
     ]
   },
   { 
-    id : 2,
+    id : 1,
     title: "게시물 제목",
     content: "게시물 내용",
     img: {uri : "https://image.newsis.com/2023/07/12/NISI20230712_0001313626_web.jpg?rnd=20230712163021"},
@@ -50,7 +52,7 @@ export const Posts = [
     ]
   },
   { 
-    id : 3,
+    id : 2,
     title: "사실 우리집 고양이 킬러임",
     content: "레옹이 아니라 냐옹이라는 유명한 킬러임 지금도 황태밀수 사업에서 손때고 짜져있으라고 권총으로 협박받고이써 ㅠㅠ",
     img: { uri: "https://ac-p1.namu.la/20240528sac/48a02548e24db4bade8089a58d4b34244c48cfd0436b894097ec670bdcfd9bac.jpg?expires=1722017549&key=ZnAk61LlLLP9Qb30HFTLhA&type=orig" },
@@ -72,7 +74,8 @@ export const Posts = [
       },
     ]
   },
-  {
+  { 
+    id : 3,
     title: "강아지 우울증인가요?",
     content:
     `남자친구랑 같이 2박3일로 놀러가게되서 지인집에 맡겼는데 지인집에는 친한 강아지 2마리가 있어서 너무 재밌게 놀고 지인이랑도 너무 잘지내고 사진이랑 영상을 봤을때 너무 행복해보였습니다.​
@@ -133,3 +136,35 @@ export const Posts = [
     ]
   }
 ];
+
+export const PostsContext = createContext();
+
+export const PostsProvider = ({ children }) => {
+  const [Posts, setPosts] = useState(initialPosts);
+
+  const AddPost = (newPost) => {
+    setPosts(prevPosts => [...prevPosts, { ...newPost, id: prevPosts.length }]);
+  };
+
+  const UpdatePost = (id, updatedPost) => {
+    setPosts(prevPosts => prevPosts.map(post => post.id === id ? { ...post, ...updatedPost } : post));
+  };
+
+  const DeletePost = (id) => {
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== id));
+  };
+
+  const AddComment = (id, profileNickName, content, postTime) => {
+    setPosts(prevPosts => prevPosts.map(post => post.id === id ?
+      {...post, comments : [{profileNickName : profileNickName, content : content, postTime : postTime}, ...post.comments]}
+      :
+      post
+    ))
+  }
+
+  return (
+    <PostsContext.Provider value={{ Posts, AddPost, UpdatePost, DeletePost, AddComment }}>
+      {children}
+    </PostsContext.Provider>
+  );
+};

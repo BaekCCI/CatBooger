@@ -1,10 +1,13 @@
-import React, { useState, useSyncExternalStore } from "react";
+import React, { useContext, useState, useSyncExternalStore } from "react";
 import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, SafeAreaView, Alert, Pressable, TextInput, PanResponder } from "react-native";
 import styled from "styled-components/native";
 import { HorizontalLine } from "./CommunityCommonStyles.jsx";
-import {Posts, initialAnimalTags, initialCategoryTags} from './CommunityCommonData.jsx'
+import {PostsContext, PostsProvider, initialAnimalTags, initialCategoryTags} from './CommunityCommonData.jsx'
 
 const Community = ({ navigation }) => {
+  /**커뮤니티 공용 데이터 */
+  const {Posts, AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
+
   /**이미지 데이터 */
   xIcon = require('../../assets/community/x_icon.png');
   penIcon = require('../../assets/community/pen_icon.png');
@@ -30,42 +33,45 @@ const Community = ({ navigation }) => {
   /**커뮤니티의 상단 부분을 담는 태그 */
   const CommunityTopContainer = () => (
     <View style={{
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingLeft : '1%',
-      paddingRight : '1%',
-    }}>
-      {/**커뮤니티 제목을 담는 태그 */}
-      <Text style={{fontSize: 25, fontWeight:'bold'}}>커뮤니티</Text>
-      
-      {/**커뮤니티 검색 버튼을담는 태그*/}
-      <View style={{ flexDirection: 'row', gap: 10, top : 5}}>
-        <TouchableOpacity 
-        style = 
-        {{
-          backgroundColor : isSearchingBoxOpened ? "#4580ff88" : null,
-          borderRadius : isSearchingBoxOpened ? 5 : null,
-        }}
-        onPress={isSearchingBoxOpened ? closeSearching : openSearching}
-        >
-          <Image source={require('../../assets/community/search_logo.png')} style={{ width: 25, height: 25 }} />
-        </TouchableOpacity>
-      {/**커뮤니티 필터 버튼을 담는 태그*/}
-        <TouchableOpacity onPress={OpenFilter}>
-          <Image source={require('../../assets/community/filter_logo.png')} 
-          style={{ width: 25, height: 25 }} />
-        </TouchableOpacity>
+        paddingLeft : '4%',
+        paddingRight : '4%',}}>
+      <View style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+        {/**커뮤니티 제목을 담는 태그 */}
+        <Text style={{fontSize: 25, fontWeight:'bold'}}>커뮤니티</Text>
+        
+        {/**커뮤니티 검색 버튼을담는 태그*/}
+        <View style={{ flexDirection: 'row', gap: 10, top : 5}}>
+          <TouchableOpacity 
+          style = 
+          {{
+            backgroundColor : isSearchingBoxOpened ? "#4580ff88" : null,
+            borderRadius : isSearchingBoxOpened ? 5 : null,
+          }}
+          onPress={isSearchingBoxOpened ? closeSearching : openSearching}
+          >
+            <Image source={require('../../assets/community/search_logo.png')} style={{ width: 25, height: 25 }} />
+          </TouchableOpacity>
+        {/**커뮤니티 필터 버튼을 담는 태그*/}
+          <TouchableOpacity onPress={OpenFilter}>
+            <Image source={require('../../assets/community/filter_logo.png')} 
+            style={{ width: 25, height: 25 }} />
+          </TouchableOpacity>
+        </View>
       </View>
+        <HorizontalLine style={{marginBottom : 0, marginTop : '2%'}}/>
     </View>
   );
 
   const Tags = animalTags.concat(categoryTags)
   /**커뮤니티 창에서 태그를 띄우는 부분을 담는 태그*/
   const CommunityTagsContainer = () => (
-    <View style={{ gap: 3, flexDirection: 'row', flexWrap: 'wrap', marginTop : 10, marginLeft : 5, marginRight : 5}}>
+    <View style={{ gap: 3, flexDirection: 'row', flexWrap: 'wrap', marginLeft : 5, marginRight : 5}}>
       {/**동물 태그들을 띄우는 태그 */}
-      <View style={{ flexDirection: "row", gap: 5 }}>
+      <View style={{ flexDirection: "row", gap: 5, marginTop : 5 }}>
         {animalTags.map((tag, index) => (
           tag.isSelected && (
             <TouchableOpacity key={index} onPress={() => SelectTag(animalTags, setAnimalTags, index)}>
@@ -79,7 +85,7 @@ const Community = ({ navigation }) => {
       </View>
 
       {/**카테고리 태그들을 띄우는 태그 */}
-      <View style={{ flexDirection: "row", gap: 5}}>
+      <View style={{ flexDirection: "row", gap: 5, marginTop : 5}}>
         {categoryTags.map((tag, index) => (
           tag.isSelected && (
             <TouchableOpacity key={index} onPress={() => SelectTag(categoryTags, setCategoryTags, index)}>
@@ -108,15 +114,13 @@ const Community = ({ navigation }) => {
     if (selectedAnimalTags.length === 0 && selectedCategoryTags.length === 0) {
       return titleFilteredPosts;
     }
-
+    
     // 활성화된 태그와 일치하는 게시물을 필터링
     return Posts.filter(post =>
       post.tags.some(tag => selectedAnimalTags.includes(tag) || selectedCategoryTags.includes(tag))
     );
   };
 
-  /**필터링된 게시물 데이터를 반환 */
-  const filteredPosts = filterPosts();
 
   /**좋아요의 개수를 표시할 태그*/
   const LikeTag = ({ likeNumber }) => {
@@ -127,7 +131,7 @@ const Community = ({ navigation }) => {
       }}>
         <Image source={require('../../assets/community/like_logo.png')} style = {{width : 15, height : 15}}/>
         <Text style={{fontSize : 15}}>
-          {" " + likeNumber + "     "}
+          {" " + likeNumber + "  "}
         </Text>
       </View>
     );
@@ -150,18 +154,15 @@ const Community = ({ navigation }) => {
   };
 
   /**게시물을 렌더링하는 함수 */
-  const CommunityPosts = (postsData) => {
-    // 선택된 태그를 가져옴
-    const selectedAnimalTags = getSelectedTags(animalTags);
-    const selectedCategoryTags = getSelectedTags(categoryTags);
+  const CommunityPosts = () => {
     // 게시물을 필터링함
-    const filteredPosts = filterPosts(postsData, selectedAnimalTags, selectedCategoryTags);
+    const filteredPosts = filterPosts();
 
     // 필터링한 게시물들을 보여줌
     return (
       filteredPosts.map((postData, index) => (
         <Post key={index}>
-          <StyledButton onPress={() => MoveToPost(postData)} style={{flexDirection:'row', alignItems:'center', gap : 5}}>
+          <PostButton onPress={() => MoveToPost(postData.id)} style={{flexDirection:'row', alignItems:'center', gap : 5}}>
             <View style={{flex:3}}>
               <View style={{marginBottom : '1%'}}>
                 <PostTitle numberOfLines={1} ellipsizeMode="tail">
@@ -189,11 +190,8 @@ const Community = ({ navigation }) => {
                 </View>
               </PostUnderContent>
             </View>
-
             {postData.img !== "" ? <PostImg source={postData.img}/> : null}
-          </StyledButton>
-
-          <HorizontalLine />
+          </PostButton>
         </Post>
       ))
     );
@@ -335,13 +333,13 @@ const Community = ({ navigation }) => {
             borderWidth:1,
             borderColor : "#8585856c",
             borderRadius: 50,
-            width : '25%',
+            width : '28%',
             }}
             >
             {/* <Image source={penIcon} style={{width:33,height:33}}/> */}
             <View style={{paddingTop : '4%', marginBottom : '5%', flexDirection : 'row'}}>
-              <Image source={penIcon} style={{width:20,height:20, marginRight : '5%', marginTop : '2%'}}/> 
-                <Text style={{fontWeight : 'bold'}}>
+              <Image source={penIcon} style={{width:22,height:22, marginRight : '5%', marginTop : '2%'}}/> 
+                <Text style={{fontWeight : 'bold', fontSize : 16}}>
                   글 쓰기
                 </Text>
             </View>
@@ -351,7 +349,7 @@ const Community = ({ navigation }) => {
   }
   
   /**-------------------------------커뮤니티 화면-------------------------------*/
-  const MoveToPost = (data) => navigation.navigate('CommunityPost', {postData : data});
+  const MoveToPost = (postDataId) => navigation.navigate('CommunityPost', {postDataId : postDataId});
   const MoveToWritingPost = () => navigation.navigate('CommunityWritingPost')
   return (
       <View style={{flex : 1}}>
@@ -361,18 +359,17 @@ const Community = ({ navigation }) => {
 
             <View style=
             {{
-              backgroundColor:'white', marginLeft : '5%', marginRight : '5%', paddingTop : '5%',
+              backgroundColor:'white', paddingTop : '5%',
               justifyContent : 'center'
             }}>
               <CommunityTopContainer />
-              <HorizontalLine style={{marginBottom : 0, marginTop : '2%'}}/>
-              <CommunityTagsContainer />
               <SearchingBox/>
+              <CommunityTagsContainer />
             </View>
 
             <CommunityContainer>
 
-            <CommunityPosts postsData={filteredPosts}/>
+            <CommunityPosts/>
 
               <FilterModalTag />
             </CommunityContainer>
@@ -384,17 +381,34 @@ const Community = ({ navigation }) => {
   );
 };
 
+const CommunityWithPostsProvider = ({ navigation }) => (
+  <PostsProvider>
+    <Community navigation={navigation} />
+  </PostsProvider>
+);
+
+export default CommunityWithPostsProvider;
+
 const CommunityContainer = styled.View`
   border-radius: 5px;
   margin: 15px;
   flex : 1;
 `;
 
-const StyledButton = styled.TouchableOpacity`
+const PostButton = styled.TouchableOpacity`
 `;
 
-const Post = styled.View`
-  margin : 0 1%;
+const Post = styled.View.attrs({
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.84,
+  elevation: 4,
+})`
+  padding: 5%;
+  margin: 1% 0;
+  background-color: white;
+  border-radius: 10px;
 `;
 
 const PostTitle = styled.Text`
@@ -468,6 +482,3 @@ const SearchingInputCompleteButton = styled.TouchableOpacity`
     justify-content:center;
     align-items:center;
 `
-
-
-export default Community;
