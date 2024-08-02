@@ -19,6 +19,7 @@ import WalkRecord from "./screen/Home/WalkRecord";
 import Calendars from "./screen/Home/calendars"
 import Hospital from "./screen/Hospital";
 import Counseling from "./screen/Counseling/Counsel";
+import Chatting from "./screen/Counseling/Chatting";
 import Comunity from "./screen/Community/Comunity";
 import CommunityPost from "./screen/Community/CommunityPost";
 import CommunityWritingPost from "./screen/Community/CommunityWritingPost";
@@ -69,6 +70,7 @@ function CounselingStackScreen() {
     <CounselingStack.Navigator screenOptions={commonHeader}>
       <CounselingStack.Screen name="Counseling" component={Counseling} />
       <CounselingStack.Screen name="DoctorDetail" component={DoctorDetail} />
+      <CounselingStack.Screen name="Chatting" component={Chatting} />
     </CounselingStack.Navigator>
   );
 }

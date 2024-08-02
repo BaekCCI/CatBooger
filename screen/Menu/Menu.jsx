@@ -1,27 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { auth, firestore } from './../../firebaseConfig'
+import { getAuth, signOut } from 'firebase/auth';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { app } from './../../firebaseConfig';
 
-const MenuScreen = ({navigation}) => {
-  // const [nickname, setNickname] = useState('');
+const auth = getAuth(app);
+const firestore = getFirestore(app);
 
-  // useEffect(() => {
-  //   const fetchUserNickname = async () => {
-  //     const user = auth().currentUser;
-  //     if (user) {
-  //       const userDoc = await firestore().collection('users').doc(user.uid).get();
-  //       if (userDoc.exists) {
-  //         setNickname(userDoc.data().nickname);
-  //       }
-  //     }
-  //   };
+const MenuScreen = ({ navigation }) => {
+  const [nickname, setNickname] = useState('');
 
-  //   fetchUserNickname();
-  // }, []);
-  
-  // 로그인 구현 후 파이어베이스 연결 함수
+  useEffect(() => {
+    const fetchUserNickname = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const userDoc = await getDoc(doc(firestore, 'users', user.uid));
+        if (userDoc.exists()) {
+          setNickname(userDoc.data().nickname);
+        }
+      }
+    };
+
+    fetchUserNickname();
+  }, []);
 
   const handleLogout = () => {
     Alert.alert(
@@ -36,7 +39,7 @@ const MenuScreen = ({navigation}) => {
           text: "네",
           onPress: async () => {
             try {
-              await auth().signOut();
+              await signOut(auth);
               navigation.navigate('Login'); // 로그아웃 후 로그인 화면으로 이동
             } catch (error) {
               console.error(error);
@@ -47,15 +50,15 @@ const MenuScreen = ({navigation}) => {
       { cancelable: false }
     );
   };
-  
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <Container>
         <Header>
-        <HeaderTitle>고양이 코딱지</HeaderTitle>
-        <IconWrapper onPress={() => navigation.navigate('ChangeProfile')}>
-        <Icon name="settings-outline" size={32} color="#000" />
-        </IconWrapper>
+          <HeaderTitle>{nickname || '고양이 코딱지'}</HeaderTitle>
+          <IconWrapper onPress={() => navigation.navigate('ChangeProfile')}>
+            <Icon name="settings-outline" size={32} color="#000" />
+          </IconWrapper>
         </Header>
         <ScrollView>
           <Section>

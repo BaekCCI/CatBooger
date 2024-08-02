@@ -143,12 +143,6 @@ const CalendarScreen = ({userId}) => {
                 onChangeText={(text) => setNewSchedule({ ...newSchedule, memo: text })}
                 style={styles.input}
               />
-              <TextInput
-                placeholder="메모"
-                value={newSchedule.memo}
-                onChangeText={(text) => setNewSchedule({ ...newSchedule, memo: text })}
-                style={styles.input}
-              />
               <ModalSection>
                 <ModalButton onPress={() => setModalVisible(false)}>
                   <ModalButtonText>취소</ModalButtonText>

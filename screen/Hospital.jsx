@@ -131,6 +131,9 @@ const Hospital = ({ navigation }) => {
 const styles = StyleSheet.create({
   webView: {
     flex: 1, // WebView가 전체 공간을 차지하도록 설정
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
