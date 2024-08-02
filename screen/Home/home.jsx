@@ -11,7 +11,6 @@ export default function Home() {
   const [modalVisible, setIsModalVisible] = useState(false);
   const [walkModal, setWalkModal] = useState(false);
   const [isWalkStart, setIsWalkStart] = useState(false);
-
   const navigation = useNavigation();
 
   const handleModal = () => {
@@ -27,7 +26,7 @@ export default function Home() {
     }
   };
   const handleWalk = () => {
-    navigation.navigate("RecordDialog", { info: '산책' });
+    navigation.navigate("WalkRecord", { info: '산책', time: '' });
     setWalkModal(false);
   };
   const handleStartWalk=()=>{
@@ -80,7 +79,7 @@ export default function Home() {
           <CalendarImg source={require("../../assets/Home/CalendarIcon.png")} />
         </CalendarBtn>
         {isWalkStart && (
-          <TimerView/>
+          <TimerView setIsWalkStart={setIsWalkStart}/>
         )}
         </RowView>
         <DogBtn>
@@ -193,40 +192,62 @@ export default function Home() {
     </BackGround>
   );
 }
-const TimerView=()=>{
-  const [start,setStart] = useState(false);
-  const [savedTime, setSavedTime] = useState();
+const TimerView=({ setIsWalkStart })=>{
+  const [start,setStart] = useState(true);
+  const [time, setTime] = useState("00:00:00:00");
+  const [finishRecord, setFinishRecord]=useState(false);
+  const navigation = useNavigation();
 
   const toggleStopwatch=()=>{
     setStart(!start);
-    setSavedTime(getTime());
-  }
-  const [time, setTime] = useState("00:00:00:00");
+    setFinishRecord(!finishRecord);
 
-  const getTime = () => {
-    return time;
-  };
+  }
+  const handleModal =()=>{
+    setFinishRecord(!finishRecord);
+    navigation.navigate("WalkRecord", { info: '산책', time: time });
+    setIsWalkStart(false);
+  }
 
   return (
     <View>
       <TouchableHighlight onPress={toggleStopwatch}>
-      <Stopwatch
-        start={start}
-        options={options}
-        getTime={(time) => {
-          setTime(time);
-        }}
-      />
+        <Stopwatch
+          start={start}
+          options={options}
+          getTime={(time) => {
+            setTime(time);
+          }}
+        />
       </TouchableHighlight>
-      <Text>산책중...{savedTime}</Text>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={finishRecord}
+        onRequestClose={toggleStopwatch}
+      >
+        <TouchableWithoutFeedback onPress={toggleStopwatch}>
+        <ModalBack>
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <FinishModalView>
+                <StartMsg>산책을 종료하시겠습니까?</StartMsg>
+                <FinishBtn onPress={handleModal}>
+                  <StartBtnTxt size='18px'>산책 종료하기</StartBtnTxt>
+                </FinishBtn>
+            </FinishModalView>
+          </TouchableWithoutFeedback>
+        </ModalBack>
+      </TouchableWithoutFeedback>
+      </Modal>
     </View>
+    
   );
 }
 const options = {
   container: {
     justifyContent : 'center',
     alignItems : 'center',
-    backgroundColor : 'rgba(0,0,0,0.5)',
+    backgroundColor : 'rgba(0,0,0,0.4)',
     borderRadius : 10,
     padding : 10,
     width : 120,
@@ -236,6 +257,25 @@ const options = {
     color: '#FFF',
   }
 };
+const FinishModalView=styled.View`
+  width : 80%;
+  height: 180px;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  margin: auto;
+  padding: 10px;
+  shadow-color: #000;
+  shadow-offset: 0 2px;
+  shadow-opacity: 0.25;
+  shadow-radius: 3.84px;
+  elevation: 5;
+
+`;
+const FinishBtn = styled.TouchableOpacity`
+  background-color : #139989;
+  padding : 10px;
+  border-radius : 10px;
+`;
 
 const WalkModalView = styled.View`
   width : 100%;
@@ -288,7 +328,7 @@ const StartBtn = styled.TouchableOpacity`
 `;
 const StartBtnTxt = styled.Text`
   color : white;
-  font-size : 20px;
+  font-size : ${(props)=>props.size || '20px'};
   font-weight : bold;
   text-align : center;
 `
