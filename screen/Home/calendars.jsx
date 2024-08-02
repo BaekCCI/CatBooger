@@ -1,26 +1,35 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, Modal, StyleSheet } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import styled from 'styled-components/native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import React, { useState } from "react";
+import {
+  SafeAreaView,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  Modal,
+  StyleSheet,
+} from "react-native";
+import { Calendar } from "react-native-calendars";
+import styled from "styled-components/native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const initialSchedules = {
-  '2024-08-01': [
-    { time: '09:30', title: '미용실 가기', icon: '🐶' },
-    { time: '10:30', title: '병원 예방접종', icon: '🐱' },
+  "2024-08-01": [
+    { time: "09:30", title: "미용실 가기", icon: "🐶" },
+    { time: "10:30", title: "병원 예방접종", icon: "🐱" },
   ],
-  '2024-08-02': [
-    { time: '09:00', title: '출근', icon: '🐶' },
-    { time: '18:00', title: '퇴근', icon: '🐱' },
+  "2024-08-02": [
+    { time: "09:00", title: "출근", icon: "🐶" },
+    { time: "18:00", title: "퇴근", icon: "🐱" },
   ],
   // 추가 일정 데이터
 };
 
 const CalendarScreen = () => {
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState("");
   const [schedules, setSchedules] = useState(initialSchedules);
   const [modalVisible, setModalVisible] = useState(false);
-  const [newSchedule, setNewSchedule] = useState({ time: '', title: '' });
+  const [newSchedule, setNewSchedule] = useState({ time: "", title: "" });
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
 
   const onDayPress = (day) => {
@@ -43,9 +52,9 @@ const CalendarScreen = () => {
       if (!updatedSchedules[selectedDate]) {
         updatedSchedules[selectedDate] = [];
       }
-      updatedSchedules[selectedDate].push({ ...newSchedule, icon: '🐾' });
+      updatedSchedules[selectedDate].push({ ...newSchedule, icon: "🐾" });
       setSchedules(updatedSchedules);
-      setNewSchedule({ time: '', title: '' });
+      setNewSchedule({ time: "", title: "" });
       setModalVisible(false);
     }
   };
@@ -61,7 +70,9 @@ const CalendarScreen = () => {
   const handleTimeConfirm = (time) => {
     const hours = time.getHours();
     const minutes = time.getMinutes();
-    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}`;
     setNewSchedule({ ...newSchedule, time: formattedTime });
     hideTimePicker();
   };
@@ -72,7 +83,11 @@ const CalendarScreen = () => {
         <Calendar
           onDayPress={onDayPress}
           markedDates={{
-            [selectedDate]: { selected: true, marked: true, selectedColor: 'blue' },
+            [selectedDate]: {
+              selected: true,
+              marked: true,
+              selectedColor: "blue",
+            },
           }}
         />
         {selectedDate ? (
@@ -113,7 +128,9 @@ const CalendarScreen = () => {
               <TextInput
                 placeholder="일정 제목"
                 value={newSchedule.title}
-                onChangeText={(text) => setNewSchedule({ ...newSchedule, title: text })}
+                onChangeText={(text) =>
+                  setNewSchedule({ ...newSchedule, title: text })
+                }
                 style={styles.input}
               />
               <ModalSection>
@@ -241,11 +258,11 @@ const ModalButtonText = styled.Text`
 
 const styles = StyleSheet.create({
   input: {
-    width: '100%',
+    width: "100%",
     padding: 10,
     marginVertical: 5,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 5,
   },
 });
