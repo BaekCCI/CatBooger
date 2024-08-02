@@ -3,36 +3,48 @@ import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, Modal,
 import { Calendar } from 'react-native-calendars';
 import styled from 'styled-components/native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import RecordList from './RecordList';
 
 const initialSchedules = {
   '2024-08-01': [
-    { time: '09:30', title: '미용실 가기', icon: '🐶' },
-    { time: '10:30', title: '병원 예방접종', icon: '🐱' },
+    { id: 1, time: '09:30', title: '미용실 가기', icon: '🐶', memo: '기억해요!' },
+    { id: 2, time: '10:30', title: '병원 예방접종', icon: '🐱', memo: '중요한 일정!' },
   ],
   '2024-08-02': [
-    { time: '09:00', title: '출근', icon: '🐶' },
-    { time: '18:00', title: '퇴근', icon: '🐱' },
+    { id: 3, time: '09:00', title: '출근', icon: '🐶', memo: '아침 출근' },
+    { id: 4, time: '18:00', title: '퇴근', icon: '🐱', memo: '저녁 퇴근' },
   ],
   // 추가 일정 데이터
 };
 
-const CalendarScreen = () => {
+const CalendarScreen = ({userId}) => {
   const [selectedDate, setSelectedDate] = useState('');
   const [schedules, setSchedules] = useState(initialSchedules);
   const [modalVisible, setModalVisible] = useState(false);
-  const [newSchedule, setNewSchedule] = useState({ time: '', title: '' });
+  const [newSchedule, setNewSchedule] = useState({ time: '', title: '', memo: '' });
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
+  const [expandedScheduleId, setExpandedScheduleId] = useState(null);
 
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
+    setExpandedScheduleId(null);
   };
 
   const renderScheduleItem = ({ item }) => (
-    <ScheduleItem>
-      <ScheduleTime>{item.time}</ScheduleTime>
-      <ScheduleTitle>{item.title}</ScheduleTitle>
-      <ScheduleIcon>{item.icon}</ScheduleIcon>
-    </ScheduleItem>
+    <View>
+      <TouchableOpacity onPress={() => setExpandedScheduleId(expandedScheduleId === item.id ? null : item.id)}>
+        <ScheduleItem>
+          <ScheduleTime>{item.time}</ScheduleTime>
+          <ScheduleTitle>{item.title}</ScheduleTitle>
+          <ScheduleIcon>{item.icon}</ScheduleIcon>
+        </ScheduleItem>
+      </TouchableOpacity>
+      {expandedScheduleId === item.id && (
+        <MemoContainer>
+          <MemoText>{item.memo}</MemoText>
+        </MemoContainer>
+      )}
+    </View>
   );
 
   const selectedSchedules = schedules[selectedDate] || [];
@@ -43,9 +55,10 @@ const CalendarScreen = () => {
       if (!updatedSchedules[selectedDate]) {
         updatedSchedules[selectedDate] = [];
       }
-      updatedSchedules[selectedDate].push({ ...newSchedule, icon: '🐾' });
+      const newId = Math.max(...Object.values(schedules).flat().map(schedule => schedule.id)) + 1;
+      updatedSchedules[selectedDate].push({ ...newSchedule, id: newId, icon: '🐾' });
       setSchedules(updatedSchedules);
-      setNewSchedule({ time: '', title: '' });
+      setNewSchedule({ time: '', title: '', memo: '' });
       setModalVisible(false);
     }
   };
@@ -86,14 +99,14 @@ const CalendarScreen = () => {
               <FlatList
                 data={selectedSchedules}
                 renderItem={renderScheduleItem}
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item) => item.id.toString()}
               />
             ) : (
               <NoScheduleText>일정이 없습니다</NoScheduleText>
             )}
           </>
         ) : (
-          <SelectedDateText>날짜를 선택하세요</SelectedDateText>
+          <SelectedDateText></SelectedDateText>
         )}
 
         <Modal
@@ -116,6 +129,12 @@ const CalendarScreen = () => {
                 onChangeText={(text) => setNewSchedule({ ...newSchedule, title: text })}
                 style={styles.input}
               />
+              <TextInput
+                placeholder="메모"
+                value={newSchedule.memo}
+                onChangeText={(text) => setNewSchedule({ ...newSchedule, memo: text })}
+                style={styles.input}
+              />
               <ModalSection>
                 <ModalButton onPress={() => setModalVisible(false)}>
                   <ModalButtonText>취소</ModalButtonText>
@@ -135,6 +154,7 @@ const CalendarScreen = () => {
           onCancel={hideTimePicker}
         />
       </Container>
+      <RecordList userId={userId} date={selectedDate} />
     </SafeAreaView>
   );
 };
@@ -195,6 +215,18 @@ const ScheduleTitle = styled.Text`
 
 const ScheduleIcon = styled.Text`
   font-size: 24px;
+`;
+
+const MemoContainer = styled.View`
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-top-width: 1px;
+  border-top-color: #eee;
+`;
+
+const MemoText = styled.Text`
+  font-size: 16px;
+  color: #333;
 `;
 
 const ModalContainer = styled.View`

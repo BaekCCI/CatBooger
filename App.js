@@ -32,6 +32,7 @@ import ConsultationHistoryScreen from "./screen/Menu/Menu_ConsultationHistory";
 import OwnedConsultationsScreen from "./screen/Menu/Menu_OwnedConsultations";
 import PaymentMethodsScreen from "./screen/Menu/Menu_PaymentMethods";
 import VetCertificationScreen from "./screen/Menu/Menu_VetCertification";
+import RecordList from "./screen/Home/RecordList";
 
 const HomeStack = createNativeStackNavigator();
 const HospitalStack = createNativeStackNavigator();
@@ -47,6 +48,7 @@ function HomeStackScreen() {
       <HomeStack.Screen name="Home" component={Home} />
       <HomeStack.Screen name="RecordDialog" component={RecordDialog} />
       <HomeStack.Screen name="Calendars" component={Calendars} />
+      <HomeStack.Screen name="RecordList" component={RecordList} />
     </HomeStack.Navigator>
   );
 }
