@@ -6,7 +6,7 @@ from firebase_admin import credentials, db
 
 cred = credentials.Certificate('./serviceAccountKey.json')
 firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://petproject-34206-default-rtdb.firebaseio.com/'
+    'databaseURL': 'https://petproject-34206-default-rtdb.firebaseio.com/'
 })
 
 app = Flask(__name__)
@@ -483,4 +483,4 @@ def delete_weight_event(user_id, weight_kg_id):
 
 
 if __name__ == '__main__':   
-    app.run(port=5001, debug=True)
+    app.run(host="172.30.1.96", port=5001)
