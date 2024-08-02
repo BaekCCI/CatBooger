@@ -33,7 +33,7 @@ const initialSchedules = {
 };
 
 
-const CalendarScreen = () => {
+const CalendarScreen = ({userId}) => {
   const [selectedDate, setSelectedDate] = useState("");
   //const [schedules, setSchedules] = useState(initialSchedules);
   const [modalVisible, setModalVisible] = useState(false);
@@ -54,7 +54,7 @@ const CalendarScreen = () => {
       try {
         const userId = "userId1"; // 실제 사용자 ID로 대체
         const response = await fetch(
-          `http://172.30.1.96:5001/get_bathing_events/${userId}`
+          `http://172.30.1.20:5000/get_bathing_events/${userId}`
         );
         if (response.ok) {
           const data = await response.json();
@@ -176,12 +176,6 @@ const CalendarScreen = () => {
                 onChangeText={(text) =>
                   setNewSchedule({ ...newSchedule, title: text })
                 }
-                style={styles.input}
-              />
-              <TextInput
-                placeholder="메모"
-                value={newSchedule.memo}
-                onChangeText={(text) => setNewSchedule({ ...newSchedule, memo: text })}
                 style={styles.input}
               />
               <TextInput

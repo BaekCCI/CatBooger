@@ -483,4 +483,4 @@ def delete_weight_event(user_id, weight_kg_id):
 
 
 if __name__ == '__main__':   
-    app.run(host="172.30.1.96", port=5001)
+    app.run(host="0.0.0.0", port=5000)
