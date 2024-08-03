@@ -13,7 +13,7 @@ export default function Main(){
             <LogoImg source={require('../assets/Home_active.png')}/>
             </CenterView>
             <LoginBtn onPress={() => navigation.navigate('AddAnimal')}>
-                <LoginTxt>시작하기</LoginTxt>
+                <LoginTxt>시작하dfasfsadf기</LoginTxt>
             </LoginBtn>
         </MainView>
     );
