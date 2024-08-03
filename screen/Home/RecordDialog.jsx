@@ -2,6 +2,7 @@ import React , {useState, useEffect} from 'react';
 import { View, Keyboard,Text, Modal, TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import axios from 'axios';
 
 export default function RecordDialog(){
     const navigation = useNavigation();
@@ -42,6 +43,8 @@ export default function RecordDialog(){
       );
 
 }
+
+const Uip = '172.17.1.123'
 
 //급여
 const Feed = ({info}) => {
@@ -403,9 +406,11 @@ const Vaccine = ({info}) => {
 
     );
 }
+
 const Bath = ({info}) => {
     const [text, setText] = useState('');
     const [isModified, setIsModified] = useState(false);
+    const navigation = useNavigation();
 
     useEffect(() => {
         // Check if there are any changes in the input or counts
@@ -413,9 +418,28 @@ const Bath = ({info}) => {
     }, [text]);
 
     //완료 버튼 동작 (text 변수 저장해야함)
-    const handleComplete=()=>{
-            
-    }
+    const handleComplete = async () => {
+        try {
+          const response = await axios.post(`http://${Uip}:5001/add`, {
+            userId: '3647105059', // 실제 사용자 ID로 대체
+            bathingId: 'generated_id', // 실제 목욕 ID로 대체
+            date: new Date().toISOString().split('T')[0], // 현재 날짜를 'YYYY-MM-DD' 형식으로 변환
+            memo: text,
+          });
+          console.log('Response:', response.data);
+          if (response.status === 201) {
+            alert('목욕 정보를 추가하였습니다!');
+            setText(''); // 완료 후 입력 필드 초기화
+            setIsModified(false); // 완료 후 버튼 비활성화
+            navigation.navigate('Home'); // 홈 화면으로 이동
+          } else {
+            alert('Failed to add bathing event');
+          }
+        } catch (error) {
+          console.error('Error adding bathing event:', error);
+          alert('An error occurred while adding the bathing event');
+        }
+    };
 
 
 
