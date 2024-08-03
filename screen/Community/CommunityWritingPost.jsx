@@ -2,7 +2,7 @@ import React, { useState, useContext, useRef } from 'react';
 import { View, Text, ScrollView, TextInput, Image, TouchableOpacity, Alert } from 'react-native';
 import styled from 'styled-components';
 import { HorizontalLine } from './CommunityCommonStyles';
-import { initialAnimalTags, initialCategoryTags, PostsContext, PostsProvider } from './CommunityCommonData';
+import { currentUserId, initialAnimalTags, initialCategoryTags, PostsContext, PostsProvider } from './CommunityCommonData';
 import * as ImagePicker from 'expo-image-picker'
 
 const CommunityWritingPost = () => {
@@ -199,14 +199,14 @@ const CommunityWritingPost = () => {
     const isQuestion = selectedCategoryTags.includes("QnA");
 
     AddPost({
+      writerID : currentUserId,
       isQuestion : isQuestion,
       isQuestionSolved : isQuestion ? false : null,
       title : titleInputRef.current,
       content : contentInputRef.current,
       img : {uri : imageUrl},
       tags : selectedTags,
-      profileNickName: "대충 닉네임",
-      postTime: "대충 등록된 시간",
+      postTime: Date(),
       likeNumber: 0,
       scrapeNumber: 0,
       comments : []

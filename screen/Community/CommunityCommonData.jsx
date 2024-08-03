@@ -1,5 +1,8 @@
 import { createContext, useState } from "react";
 
+//이미지 데이터
+export const basicProfilePicture = require('../../assets/community/basic_profile_picture.png')
+
 // 태그 데이터
 export const initialAnimalTags = [
   { name: "강아지", isSelected: false },
@@ -17,22 +20,20 @@ export const initialCategoryTags = [
 const initialPosts = [
   { 
     id : 0,
+    writerID: 0,
     isQuestion : false,
     isQuestionSolved : null,
     title: "게시물 제목",
     content: "게시물 내용",
     img: "",
     tags: ["강아지", "간식", "일상"],
-    profileNickName: "글쓴이 닉네임",
     postTime: "게시 시간",
     likeNumber: 0,
     scrapeNumber: 0,
     comments : [
       { 
-        isDoctor : false,
+        writerID : 0,
         isAdopted : null,
-        doctorProfile : null,
-        profileNickName: '닉네임',
         content: '댓글내용',
         postTime: '2024-07-26'
       }
@@ -40,22 +41,20 @@ const initialPosts = [
   },
   { 
     id : 1,
+    writerID: 0,
     isQuestion : true,
     isQuestionSolved : false,
     title: "게시물 제목",
     content: "게시물 내용",
     img: {uri : "https://image.newsis.com/2023/07/12/NISI20230712_0001313626_web.jpg?rnd=20230712163021"},
     tags: ["강아지", "간식", "일상", "QnA"],
-    profileNickName: "글쓴이 닉네임",
     postTime: "게시 시간",
     likeNumber: 0,
     scrapeNumber: 0,
     comments : [
       {
-        isDoctor : false,
+        writerID : 1,
         isAdopted : null,
-        doctorProfile : null,
-        profileNickName: '닉네임',
         content: '댓글내용',
         postTime: '2024-07-26'
       }
@@ -63,27 +62,26 @@ const initialPosts = [
   },
   { 
     id : 2,
+    writerID: 2,
     isQuestion : false,
     isQuestionSolved : null,
     title: "사실 우리집 고양이 킬러임",
     content: "레옹이 아니라 냐옹이라는 유명한 킬러임 지금도 황태밀수 사업에서 손때고 짜져있으라고 권총으로 협박받고이써 ㅠㅠ",
     img: { uri: "https://ac-p1.namu.la/20240528sac/48a02548e24db4bade8089a58d4b34244c48cfd0436b894097ec670bdcfd9bac.jpg?expires=1722017549&key=ZnAk61LlLLP9Qb30HFTLhA&type=orig" },
     tags: ["고양이", "일상"],
-    profileNickName: "괴문서맵게하는집",
     postTime: "2024-05-28 19:17:11",
     likeNumber: 15,
     scrapeNumber: 10,
     comments : [
       {
-        isDoctor : false,
+        writerID : 2,
         isAdopted : null,
-        doctorProfile : null,
-        profileNickName: '개냥이',
         content: '저 킬러 이름이 야옹 이군요.',
         postTime: '2024-05-29 14:18:19'
       },
       {
-        profileNickName: '얼죽패딩',
+        writerID : 3,
+        isAdopted : null,
         content: '킬러군',
         postTime: '2024-05-30 17:17:43'
       },
@@ -91,6 +89,7 @@ const initialPosts = [
   },
   { 
     id : 3,
+    writerID: 3,
     isQuestion : true,
     isQuestionSolved : true,
     title: "강아지 우울증인가요?",
@@ -104,24 +103,19 @@ const initialPosts = [
 저희집 강아지는 진도믹스/11개월 입니다`,
     img: {uri : "https://bff-images.bemypet.kr/media/medias/all/650-KakaoTalk_20240730_004108127.jpg"},
     tags: ["강아지", "QnA"],
-    profileNickName: "min",
     postTime: "2023-07-18 11:00:00",
     likeNumber: 0,
     scrapeNumber: 0,
     comments : [
       {
-        isDoctor : true,
+        writerID : 1,
         isAdopted : true,        
-        doctorProfile : {hospitalName : '올리몰스 동물메디컬 센터'},
-        profileNickName: '길동',
         content: '저희 병문에 와서 검사하시지요오',
         postTime: '2024-07-30'
       },
       {
-        isDoctor : false,
+        writerID : 3,
         isAdopted : null,
-        doctorProfile : null,
-        profileNickName: '나물이네',
         content: '떨어져있어서 조금 ..삐진거 아닐까용... ?!! 👉🏻👈🏻  맛있는 간식으로  보상을🫶🏻',
         postTime: '2024-07-30'
       },
@@ -129,6 +123,7 @@ const initialPosts = [
   },
   { 
     id : 4,
+    writerID: 3,
     isQuestion : false,
     isQuestionSolved : null,
     title: "아파도 티 안 내는 고양이… 질병 ‘조기 진단’하려면?",
@@ -153,16 +148,13 @@ const initialPosts = [
 고양이의 ▲식사량 ▲음수량 ▲체형·체중 ▲배변·배뇨량이 적힌 기록은 병원에 갈 때 꼭 지참한다. 이 수의사는 “보호자에게 고양이가 밥은 얼마나 먹는지, 배변·배뇨량은 얼마나 되는지 등을 물었을 때 정확한 답이 돌아오면 진료·진단에 큰 도움이 된다”며 “건강 상태와 생활 습관의 변화를 오랫동안 기록한 데이터가 있으면 더 좋다”고 말했다. 고양이의 몸 상태를 기록하는 습관이 잡혀있지 않은 보호자는 한국고양이수의사회가 로얄캐닌코리아와 개발한 ‘마이 캣 다이어리’를 사용해볼 수 있다. 반려묘 보호자가 반드시 알아야 할 육묘 상식과 ▲배변·배뇨량 ▲음수량 ▲활력도 기록란이 수록된 육묘수첩이다. 오는 9월 30일까지 동물병원을 통해 반려묘 보호자들에게 배포된다.`,
     img: {uri : "https://health.chosun.com/site/data/img_dir/2023/07/17/2023071701753_0.jpg"},
     tags: ["고양이", "정보"],
-    profileNickName: "해리미",
     postTime: "2023-07-18 11:00:00",
     likeNumber: 241,
     scrapeNumber: 64,
     comments : [
       {
-        isDoctor : false,
+        writerID : 0,
         isAdopted : null,
-        doctorProfile : null,
-        profileNickName: '고양이가 좋아',
         content: '정보글 아주 좋아요!',
         postTime: '2024-05-29 14:18:19'
       },
@@ -187,9 +179,9 @@ export const PostsProvider = ({ children }) => {
     setPosts(prevPosts => prevPosts.filter(post => post.id !== id));
   };
 
-  const AddComment = (id, profileNickName, content, postTime) => {
+  const AddComment = (id, writerID, content, postTime) => {
     setPosts(prevPosts => prevPosts.map(post => post.id === id ?
-      {...post, comments : [{profileNickName : profileNickName, content : content, postTime : postTime}, ...post.comments]}
+      {...post, comments : [{writerID : writerID, content : content, postTime : postTime}, ...post.comments]}
       :
       post
     ))
@@ -203,13 +195,15 @@ export const PostsProvider = ({ children }) => {
 };
 
 //유저 프로필 데이터
+export const currentUserId = 0;
+
 export const usersProfile = 
 [
   { 
     id : 0,
     isDoctor : false,
     doctorProfile : null,
-    NickName: 'Admin',
+    nickName: 'Admin',
     profilePicture : null,
     writtenPostsId : [0, 1],
     writtenPostCommentsId : ['0-0']
@@ -218,27 +212,27 @@ export const usersProfile =
     id : 1,
     isDoctor : true,
     doctorProfile : {hospitalName : '올리몰스 동물메디컬 센터'},
-    NickName: '길',
-    profilePicture : {uri : 'https://cdn.pixabay.com/photo/2020/05/17/20/21/cat-5183427_1280.jpg'},
+    nickName: '길동',
+    profilePicture : {uri : 'https://img.freepik.com/free-photo/smiling-asian-doctor-female-nurse-holding-clipboard-pen-wearing-uniform-with-gloves-writing-pati_1258-83340.jpg?t=st=1722671824~exp=1722675424~hmac=afd022ece291d1365c2add477d452a7a99e685966fced2501acb5fc2a0c32d98&w=996'},
     writtenPostsId : [],
-    writtenPostCommentsId : ['1-0']
+    writtenPostCommentsId : ['1-0', '3-0']
   },
   {
     id : 2,
     isDoctor : false,
     doctorProfile : null,
-    NickName: '괴문서맵게하는집',
+    nickName: '괴문서맵게하는집',
     profilePicture : {uri : 'https://cdn.pixabay.com/photo/2023/09/19/12/34/dog-8262506_1280.jpg'},
-    writtenPostsId동 : [2],
+    writtenPostsId : [2],
     writtenPostCommentsId : ['2-0']
   },
   {
     id : 3,
     isDoctor : false,
     doctorProfile : null,
-    NickName: '해리미',
+    nickName: '해리미',
     profilePicture : {uri : 'https://cdn.pixabay.com/photo/2023/12/15/21/47/cat-8451431_1280.jpg'},
-    writtenPostsId동 : [3,4],
-    writtenPostCommentsId : ['3-0', '4-0', '2-1']
+    writtenPostsId : [3,4],
+    writtenPostCommentsId : ['3-1', '4-0', '2-1']
   }
 ]

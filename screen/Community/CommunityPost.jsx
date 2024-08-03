@@ -4,7 +4,7 @@ import { useRoute } from '@react-navigation/native';
 import styled from "styled-components";
 import { HorizontalLine} from "./CommunityCommonStyles.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {initialPosts, originPosts, PostsContext, PostsProvider, setOriginPosts} from './CommunityCommonData.jsx'
+import {basicProfilePicture, currentUserId, initialPosts, originPosts, PostsContext, PostsProvider, setOriginPosts, usersProfile} from './CommunityCommonData.jsx'
 
 /**이미지 데이터 */
 const commentIcon = require('../../assets/community/comment_icon.png')
@@ -12,7 +12,7 @@ const sendCommentIcon = require('../../assets/community/send_comment_icon.png')
 const adoptedCommentIcon = require('../../assets/community/adopted_comment_icon.png')
 const profilePircure =  {uri : 'https://cdn.pixabay.com/photo/2020/05/17/20/21/cat-5183427_1280.jpg'}
 
-const CommunityPost = () => {
+const CommunityPost = ({navigation}) => {
   /**커뮤니티 공용 데이터 */
   const {Posts, AddPost, UpdatePost, DeletePost, AddComment} = useContext(PostsContext)
 
@@ -21,6 +21,8 @@ const CommunityPost = () => {
   const postData = Posts[postDataId]
 
   const inputCommentRef = useRef("");
+
+  const MoveToDoctorPage = () => navigation.navigate('../Counseling/DoctorDetail')
 
   /**게시글 사진을 담는 태그 */
   const PostImgContainer = () => {  
@@ -41,8 +43,8 @@ const CommunityPost = () => {
   const CloseWriteComment = () => setIsWriteCommentOpened(false);
 
   /**댓글 등록할 때의 기능을 담은 함수 (매개변수 : 게시물 ID, 댓글 쓴 사람 닉네임, 댓글 내용, 댓글 등록 시간*/
-  const RegisterComment = (postId, NickName, content, date) => {
-    AddComment(postId, NickName, content, date);
+  const RegisterComment = (postId, writerID, content, date) => {
+    AddComment(postId, writerID, content, date);
     setIsWriteCommentOpened(false);
   }
 
@@ -75,7 +77,7 @@ const CommunityPost = () => {
               </ScrollView>
 
               <CommentSendButton 
-              onPress={() => {RegisterComment(postDataId, "대충 닉네임", inputCommentRef.current, Date())}}>
+              onPress={() => {RegisterComment(postDataId, currentUserId, inputCommentRef.current, Date())}}>
               <Text style={{fontWeight:'bold'}}>
                 등록
               </Text>
@@ -158,24 +160,41 @@ const CommunityPost = () => {
         <View key={index}>
             <Comment>
               { 
-                comment.isDoctor ? 
+                usersProfile[comment.writerID].isDoctor ? 
                   <View>
-                    <TouchableOpacity 
-                    style={{backgroundColor : '#5cc4b849', padding : '5%', borderRadius : 10, 
-                          gap : 15, flexDirection : 'row', alignItems : 'center'}}>
-                      <Image source={profilePircure}  style={{ width: 60, height: 60}}/>
-                      <View>
-                        <Text style={{fontSize : 18, fontWeight : 'bold'}}>{comment.profileNickName + " 선생님"}</Text>
-                        <Text style={{color : '#595959'}}>{comment.doctorProfile.hospitalName}</Text>
-                      </View>
-                    </TouchableOpacity>
+                    <View>
+                      <TouchableOpacity 
+                      onPress={() => alert(usersProfile[comment.writerID].nickName + " 의사 프로필로 이동")}
+                      style={{backgroundColor : '#5cc4b849', padding : '5%', borderRadius : 10, 
+                            gap : 15, flexDirection : 'row', alignItems : 'center'}}>
+                        {usersProfile[comment.writerID].profilePicture === null ? 
+                          <Image source={basicProfilePicture}
+                                style={{width : 60, height : 60}} />
+                        :
+                          <Image source={usersProfile[comment.writerID].profilePicture}
+                                style={{width : 60, height : 60}} />
+                        }
+                        <View>
+                          <Text style={{fontSize : 18, fontWeight : 'bold'}}>{usersProfile[comment.writerID].nickName + " 선생님"}</Text>
+                          <Text style={{color : '#595959'}}>{usersProfile[comment.writerID].doctorProfile.hospitalName}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
                     <CommentText >{comment.content}</CommentText>
                   </View>
                 :
                   <View>
-                    <TouchableOpacity style={{flexDirection : 'row', gap : 5}}>
-                      <Image source={profilePircure}  style={{ width: 20, height: 20, borderRadius : 50 }}/>
-                      <ProfileNickName style={{lineHeight : 21}}>{comment.profileNickName}</ProfileNickName>
+                    <TouchableOpacity 
+                    onPress={() => alert(usersProfile[comment.writerID].nickName + " 개인 프로필로 이동")}
+                    style={{flexDirection : 'row', gap : 5, alignSelf: 'flex-start'}}>
+                        {usersProfile[comment.writerID].profilePicture === null ? 
+                        <Image source={basicProfilePicture}
+                              style={{width : 20, height : 20, borderRadius : 50}} />
+                      :
+                        <Image source={usersProfile[comment.writerID].profilePicture}
+                              style={{width : 20, height : 20, borderRadius : 50}} />
+                      }
+                      <ProfileNickName style={{lineHeight : 21}}>{usersProfile[comment.writerID].nickName}</ProfileNickName>
                     </TouchableOpacity>
                     <CommentText>{comment.content}</CommentText>
                   </View>
@@ -211,12 +230,20 @@ const CommunityPost = () => {
               <Tag key={index}>{'#' + tag}</Tag>
             ))}
           </TagsContainer>
-          
+            
           <PostUnderContainer>
             <PostUnderLeftContainer>
-              <TouchableOpacity style={{flexDirection:'row', gap : 5, alignItems : 'center'}}>
-                <Image source={profilePircure}  style={{ width: 15, height: 15, borderRadius : 50 }}/>
-                <ProfileNickName>{postData.profileNickName}</ProfileNickName>
+              <TouchableOpacity 
+              onPress={() => alert(usersProfile[postData.writerID].nickName + " 개인 프로필로 이동")}
+              style={{flexDirection:'row', gap : 5, alignItems : 'center'}}>
+                {usersProfile[postData.writerID].profilePicture === null ? 
+                    <Image source={basicProfilePicture}
+                          style={{width : 20, height : 20, borderRadius : 50}} />
+                  : 
+                    <Image source={usersProfile[postData.writerID].profilePicture}
+                          style={{width : 20, height : 20, borderRadius : 50}} />
+                  }
+                <ProfileNickName>{usersProfile[postData.writerID].nickName}</ProfileNickName>
               </TouchableOpacity>
               <PostedTime>{postData.postTime}</PostedTime>
             </PostUnderLeftContainer>

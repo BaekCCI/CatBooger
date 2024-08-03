@@ -2,7 +2,7 @@ import React, { useContext, useState, useSyncExternalStore } from "react";
 import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, SafeAreaView, Alert, Pressable, TextInput, PanResponder } from "react-native";
 import styled from "styled-components/native";
 import { HorizontalLine } from "./CommunityCommonStyles.jsx";
-import {PostsContext, PostsProvider, initialAnimalTags, initialCategoryTags} from './CommunityCommonData.jsx'
+import {PostsContext, PostsProvider, basicProfilePicture, initialAnimalTags, initialCategoryTags, usersProfile} from './CommunityCommonData.jsx'
 
 const Community = ({ navigation }) => {
   /**커뮤니티 공용 데이터 */
@@ -186,7 +186,18 @@ const Community = ({ navigation }) => {
               </TagsContainer>
 
               <PostUnderContent>
-                <NickNameText>{postData.profileNickName}</NickNameText>
+                {usersProfile[postData.writerID].profilePicture === null ? 
+                  <Image source={basicProfilePicture}
+                        style={{width : 20, height : 20, borderRadius : 50}} />
+                :
+                  <Image source={usersProfile[postData.writerID].profilePicture}
+                        style={{width : 20, height : 20, borderRadius : 50}} />
+                }
+                <NickNameText>
+                  {usersProfile[postData.writerID] 
+                    ? usersProfile[postData.writerID].nickName 
+                    : 'Unknown User'}
+                </NickNameText>
                 <View style={{flexDirection:'row', gap : 3, top : 1.5}}>
                   <LikeTag likeNumber={postData.likeNumber} />
                   <ScrapeTag scrapeNumber={postData.scrapeNumber} />
