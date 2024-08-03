@@ -7,8 +7,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {initialPosts, originPosts, PostsContext, PostsProvider, setOriginPosts} from './CommunityCommonData.jsx'
 
 /**이미지 데이터 */
-commentIcon = require('../../assets/community/comment_icon.png')
-sendCommentIcon = require('../../assets/community/send_comment_icon.png')
+const commentIcon = require('../../assets/community/comment_icon.png')
+const sendCommentIcon = require('../../assets/community/send_comment_icon.png')
+const adoptedCommentIcon = require('../../assets/community/adopted_comment_icon.png')
+const profilePircure =  {uri : 'https://cdn.pixabay.com/photo/2020/05/17/20/21/cat-5183427_1280.jpg'}
 
 const CommunityPost = () => {
   /**커뮤니티 공용 데이터 */
@@ -146,6 +148,54 @@ const CommunityPost = () => {
       </View>
     )
   }
+
+  const Comments = () => {
+    return(
+      <CommentsContainer>
+      <CommentsContainerTitle>{'댓글 ' + postData.comments.length}</CommentsContainerTitle>
+      <HorizontalLine/>
+      {postData.comments.map((comment, index) => (
+        <View key={index}>
+            <Comment>
+              { 
+                comment.isDoctor ? 
+                  <View>
+                    <TouchableOpacity 
+                    style={{backgroundColor : '#5cc4b849', padding : '5%', borderRadius : 10, 
+                          gap : 15, flexDirection : 'row', alignItems : 'center'}}>
+                      <Image source={profilePircure}  style={{ width: 60, height: 60}}/>
+                      <View>
+                        <Text style={{fontSize : 18, fontWeight : 'bold'}}>{comment.profileNickName + " 선생님"}</Text>
+                        <Text style={{color : '#595959'}}>{comment.doctorProfile.hospitalName}</Text>
+                      </View>
+                    </TouchableOpacity>
+                    <CommentText >{comment.content}</CommentText>
+                  </View>
+                :
+                  <View>
+                    <TouchableOpacity style={{flexDirection : 'row', gap : 5}}>
+                      <Image source={profilePircure}  style={{ width: 20, height: 20, borderRadius : 50 }}/>
+                      <ProfileNickName style={{lineHeight : 21}}>{comment.profileNickName}</ProfileNickName>
+                    </TouchableOpacity>
+                    <CommentText>{comment.content}</CommentText>
+                  </View>
+              }
+
+              {comment.isAdopted && 
+                <View style={{flexDirection : 'row', gap : 5}}>
+                  <Image source={adoptedCommentIcon} style={{width : 15, height : 15}}/>
+                  <Text style={{lineHeight : 16, color : '#595959'}}>채택된 답변</Text>
+                </View>
+              }
+
+              <CommentPostedTime>{comment.postTime}</CommentPostedTime>
+            </Comment>
+          <HorizontalLine />
+        </View>
+      ))}
+    </CommentsContainer>
+    )
+  }
   /**--------------------Post창의 메인 화면--------------------*/
   return (
     <View style={{flex : 1}}> 
@@ -164,7 +214,10 @@ const CommunityPost = () => {
           
           <PostUnderContainer>
             <PostUnderLeftContainer>
-              <ProfileNickName>{postData.profileNickName}</ProfileNickName>
+              <TouchableOpacity style={{flexDirection:'row', gap : 5, alignItems : 'center'}}>
+                <Image source={profilePircure}  style={{ width: 15, height: 15, borderRadius : 50 }}/>
+                <ProfileNickName>{postData.profileNickName}</ProfileNickName>
+              </TouchableOpacity>
               <PostedTime>{postData.postTime}</PostedTime>
             </PostUnderLeftContainer>
             <PostUnderRightContainer>
@@ -179,20 +232,7 @@ const CommunityPost = () => {
           backgroundColor: '#96d3cb'
         }} />
 
-        <CommentsContainer>
-          <CommentsContainerTitle>{'댓글 ' + postData.comments.length}</CommentsContainerTitle>
-          <HorizontalLine/>
-          {postData.comments.map((comment, index) => (
-            <View key={index}>
-              <Comment>
-                <ProfileNickName>{comment.profileNickName}</ProfileNickName>
-                <CommentText>{comment.content}</CommentText>
-                <CommentPostedTime>{comment.postTime}</CommentPostedTime>
-              </Comment>
-              <HorizontalLine />
-            </View>
-          ))}
-        </CommentsContainer>
+        <Comments/>
       </ScrollView>
 
       <WriteCommentButton/>

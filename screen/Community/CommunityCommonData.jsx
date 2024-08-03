@@ -28,7 +28,10 @@ const initialPosts = [
     likeNumber: 0,
     scrapeNumber: 0,
     comments : [
-      {
+      { 
+        isDoctor : false,
+        isAdopted : null,
+        doctorProfile : null,
         profileNickName: '닉네임',
         content: '댓글내용',
         postTime: '2024-07-26'
@@ -49,6 +52,9 @@ const initialPosts = [
     scrapeNumber: 0,
     comments : [
       {
+        isDoctor : false,
+        isAdopted : null,
+        doctorProfile : null,
         profileNickName: '닉네임',
         content: '댓글내용',
         postTime: '2024-07-26'
@@ -69,6 +75,9 @@ const initialPosts = [
     scrapeNumber: 10,
     comments : [
       {
+        isDoctor : false,
+        isAdopted : null,
+        doctorProfile : null,
         profileNickName: '개냥이',
         content: '저 킬러 이름이 야옹 이군요.',
         postTime: '2024-05-29 14:18:19'
@@ -101,6 +110,17 @@ const initialPosts = [
     scrapeNumber: 0,
     comments : [
       {
+        isDoctor : true,
+        isAdopted : true,        
+        doctorProfile : {hospitalName : '올리몰스 동물메디컬 센터'},
+        profileNickName: '길동',
+        content: '저희 병문에 와서 검사하시지요오',
+        postTime: '2024-07-30'
+      },
+      {
+        isDoctor : false,
+        isAdopted : null,
+        doctorProfile : null,
         profileNickName: '나물이네',
         content: '떨어져있어서 조금 ..삐진거 아닐까용... ?!! 👉🏻👈🏻  맛있는 간식으로  보상을🫶🏻',
         postTime: '2024-07-30'
@@ -139,6 +159,9 @@ const initialPosts = [
     scrapeNumber: 64,
     comments : [
       {
+        isDoctor : false,
+        isAdopted : null,
+        doctorProfile : null,
         profileNickName: '고양이가 좋아',
         content: '정보글 아주 좋아요!',
         postTime: '2024-05-29 14:18:19'
@@ -153,7 +176,7 @@ export const PostsProvider = ({ children }) => {
   const [Posts, setPosts] = useState(initialPosts);
 
   const AddPost = (newPost) => {
-    setPosts(prevPosts => [...prevPosts, { ...newPost, id: prevPosts.length }]);
+    setPosts(prevPosts => [...prevPosts, { ...newPost, id: prevPosts.length}]);
   };
 
   const UpdatePost = (id, updatedPost) => {
@@ -178,3 +201,22 @@ export const PostsProvider = ({ children }) => {
     </PostsContext.Provider>
   );
 };
+
+//유저 프로필 데이터
+export const usersProfile = 
+[
+  { 
+    id : 0,
+    isDoctor : false,
+    doctorProfile : {hospitalName : '올리몰스 동물메디컬 센터'},
+    NickName: 'Admin',
+    profilePicture : null,
+  },
+  { 
+    id : 1,
+    isDoctor : true,
+    doctorProfile : {hospitalName : '올리몰스 동물메디컬 센터'},
+    NickName: '나 오예준 아니다다',
+    profilePicture : {uri : 'https://cdn.pixabay.com/photo/2020/05/17/20/21/cat-5183427_1280.jpg'},
+  }
+]

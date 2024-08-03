@@ -196,8 +196,11 @@ const CommunityWritingPost = () => {
     const selectedAnimalTags = (animalTags.filter((tag) => tag.isSelected)).map((selectedTag) => selectedTag.name);
     const selectedCategoryTags = (categoryTags.filter((tag) => tag.isSelected)).map((selectedTag) => selectedTag.name);
     const selectedTags = selectedAnimalTags.concat(selectedCategoryTags);
+    const isQuestion = selectedCategoryTags.includes("QnA");
 
     AddPost({
+      isQuestion : isQuestion,
+      isQuestionSolved : isQuestion ? false : null,
       title : titleInputRef.current,
       content : contentInputRef.current,
       img : {uri : imageUrl},
@@ -212,14 +215,14 @@ const CommunityWritingPost = () => {
     titleInputRef.current = "";
     contentInputRef.current = "";
     setImageUrl("")
-
+    
     const resetAnimalTags = animalTags.map((tag) => ({ ...tag, isSelected: false }));
     setAnimalTags(resetAnimalTags);
-
+    
     const resetCategoryTags = categoryTags.map((tag) => ({ ...tag, isSelected: false }));
     setCategoryTags(resetCategoryTags);
   }
-
+  
   return (
     <View style={{flex : 1}}>
       <WritingPostContainer>
