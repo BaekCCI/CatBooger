@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MapView, { Marker } from 'react-native-maps';
 import WebView from 'react-native-webview';
-import { CLIENT_ID } from '@env';
+import { CLIENT_ID, JAVASCRIPT_KEY, MAP } from '@env';
 
 const hospitals = [
   {
@@ -26,38 +26,35 @@ const hospitals = [
   // 필요에 따라 병원 객체를 더 추가하세요
 ];
 
-const mapUrl = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${CLIENT_ID}&autoload=false&libraries=services,clusterer,drawing`;
-
 const htmlContent = `
+<!DOCTYPE html>
 <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script type="text/javascript" src= ${mapUrl}></script> 
-        <style>
-          #map {
-            width: 100%;
+<head>
+	<meta charset="utf-8"/>
+	<title>Kakao 지도</title>
+	<style>
+        html, body {
             height: 100%;
-          }
-        </style>
-    </head>
-    <body >
-        <div id="map" style="width:500px;height:400px;"></div>
-        <script type="text/javascript">
-            (function () {
-                const container = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
-                const options = { //지도를 생성할 때 필요한 기본 옵션
-                    center: new kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
-                    level: 3 //지도의 레벨(확대, 축소 정도)
-                };
-                
-                const map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
-                
-                // 주소-좌표 변환 객체를 생성합니다
-                const geocoder = new kakao.maps.services.Geocoder();
-            })();
-        </script>       
-    </body>
-</html>    
+            margin: 0;
+        }
+	</style>
+</head>
+<body>
+	<div id="map" style="width: 100%;height: 100%;"></div>
+	<script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${JAVASCRIPT_KEY}&libraries=services,clusterer,drawing"></script>
+	<script>
+	
+		var container = document.getElementById('map');
+		var options = {
+			center: new kakao.maps.LatLng(33.450701, 126.570667),
+			level: 3
+		};
+
+		var map = new kakao.maps.Map(container, options);
+	</script>
+</body>
+</html>
+    
 `;
 
 const Hospital = ({ navigation }) => {
@@ -78,7 +75,7 @@ const Hospital = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, justifyContent: 'center' }}>
       <Container>
         <Header>
           <SearchInput placeholder="병원을 검색하세요" />
@@ -112,6 +109,8 @@ const Hospital = ({ navigation }) => {
               source={{ html: htmlContent }}
               originWhitelist={['*']}
               style={styles.webView}
+              onLoadEnd={() => console.log('WebView loaded')}
+              onError={(event) => console.error('WebView error', event.nativeEvent)}
             />
         ) : (
           <>
@@ -131,6 +130,7 @@ const Hospital = ({ navigation }) => {
 const styles = StyleSheet.create({
   webView: {
     flex: 1, // WebView가 전체 공간을 차지하도록 설정
+    width: '100%', 
   },
 });
 
