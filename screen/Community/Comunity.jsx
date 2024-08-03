@@ -166,9 +166,12 @@ const Community = ({ navigation }) => {
             <View style={{flex:3}}>
               <View style={{marginBottom : '1%'}}>
                 <PostTitle numberOfLines={1} ellipsizeMode="tail">
-                {postData.tags.includes("QnA")
+                {postData.isQuestion
                 ? 
-                  <Text >Q. {postData.title}</Text>
+                  <Text>
+                      <Text style={{color : postData.isQuestionSolved ? '#23C6B3' : '#989898'}}>Q.</Text>
+                      <Text>{postData.title}</Text>
+                  </Text>
                 : 
                   <Text>{postData.title}</Text>}
                 </PostTitle>

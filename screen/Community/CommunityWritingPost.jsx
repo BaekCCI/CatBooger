@@ -301,7 +301,7 @@ const ContentsInput = styled.TextInput`
 
 /**게시물 작성 완료 버튼에 해당하는 태그 */
 const PostSendButton = styled.TouchableOpacity`
-    background-color: #6495ED90; 
+    background-color: #1399895f; 
     border-radius: 10px; 
     border-width:1px;
     padding : 5px 10px;

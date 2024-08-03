@@ -128,14 +128,31 @@ const CommunityPost = () => {
     );
   };
 
+  const PostTitleContainer = () => {
+    return(
+      <View style={{flexDirection:'row', justifyContent : 'space-between', alignItems : 'baseline'}}>
+        <PostTitle>{postData.title}</PostTitle>
+        {postData.isQuestion ? 
+          postData.isQuestionSolved ?
+            <View>
+              <Text style={{color : 'white', fontWeight : '600', fontSize : 13, backgroundColor : '#23C6B3', 
+                paddingLeft : '2%', paddingRight : '2%', paddingBottom : '1%', marginBottom : '1%', paddingTop : '1%',
+                 borderRadius : 5, lineHeight : 17  }}>채택 완료</Text>
+            </View>
+          : null
+        :
+        null  
+      }
+      </View>
+    )
+  }
   /**--------------------Post창의 메인 화면--------------------*/
   return (
     <View style={{flex : 1}}> 
       <ScrollView backgroundColor='white' style={{flex : 1}}>
         <Post>
-          <PostTitle>{postData.title}</PostTitle>
-          <HorizontalLine />
-
+          <PostTitleContainer/>
+          <HorizontalLine/>
           <PostContent>{postData.content}</PostContent>
 
           <PostImgContainer/>
@@ -164,7 +181,7 @@ const CommunityPost = () => {
 
         <CommentsContainer>
           <CommentsContainerTitle>{'댓글 ' + postData.comments.length}</CommentsContainerTitle>
-          <HorizontalLine />
+          <HorizontalLine/>
           {postData.comments.map((comment, index) => (
             <View key={index}>
               <Comment>
