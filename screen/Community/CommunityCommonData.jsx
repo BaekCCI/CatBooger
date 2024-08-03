@@ -206,7 +206,9 @@ export const usersProfile =
     nickName: 'Admin',
     profilePicture : null,
     writtenPostsId : [0, 1],
-    writtenPostCommentsId : ['0-0']
+    writtenPostCommentsId : ['0-0'],
+    likePosts : [],
+    scrapedPosts : []
   },
   { 
     id : 1,
@@ -215,7 +217,9 @@ export const usersProfile =
     nickName: '길동',
     profilePicture : {uri : 'https://img.freepik.com/free-photo/smiling-asian-doctor-female-nurse-holding-clipboard-pen-wearing-uniform-with-gloves-writing-pati_1258-83340.jpg?t=st=1722671824~exp=1722675424~hmac=afd022ece291d1365c2add477d452a7a99e685966fced2501acb5fc2a0c32d98&w=996'},
     writtenPostsId : [],
-    writtenPostCommentsId : ['1-0', '3-0']
+    writtenPostCommentsId : ['1-0', '3-0'],
+    likePosts : [],
+    scrapedPosts : []
   },
   {
     id : 2,
@@ -224,7 +228,9 @@ export const usersProfile =
     nickName: '괴문서맵게하는집',
     profilePicture : {uri : 'https://cdn.pixabay.com/photo/2023/09/19/12/34/dog-8262506_1280.jpg'},
     writtenPostsId : [2],
-    writtenPostCommentsId : ['2-0']
+    writtenPostCommentsId : ['2-0'],
+    likePosts : [],
+    scrapedPosts : []
   },
   {
     id : 3,
@@ -233,6 +239,8 @@ export const usersProfile =
     nickName: '해리미',
     profilePicture : {uri : 'https://cdn.pixabay.com/photo/2023/12/15/21/47/cat-8451431_1280.jpg'},
     writtenPostsId : [3,4],
-    writtenPostCommentsId : ['3-1', '4-0', '2-1']
+    writtenPostCommentsId : ['3-1', '4-0', '2-1'],
+    likePosts : [],
+    scrapedPosts : []
   }
 ]

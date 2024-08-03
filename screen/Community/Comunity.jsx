@@ -131,7 +131,7 @@ const Community = ({ navigation }) => {
       }}>
         <Image source={require('../../assets/community/like_logo.png')} style = {{width : 15, height : 15}}/>
         <Text style={{fontSize : 15}}>
-          {" " + likeNumber + "  "}
+          {likeNumber}
         </Text>
       </View>
     );
@@ -147,7 +147,7 @@ const Community = ({ navigation }) => {
       }}>
         <Image source={require('../../assets/community/scrape_logo.png')} style = {{width : 15, height : 15}}/>
         <Text style={{fontSize : 15}}>
-          {" " + scrapeNumber}
+          {scrapeNumber}
         </Text>
       </View>
     );
@@ -198,7 +198,7 @@ const Community = ({ navigation }) => {
                     ? usersProfile[postData.writerID].nickName 
                     : 'Unknown User'}
                 </NickNameText>
-                <View style={{flexDirection:'row', gap : 3, top : 1.5}}>
+                <View style={{flexDirection:'row', gap : 5, top : 1.5}}>
                   <LikeTag likeNumber={postData.likeNumber} />
                   <ScrapeTag scrapeNumber={postData.scrapeNumber} />
                 </View>
@@ -447,7 +447,7 @@ const PostImg = styled.Image`
 const PostUnderContent = styled.View`
   flex-direction: row;
   align-items: center;
-  gap : 10px;
+  gap : 5px;
 `;
 
 const NickNameText = styled.Text`
