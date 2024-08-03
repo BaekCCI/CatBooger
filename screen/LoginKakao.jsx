@@ -61,6 +61,7 @@ export function KakaoLoginRedirect({ navigation, route }) {
       console.log(code);
       axios
         .get(`http://172.17.1.123:5000/oauth?code=${code}`)
+
         .then((getRes) => {
           console.log("login successful: ", getRes.data.id);
           //getRes.data를 넘겨주고 싶어요.... 이게 userid인데....git

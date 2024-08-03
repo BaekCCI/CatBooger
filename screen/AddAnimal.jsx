@@ -2,16 +2,44 @@ import React, { useState, useEffect } from "react";
 import {View,Text,ImageBackground,Modal,TouchableWithoutFeedback, TouchableHighlight, StyleSheet } from "react-native";
 import styled from "styled-components";
 import { useNavigation } from "@react-navigation/native";
+import RNPickerSelect from 'react-native-picker-select';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import moment from 'moment';
 
 
 export default function AddAnimal(){
     const navigation = useNavigation();
 
     const [name, setName] = useState('');
-    const [birth,setBirth] = useState('');
+    const [birth,setBirth] = useState(new Date());
     const [breed, setBreed] = useState('');
     const [gender, setGender] = useState('');
     const [type, setType] = useState('');
+    const [isModified, setIsModified] = useState(false);
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+    const showDatePicker = () => {
+        setDatePickerVisibility(true);
+    };
+
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false);
+    };
+    const handleDatePiker =(date) => {
+        setBirth(date);
+        hideDatePicker();
+    }
+
+    useEffect(() => {
+        setIsModified(name!=='' && breed!=='' && gender!=='' && type!=='');
+    }, [name, breed, gender, type]);
+    
+
+    const handleConfirm = () => {
+
+    };
+    
+
 
     return(
         <MainView>
@@ -30,56 +58,107 @@ export default function AddAnimal(){
             </RowView>
             <RowView>
                 <TypeTxt>종</TypeTxt>
-                <InputWrap>
-                    <InputMemo
-                        value={type}
-                        onChangeText={setType}
-                        placeholder="이름을 입력하세요"
-                        placeholderTextColor="#d0d0d0"
-                    />
-                </InputWrap>
+                <PickerWrap>
+                <RNPickerSelect
+                    onValueChange={(value) => setType(value)}
+                    items={[
+                        { label: '강아지', value: 'dog' },
+                        { label: '고양이', value: 'cat' },
+                        // 필요한 경우 다른 옵션을 추가하세요
+                    ]}
+                    placeholder={{
+                        label: "종을 선택하세요",
+                        value: null,
+                        color: "#d0d0d0"
+                    }}
+                    value={type}
+                    style={pickerSelectStyles}
+
+                />
+                </PickerWrap>
             </RowView>
             <RowView>
                 <TypeTxt>성별</TypeTxt>
-                <InputWrap>
-                    <InputMemo
-                        value={gender}
-                        onChangeText={setGender}
-                        placeholder="이름을 입력하세요"
-                        placeholderTextColor="#d0d0d0"
-                    />
-                </InputWrap>
+                <PickerWrap>
+                <RNPickerSelect
+                    onValueChange={(gender) => setGender(gender)}
+                    items={[
+                        { label: '암컷', value: 'female' },
+                        { label: '수컷', value: 'male' },
+                        // 필요한 경우 다른 옵션을 추가하세요
+                    ]}
+                    placeholder={{
+                        label: "성별을 선택하세요",
+                        value: null,
+                        color: "#d0d0d0"
+                    }}
+                    value={gender}
+                    style={pickerSelectStyles}
+
+                />
+                </PickerWrap>
             </RowView>
             <RowView>
                 <TypeTxt>중성화 여부</TypeTxt>
-                <InputWrap>
-                    <InputMemo
-                        value={breed}
-                        onChangeText={setBreed}
-                        placeholder="이름을 입력하세요"
-                        placeholderTextColor="#d0d0d0"
-                    />
-                </InputWrap>
+                <PickerWrap>
+                <RNPickerSelect
+                    onValueChange={(breed) => setBreed(breed)}
+                    items={[
+                        { label: '예', value: 'yes' },
+                        { label: '아니오', value: 'no' },
+                        { label: '모름', value: 'unKnown' },
+                        // 필요한 경우 다른 옵션을 추가하세요
+                    ]}
+                    placeholder={{
+                        label: "중성화 여부를 선택하세요",
+                        value: null,
+                        color: "#d0d0d0"
+                    }}
+                    value={breed}
+                    style={pickerSelectStyles}
+
+                />
+                </PickerWrap>
             </RowView>
             <RowView>
                 <TypeTxt>생년월일</TypeTxt>
-                <InputWrap>
-                    <InputMemo
-                        value={birth}
-                        onChangeText={setBirth}
-                        placeholder="이름을 입력하세요"
-                        placeholderTextColor="#d0d0d0"
+                <PickerWrap>
+                    <DatePickerButton onPress={showDatePicker}>
+                        <DatePickerText>{moment(birth).format('YYYY-MM-DD')}</DatePickerText>
+                    </DatePickerButton>
+                    <DateTimePickerModal
+                        isVisible={isDatePickerVisible}
+                        mode="date"
+                        onConfirm={handleDatePiker}
+                        onCancel={hideDatePicker}
+                        maximumDate={new Date()}
+                        locale="ko"
                     />
-                </InputWrap>
+                </PickerWrap>
             </RowView>
             </StyledView>
-            <CompleBtn>
+            <CompleBtn disabled={!isModified} isModified={isModified} onPress={handleConfirm}>
                 <CompleTxt>완료하기</CompleTxt>
             </CompleBtn>
             </MainView>
 
     );
 }
+const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+        fontSize: 16,
+        borderBottomWidth : 1,
+        borderBottomColor : '#d9d9d9',
+        paddingBottom : 5,
+        paddingLeft : 5,
+    },
+    inputAndroid: {
+        fontSize: 10,
+        fontWeight : 'bold',
+        textAlign: 'center',
+    },
+  });
+
 
 const MainView = styled.View`
     width : 100%;
@@ -89,7 +168,7 @@ const MainView = styled.View`
     align-items : center;
 `;
 const StyledView = styled.View`
-    width : 90%;
+    width : 95%;
     justify-content : center;
     align-items : center;
     border: 1px solid #989898;
@@ -117,28 +196,45 @@ const Title = styled.Text`
     margin-bottom : 20px;
 `;
 const TypeTxt = styled.Text`
-    font-size : 18px;
+    font-size : 15px;
     font-weight : semi-bold;
     align-text : center;
-    width : 95px;
 `;
 const InputWrap = styled.View`
     align-self : center;
     border-bottom-width: 1px;
     border-bottom-color: #d9d9d9;
     padding : 0 10px;
-    width : 200px;
+    width : 65%;
 `;
+const PickerWrap = styled.View`
+    align-self : center;
+    width : 65%;
+`
 const InputMemo = styled.TextInput`
     width : 100%;
     font-size: 15px;
     color: black;
 `;
+
+
+const DatePickerButton = styled.TouchableOpacity`
+    justify-content: center;
+    border-bottom-width: 1px;
+    border-bottom-color: #d9d9d9;
+    padding-bottom : 2px;
+`;
+
+const DatePickerText = styled.Text`
+    font-size: 16px;
+    color: #000;
+`;
+
 const CompleBtn = styled.TouchableOpacity`
-    background-color : #139989;
+    background-color: ${props => props.isModified ? '#139989' : '#d0d0d0'};
     padding : 10px 25px;
     border-radius : 30px;
-    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.4);
+    box-shadow: ${props => props.isModified ? '3px 3px 3px rgba(0, 0, 0, 0.2)' : '0px 0px 0px rgba(0, 0, 0, 0)'};
     elevation: 5;
     margin-top : 10%;
 `;
