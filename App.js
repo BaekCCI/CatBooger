@@ -11,15 +11,17 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import Main from './screen/Main';
-import AddAnimal from './screen/AddAnimal';
+import Main from "./screen/Main";
+import AddAnimal from "./screen/AddAnimal";
 
-import Login from './screen/LoginKakao'
-import {KakaoLoginRedirect} from './screen/LoginKakao'
+import Channel from "./screen/channel";
+
+import Login from "./screen/LoginKakao";
+import { KakaoLoginRedirect } from "./screen/LoginKakao";
 import Home from "./screen/Home/home";
 import RecordDialog from "./screen/Home/RecordDialog";
 import WalkRecord from "./screen/Home/WalkRecord";
-import Calendars from "./screen/Home/calendars"
+import Calendars from "./screen/Home/calendars";
 import Hospital from "./screen/Hospital";
 import Counseling from "./screen/Counseling/Counsel";
 import Comunity from "./screen/Community/Comunity";
@@ -50,7 +52,7 @@ function HomeStackScreen() {
     <HomeStack.Navigator screenOptions={commonHeader}>
       <HomeStack.Screen name="Home" component={Home} />
       <HomeStack.Screen name="RecordDialog" component={RecordDialog} />
-      <HomeStack.Screen name="WalkRecord" component={WalkRecord}/>
+      <HomeStack.Screen name="WalkRecord" component={WalkRecord} />
       <HomeStack.Screen name="Calendars" component={Calendars} />
     </HomeStack.Navigator>
   );
@@ -141,9 +143,22 @@ function MenuStackScreen() {
 function LoginStackScreen() {
   return (
     <LoginStack.Navigator>
-      <LoginStack.Screen name="Login" component={Login} options={{headerShown:false}}/>
-      <LoginStack.Screen name="KakaoLoginRedirect" component={KakaoLoginRedirect} options={{headerShown:false}}/>
-      <LoginStack.Screen name="MyTabs" component={MyTabs} screenOptions={commonHeader} options={{headerShown:false}}/>
+      <LoginStack.Screen
+        name="Login"
+        component={Login}
+        options={{ headerShown: false }}
+      />
+      <LoginStack.Screen
+        name="KakaoLoginRedirect"
+        component={KakaoLoginRedirect}
+        options={{ headerShown: false }}
+      />
+      <LoginStack.Screen
+        name="MyTabs"
+        component={MyTabs}
+        screenOptions={commonHeader}
+        options={{ headerShown: false }}
+      />
     </LoginStack.Navigator>
   );
 }

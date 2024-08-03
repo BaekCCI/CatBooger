@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
-import {View,Text,ImageBackground,Modal,TouchableWithoutFeedback, TouchableHighlight, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ImageBackground,
+  Modal,
+  TouchableWithoutFeedback,
+  TouchableHighlight,
+  StyleSheet,
+} from "react-native";
 import styled from "styled-components";
 import { useNavigation } from "@react-navigation/native";
-import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
+import { Stopwatch, Timer } from "react-native-stopwatch-timer";
 
 import { ref, set, get, child, onValue } from "firebase/database";
 import { database } from "../../firebaseConfig";
@@ -17,23 +25,23 @@ export default function Home() {
     setIsModalVisible(!modalVisible);
   };
   const handleDialog = (info) => {
-    if(info==='산책'){
+    if (info === "산책") {
       setIsModalVisible(!modalVisible);
       setWalkModal(!walkModal);
-    }else{
+    } else {
       navigation.navigate("RecordDialog", { info });
       setIsModalVisible(!modalVisible);
     }
   };
   const handleWalk = () => {
-    navigation.navigate("WalkRecord", { info: '산책', time: '00:00:00' });
+    navigation.navigate("WalkRecord", { info: "산책", time: "00:00:00" });
     setWalkModal(false);
   };
-  const handleStartWalk=()=>{
+  const handleStartWalk = () => {
     setIsWalkStart(true);
     setWalkModal(false);
-  }
-  
+  };
+
   /*
 //   useEffect(() => {
 // <<<<<<< login
@@ -52,35 +60,18 @@ export default function Home() {
 //           console.error("Firebase 연결 오류: ", error);
 //         }
 //       );
-
-
-// =======
-//     const addSchedule = () => {
-//       const scheduleRef = ref(database, "calendar/scheduleId1");
-//       set(scheduleRef, {
-//         date: "2024-12-31T23:59:59Z",
-//         memo: "New Year's Eve Party",
-//         notificationTime: "2024-12-31T20:00:00Z",
-//         title: "End of Year Celebration",
-//       })
-//         .then(() => console.log("일정 추가 성공!"))
-//         .catch((error) => console.error("일정 추가 실패:", error));
-// >>>>>>> master
-//     };
-
-//     addSchedule();
 //   }, []);
 */
   return (
     <BackGround source={require("../../assets/Home/HomeBG.png")}>
       <StyledView>
         <RowView>
-        <CalendarBtn onPress={() => navigation.navigate('Calendars')}>
-          <CalendarImg source={require("../../assets/Home/CalendarIcon.png")} />
-        </CalendarBtn>
-        {isWalkStart && (
-          <TimerView setIsWalkStart={setIsWalkStart}/>
-        )}
+          <CalendarBtn onPress={() => navigation.navigate("Calendars")}>
+            <CalendarImg
+              source={require("../../assets/Home/CalendarIcon.png")}
+            />
+          </CalendarBtn>
+          {isWalkStart && <TimerView setIsWalkStart={setIsWalkStart} />}
         </RowView>
         <DogBtn>
           <DogImg source={require("../../assets/Home/DogHouse.png")} />
@@ -169,48 +160,49 @@ export default function Home() {
         onRequestClose={() => setWalkModal(false)}
       >
         <TouchableWithoutFeedback onPress={() => setWalkModal(false)}>
-        <ModalBack>
-          <TouchableWithoutFeedback onPress={() => {}}>
-            <WalkModalView>
-              <RowView>
-                <BackBtn onPress={() => setWalkModal(false)}>
-                  <BackImg source={require('../../assets/Home/ArrowLeft.png')}/>
-                </BackBtn>
-                <AddWalkBtn onPress={handleWalk}>
-                  <AddWaltTxt>+ 기록 추가</AddWaltTxt>
-                </AddWalkBtn>
-              </RowView>
-              <StartMsg>주인님 산책해요!</StartMsg>
-              <StartBtn onPress={handleStartWalk}>
-                <StartBtnTxt>기록 시작하기</StartBtnTxt>
-              </StartBtn>
-            </WalkModalView>
-          </TouchableWithoutFeedback>
-        </ModalBack>
-      </TouchableWithoutFeedback>
+          <ModalBack>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <WalkModalView>
+                <RowView>
+                  <BackBtn onPress={() => setWalkModal(false)}>
+                    <BackImg
+                      source={require("../../assets/Home/ArrowLeft.png")}
+                    />
+                  </BackBtn>
+                  <AddWalkBtn onPress={handleWalk}>
+                    <AddWaltTxt>+ 기록 추가</AddWaltTxt>
+                  </AddWalkBtn>
+                </RowView>
+                <StartMsg>주인님 산책해요!</StartMsg>
+                <StartBtn onPress={handleStartWalk}>
+                  <StartBtnTxt>기록 시작하기</StartBtnTxt>
+                </StartBtn>
+              </WalkModalView>
+            </TouchableWithoutFeedback>
+          </ModalBack>
+        </TouchableWithoutFeedback>
       </Modal>
     </BackGround>
   );
 }
-const TimerView=({ setIsWalkStart })=>{
-  const [start,setStart] = useState(true);
+const TimerView = ({ setIsWalkStart }) => {
+  const [start, setStart] = useState(true);
   const [time, setTime] = useState("00:00:00");
-  const [finishRecord, setFinishRecord]=useState(false);
+  const [finishRecord, setFinishRecord] = useState(false);
   const navigation = useNavigation();
 
-  const toggleStopwatch=()=>{
+  const toggleStopwatch = () => {
     setStart(!start);
     setFinishRecord(!finishRecord);
-
-  }
-  const handleModal =()=>{
+  };
+  const handleModal = () => {
     setFinishRecord(!finishRecord);
-    navigation.navigate("WalkRecord", { info: '산책', time: time });
+    navigation.navigate("WalkRecord", { info: "산책", time: time });
     setIsWalkStart(false);
-  }
-  const handleCancel =()=>{
+  };
+  const handleCancel = () => {
     setIsWalkStart(false);
-  }
+  };
 
   return (
     <View>
@@ -230,51 +222,57 @@ const TimerView=({ setIsWalkStart })=>{
         onRequestClose={toggleStopwatch}
       >
         <TouchableWithoutFeedback onPress={toggleStopwatch}>
-        <ModalBack>
-          <TouchableWithoutFeedback onPress={() => {}}>
-            <FinishModalView>
-              <AddWalkBtn marginBottom='5px;' alignSelf='flex-end' onPress={handleCancel}>
-                <AddWaltTxt>기록 취소하기</AddWaltTxt>
-              </AddWalkBtn>
-              <StartMsg size = '22px'>산책을 종료하시겠습니까?</StartMsg>
-              <RowView justifyContent='center'>
-                <FinishBtn backgroundColor='#C0C0C0' onPress={toggleStopwatch}>
-                  <StartBtnTxt size='18px'>뒤로가기</StartBtnTxt>
-                </FinishBtn>
-                <FinishBtn onPress={handleModal}>
-                  <StartBtnTxt size='18px'>종료하기</StartBtnTxt>
-                </FinishBtn>
+          <ModalBack>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <FinishModalView>
+                <AddWalkBtn
+                  marginBottom="5px;"
+                  alignSelf="flex-end"
+                  onPress={handleCancel}
+                >
+                  <AddWaltTxt>기록 취소하기</AddWaltTxt>
+                </AddWalkBtn>
+                <StartMsg size="22px">산책을 종료하시겠습니까?</StartMsg>
+                <RowView justifyContent="center">
+                  <FinishBtn
+                    backgroundColor="#C0C0C0"
+                    onPress={toggleStopwatch}
+                  >
+                    <StartBtnTxt size="18px">뒤로가기</StartBtnTxt>
+                  </FinishBtn>
+                  <FinishBtn onPress={handleModal}>
+                    <StartBtnTxt size="18px">종료하기</StartBtnTxt>
+                  </FinishBtn>
                 </RowView>
-            </FinishModalView>
-          </TouchableWithoutFeedback>
-        </ModalBack>
-      </TouchableWithoutFeedback>
+              </FinishModalView>
+            </TouchableWithoutFeedback>
+          </ModalBack>
+        </TouchableWithoutFeedback>
       </Modal>
     </View>
-    
   );
-}
+};
 const options = {
   container: {
-    justifyContent : 'center',
-    alignItems : 'center',
-    backgroundColor : 'rgba(0,0,0,0.4)',
-    borderRadius : 10,
-    padding : 10,
-    width : 120,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.4)",
+    borderRadius: 10,
+    padding: 10,
+    width: 120,
   },
   text: {
     fontSize: 18,
-    color: '#FFF',
-  }
+    color: "#FFF",
+  },
 };
-const FinishModalView=styled.View`
-  width : 85%;
+const FinishModalView = styled.View`
+  width: 85%;
   align-items: center;
   background-color: rgba(255, 255, 255, 0.9);
   margin: auto;
-  border-radius : 10px;
-  padding : 20px 5px 10px 5px;
+  border-radius: 10px;
+  padding: 20px 5px 10px 5px;
   shadow-color: #000;
   shadow-offset: 0 2px;
   shadow-opacity: 0.25;
@@ -282,13 +280,13 @@ const FinishModalView=styled.View`
   elevation: 5;
 `;
 const FinishBtn = styled.TouchableOpacity`
-  background-color : ${(props)=>props.backgroundColor || '#139989'};
-  padding : 10px 20px;
-  border-radius : 10px;
-  margin : 20px 10px 0 10px;
+  background-color: ${(props) => props.backgroundColor || "#139989"};
+  padding: 10px 20px;
+  border-radius: 10px;
+  margin: 20px 10px 0 10px;
 `;
 const WalkModalView = styled.View`
-  width : 100%;
+  width: 100%;
   height: 220px;
   align-items: center;
   background-color: rgba(255, 255, 255, 0.9);
@@ -301,49 +299,49 @@ const WalkModalView = styled.View`
   elevation: 5;
 `;
 const RowView = styled.View`
-  flex-direction : row;
-  align-items : center;
-  width : 100%;
-  justify-content: ${(props)=> props.justifyContent || 'space-between'};
-  margin-bottom : 20px;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: ${(props) => props.justifyContent || "space-between"};
+  margin-bottom: 20px;
 `;
 const BackBtn = styled.TouchableOpacity`
-  width : 40px;
-  height : 40px;
-  align-self : flex-start;
+  width: 40px;
+  height: 40px;
+  align-self: flex-start;
 `;
 const BackImg = styled.Image`
-  width : 100%;
-  height : 100%;
+  width: 100%;
+  height: 100%;
 `;
 const AddWalkBtn = styled.TouchableOpacity`
-  margin-right : 10px;
-  margin-bottom : ${(props)=>props.marginBottom || '0'};
-  align-self : ${(props)=>props.alignSelf || 'auto'};
+  margin-right: 10px;
+  margin-bottom: ${(props) => props.marginBottom || "0"};
+  align-self: ${(props) => props.alignSelf || "auto"};
 `;
-const AddWaltTxt =styled.Text`
-  color : #2F6AB0;
-  font-size : 16px;
+const AddWaltTxt = styled.Text`
+  color: #2f6ab0;
+  font-size: 16px;
 `;
 const StartMsg = styled.Text`
-  font-size : ${(props)=> props.size || '25px'};
-  font-weight : bold;
+  font-size: ${(props) => props.size || "25px"};
+  font-weight: bold;
 `;
 const StartBtn = styled.TouchableOpacity`
-  background-color : #F6D663;
+  background-color: #f6d663;
   border-radius: 10px;
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4);
   elevation: 5;
-  margin-top : 25px;
-  justify-content : center;
-  padding : 10px 20px;
+  margin-top: 25px;
+  justify-content: center;
+  padding: 10px 20px;
 `;
 const StartBtnTxt = styled.Text`
-  color : white;
-  font-size : ${(props)=>props.size || '20px'};
-  font-weight : bold;
-  text-align : center;
-`
+  color: white;
+  font-size: ${(props) => props.size || "20px"};
+  font-weight: bold;
+  text-align: center;
+`;
 const ModalBack = styled.View`
   flex: 1;
 `;

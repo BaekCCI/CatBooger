@@ -1,32 +1,48 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, Modal, StyleSheet } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import styled from 'styled-components/native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import React, { useState } from "react";
+import {
+  SafeAreaView,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  Modal,
+  StyleSheet,
+} from "react-native";
+import { Calendar } from "react-native-calendars";
+import styled from "styled-components/native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+
+import { ref, set, get, child, onValue } from "firebase/database";
+import { database } from "../../firebaseConfig";
 
 const initialSchedules = {
-  '2024-08-01': [
-    { time: '09:30', title: '미용실 가기', icon: '🐶' },
-    { time: '10:30', title: '병원 예방접종', icon: '🐱' },
+  "2024-08-01": [
+    { time: "09:30", title: "미용실 가기", icon: "🐶" },
+    { time: "10:30", title: "병원 예방접종", icon: "🐱" },
   ],
-  '2024-08-02': [
-    { time: '09:00', title: '출근', icon: '🐶' },
-    { time: '18:00', title: '퇴근', icon: '🐱' },
+  "2024-08-02": [
+    { time: "09:00", title: "출근", icon: "🐶" },
+    { time: "18:00", title: "퇴근", icon: "🐱" },
   ],
   // 추가 일정 데이터
 };
 
 const CalendarScreen = () => {
-  const [selectedDate, setSelectedDate] = useState('');
-  const [schedules, setSchedules] = useState(initialSchedules);
+  const [selectedDate, setSelectedDate] = useState("");
+  //const [schedules, setSchedules] = useState(initialSchedules);
   const [modalVisible, setModalVisible] = useState(false);
-  const [newSchedule, setNewSchedule] = useState({ time: '', title: '' });
+  const [newSchedule, setNewSchedule] = useState({ time: "", title: "" });
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
 
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
   };
 
+  const [schedules, setSchedules] = useState({});
+  const [error, setError] = useState(null);
+
+  /*
   const renderScheduleItem = ({ item }) => (
     <ScheduleItem>
       <ScheduleTime>{item.time}</ScheduleTime>
@@ -34,8 +50,43 @@ const CalendarScreen = () => {
       <ScheduleIcon>{item.icon}</ScheduleIcon>
     </ScheduleItem>
   );
+*/
+
+  useEffect(() => {
+    const fetchBathingEvents = async () => {
+      try {
+        const userId = "userId2"; // 실제 사용자 ID로 대체
+        const response = await fetch(
+          `http://172.17.1.191:5001/get_bathing_events/${userId}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Bathing events data:", data);
+        } else {
+          console.error("Failed to fetch bathing events:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching bathing events:", error);
+      }
+    };
+
+    fetchBathingEvents();
+  }, []);
 
   const selectedSchedules = schedules[selectedDate] || [];
+
+  const addNewEvent = (userId, date) => {
+    const scheduleId = Date.now().toString(); // 현재 시간을 이용해 고유한 ID 생성
+    const newEventRef = ref(database, `calendar/${userId}/${scheduleId}`);
+    set(newEventRef, {
+      date: "2024-11-25T18:00:00Z",
+      memo: "Project Deadline Meeting",
+      notificationTime: "2024-11-25T16:00:00Z",
+      title: "Final Project Meeting",
+    })
+      .then(() => console.log("Event added successfully!"))
+      .catch((error) => console.error("Failed to add event:", error));
+  };
 
   const addSchedule = () => {
     if (newSchedule.time && newSchedule.title) {
@@ -43,9 +94,9 @@ const CalendarScreen = () => {
       if (!updatedSchedules[selectedDate]) {
         updatedSchedules[selectedDate] = [];
       }
-      updatedSchedules[selectedDate].push({ ...newSchedule, icon: '🐾' });
+      updatedSchedules[selectedDate].push({ ...newSchedule, icon: "🐾" });
       setSchedules(updatedSchedules);
-      setNewSchedule({ time: '', title: '' });
+      setNewSchedule({ time: "", title: "" });
       setModalVisible(false);
     }
   };
@@ -61,7 +112,9 @@ const CalendarScreen = () => {
   const handleTimeConfirm = (time) => {
     const hours = time.getHours();
     const minutes = time.getMinutes();
-    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}`;
     setNewSchedule({ ...newSchedule, time: formattedTime });
     hideTimePicker();
   };
@@ -72,7 +125,11 @@ const CalendarScreen = () => {
         <Calendar
           onDayPress={onDayPress}
           markedDates={{
-            [selectedDate]: { selected: true, marked: true, selectedColor: 'blue' },
+            [selectedDate]: {
+              selected: true,
+              marked: true,
+              selectedColor: "blue",
+            },
           }}
         />
         {selectedDate ? (
@@ -113,7 +170,9 @@ const CalendarScreen = () => {
               <TextInput
                 placeholder="일정 제목"
                 value={newSchedule.title}
-                onChangeText={(text) => setNewSchedule({ ...newSchedule, title: text })}
+                onChangeText={(text) =>
+                  setNewSchedule({ ...newSchedule, title: text })
+                }
                 style={styles.input}
               />
               <ModalSection>
@@ -241,11 +300,11 @@ const ModalButtonText = styled.Text`
 
 const styles = StyleSheet.create({
   input: {
-    width: '100%',
+    width: "100%",
     padding: 10,
     marginVertical: 5,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 5,
   },
 });
