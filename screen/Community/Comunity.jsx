@@ -32,9 +32,7 @@ const Community = ({ navigation }) => {
   
   /**커뮤니티의 상단 부분을 담는 태그 */
   const CommunityTopContainer = () => (
-    <View style={{
-        paddingLeft : '4%',
-        paddingRight : '4%',}}>
+    <View>
       <View style={{
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -69,9 +67,9 @@ const Community = ({ navigation }) => {
   const Tags = animalTags.concat(categoryTags)
   /**커뮤니티 창에서 태그를 띄우는 부분을 담는 태그*/
   const CommunityTagsContainer = () => (
-    <View style={{ gap: 3, flexDirection: 'row', flexWrap: 'wrap', marginRight : 5}}>
+    <View style={{ gap: 5, flexDirection: 'row', flexWrap: 'wrap', marginRight : 5}}>
       {/**동물 태그들을 띄우는 태그 */}
-      <View style={{ flexDirection: "row", gap: 5, marginTop : 5 }}>
+      <View style={{ flexDirection: "row", gap: 5}}>
         {animalTags.map((tag, index) => (
           tag.isSelected && (
             <TouchableOpacity key={index} onPress={() => SelectTag(animalTags, setAnimalTags, index)}>
@@ -85,7 +83,7 @@ const Community = ({ navigation }) => {
       </View>
 
       {/**카테고리 태그들을 띄우는 태그 */}
-      <View style={{ flexDirection: "row", gap: 5, marginTop : 5}}>
+      <View style={{ flexDirection: "row", gap: 5}}>
         {categoryTags.map((tag, index) => (
           tag.isSelected && (
             <TouchableOpacity key={index} onPress={() => SelectTag(categoryTags, setCategoryTags, index)}>
@@ -162,7 +160,7 @@ const Community = ({ navigation }) => {
     return (
       filteredPosts.map((postData, index) => (
         <Post key={index}>
-          <PostButton onPress={() => MoveToPost(postData.id)} style={{flexDirection:'row', gap : 5}}>
+          <PostButton onPress={() => MoveToPost(postData.id)} style={{flexDirection:'row', gap : 5, alignItems : 'center'}}>
             <View style={{flex:3}}>
               <View style={{marginBottom : '1%'}}>
                 <PostTitle numberOfLines={1} ellipsizeMode="tail">
@@ -221,11 +219,12 @@ const Community = ({ navigation }) => {
       isSearchingBoxOpened 
       ?
         <View style={{
-          width : '100%',
-          backgroundColor : '#ffffff', borderColor : '#c2c2c25c'}}>
+          backgroundColor : '#ffffff', borderColor : '#c2c2c25c',
+          marginTop : 5, marginBottom : 5
+          }}>
           <View 
-          style={{paddingLeft : 5 ,margin : 10,borderWidth : 2, borderRadius : 5 , 
-                  backgroundColor:'#ffffffed', margin : 10, flexDirection : 'row', 
+          style={{paddingLeft : 5,borderWidth : 1.5, borderRadius : 5 , 
+                  backgroundColor:'#ffffffed', marginBottom : 0, flexDirection : 'row', 
                   alignSelf : 'center'}}>
             <ScrollView>
               <TextInput 
@@ -318,6 +317,7 @@ const Community = ({ navigation }) => {
                     </TouchableOpacity>
                   ))}
                 </View>
+                <HorizontalLine/>
               </View>
 
               
@@ -394,12 +394,14 @@ const Community = ({ navigation }) => {
 
             <View style=
             {{
-              backgroundColor:'white', paddingTop : '5%',
-              justifyContent : 'center'
+              backgroundColor:'white', padding : '4%', paddingBottom : 5,
+              justifyContent : 'center', columnGap : 10
             }}>
               <CommunityTopContainer />
               <SearchingBox/>
-              <CommunityTagsContainer />
+              <View>
+                <CommunityTagsContainer />
+              </View>
             </View>
 
             <CommunityContainer>
@@ -422,8 +424,8 @@ const CommunityWithPostsProvider = ({ navigation }) => (
 export default CommunityWithPostsProvider;
 
 const CommunityContainer = styled.View`
+  margin : 0 4%;
   border-radius: 5px;
-  margin: 4%;
   flex : 1;
 `;
 
@@ -438,7 +440,7 @@ const Post = styled.View.attrs({
   elevation: 4,
 })`
   padding: 5%;
-  margin: 1% 0;
+  margin : 4px 0;
   background-color: white;
   border-radius: 10px;
 `;

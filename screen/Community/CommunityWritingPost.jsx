@@ -2,7 +2,7 @@ import React, { useState, useContext, useRef } from 'react';
 import { View, Text, ScrollView, TextInput, Image, TouchableOpacity, Alert } from 'react-native';
 import styled from 'styled-components';
 import { HorizontalLine } from './CommunityCommonStyles';
-import { currentUserId, initialAnimalTags, initialCategoryTags, PostsContext, PostsProvider } from './CommunityCommonData';
+import { currentUserId, GetDate, initialAnimalTags, initialCategoryTags, PostsContext, PostsProvider } from './CommunityCommonData';
 import * as ImagePicker from 'expo-image-picker'
 
 const CommunityWritingPost = () => {
@@ -206,7 +206,7 @@ const CommunityWritingPost = () => {
       content : contentInputRef.current,
       img : {uri : imageUrl},
       tags : selectedTags,
-      postTime: Date(),
+      postTime: GetDate(),
       likeNumber: 0,
       scrapeNumber: 0,
       comments : []

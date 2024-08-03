@@ -4,7 +4,7 @@ import { useRoute } from '@react-navigation/native';
 import styled from "styled-components";
 import { HorizontalLine} from "./CommunityCommonStyles.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {basicProfilePicture, currentUserId, initialPosts, originPosts, PostsContext, PostsProvider, setOriginPosts, usersProfile} from './CommunityCommonData.jsx'
+import {basicProfilePicture, currentUserId, GetDate, initialPosts, originPosts, PostsContext, PostsProvider, setOriginPosts, usersProfile} from './CommunityCommonData.jsx'
 
 /**이미지 데이터 */
 const commentIcon = require('../../assets/community/comment_icon.png')
@@ -37,65 +37,35 @@ const CommunityPost = ({navigation}) => {
     )
   }
 
-  /**댓글 쓰기 창의 열고 닫힘을 확인하는 state */
-  const [isWriteCommentOpened, setIsWriteCommentOpened] = useState(false);
-  const OpenWriteComment = () => setIsWriteCommentOpened(true);
-  const CloseWriteComment = () => setIsWriteCommentOpened(false);
-
   /**댓글 등록할 때의 기능을 담은 함수 (매개변수 : 게시물 ID, 댓글 쓴 사람 닉네임, 댓글 내용, 댓글 등록 시간*/
   const RegisterComment = (postId, writerID, content, date) => {
     AddComment(postId, writerID, content, date);
-    setIsWriteCommentOpened(false);
   }
 
   /**댓글 쓰기 버튼에 해당하는 태그 */
   const WriteCommentButton = () => {
     return(
-      isWriteCommentOpened 
-      ? 
       <CommentWritingContainer>
-        <CommentWritingButton
-        onPress={CloseWriteComment}
-        style={{
-          backgroundColor:'#6495ED90',
-          right : 10,
-          bottom : 5
-          }}
-          >
-            <Image source={commentIcon} style={{width:40,height:40}}/>
-        </CommentWritingButton>
-        
-        <View style={{width : '100%', borderTopWidth : 3, backgroundColor : '#ffffff', borderColor : '#c2c2c25c'}}>
+        <View style={{width : '100%'}}>
           <CommentWritingBox
               flexDirection="row"
               style = {{width : '95%', alignSelf : 'center'}}>
               <ScrollView >
                 <TextInput 
                 onChangeText={(newText) => {inputCommentRef.current = newText}}
-                multiline={true} autoFocus={true} placeholder="댓글 작성" 
-                style={{height:40}} />
+                multiline={true} placeholder="댓글 작성" 
+                style={{height:40}}/>
               </ScrollView>
 
               <CommentSendButton 
-              onPress={() => {RegisterComment(postDataId, currentUserId, inputCommentRef.current, Date())}}>
+              onPress={() => {RegisterComment(postDataId, currentUserId, inputCommentRef.current, GetDate())}}>
               <Text style={{fontWeight:'bold'}}>
-                등록
+                댓글 등록
               </Text>
               </CommentSendButton>
           </CommentWritingBox>
         </View>
-
       </CommentWritingContainer>
-      :
-        <CommentWritingButton
-        onPress={OpenWriteComment}
-        style={{
-          position:'absolute', 
-          bottom:10, right:10, 
-          backgroundColor:'#ffffffdc'}}>
-          
-          <Image source={commentIcon} style={{width:40,height:40}} />
-        </CommentWritingButton>
     )
   }
     /**좋아요의 개수를 표시할 태그*/
@@ -247,7 +217,6 @@ const CommunityPost = ({navigation}) => {
 
         <Comments/>
       </ScrollView>
-
       <WriteCommentButton/>
     </View>
   );
@@ -358,8 +327,6 @@ const CommentText = styled.Text`
 
 /**게시물 댓글 쓰기 창의 내용들을 담을 태그 */
 const CommentWritingContainer = styled.View`
-  position : absolute;
-  bottom : 0;
   width : 100%;
 `
 /**게시물 댓글 쓰기 버튼에 해당하는 태그 */
@@ -373,7 +340,6 @@ const CommentWritingButton = styled.TouchableOpacity`
 /**게시물 댓글 쓰기를 활성화 시켰을 때 나오는 댓글 쓰기창에 해당하는 태그*/
 const CommentWritingBox = styled.View`
     margin : 10px;
-    flex: 1px; 
     border-width : 2px; 
     border-radius: 10px; 
     background-color: #fafafaeb; 
@@ -384,7 +350,7 @@ const CommentWritingBox = styled.View`
 const CommentSendButton = styled.TouchableOpacity`
     margin : 5px;
     margin-right : 10px;
-    width : 40px;
+    padding : 0 5px;
     height: 30px;
     background-color: #6495ED90; 
     border-radius:5px; 
