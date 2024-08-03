@@ -34,6 +34,10 @@ const MenuScreen = ({navigation}) => {
               <MenuText>작성 글 관리</MenuText>
               <Icon name="chevron-forward-outline" size={24} color="#000" />
             </MenuItem>
+            <MenuItem onPress={() => navigation.navigate('ScrapedPostManagement')}>
+              <MenuText>스크랩 글 목록</MenuText>
+              <Icon name="chevron-forward-outline" size={24} color="#000" />
+            </MenuItem>
           </Section>
           <Section>
             <SectionHeader>
