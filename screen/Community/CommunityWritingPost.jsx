@@ -2,7 +2,7 @@ import React, { useState, useContext, useRef } from 'react';
 import { View, Text, ScrollView, TextInput, Image, TouchableOpacity, Alert } from 'react-native';
 import styled from 'styled-components';
 import { HorizontalLine } from './CommunityCommonStyles';
-import { initialAnimalTags, initialCategoryTags, PostsContext, PostsProvider } from './CommunityCommonData';
+import { currentUserId, GetDate, initialAnimalTags, initialCategoryTags, PostsContext, PostsProvider } from './CommunityCommonData';
 import * as ImagePicker from 'expo-image-picker'
 
 const CommunityWritingPost = () => {
@@ -196,14 +196,17 @@ const CommunityWritingPost = () => {
     const selectedAnimalTags = (animalTags.filter((tag) => tag.isSelected)).map((selectedTag) => selectedTag.name);
     const selectedCategoryTags = (categoryTags.filter((tag) => tag.isSelected)).map((selectedTag) => selectedTag.name);
     const selectedTags = selectedAnimalTags.concat(selectedCategoryTags);
+    const isQuestion = selectedCategoryTags.includes("QnA");
 
     AddPost({
+      writerID : currentUserId,
+      isQuestion : isQuestion,
+      isQuestionSolved : isQuestion ? false : null,
       title : titleInputRef.current,
       content : contentInputRef.current,
       img : {uri : imageUrl},
       tags : selectedTags,
-      profileNickName: "대충 닉네임",
-      postTime: "대충 등록된 시간",
+      postTime: GetDate(),
       likeNumber: 0,
       scrapeNumber: 0,
       comments : []
@@ -212,14 +215,14 @@ const CommunityWritingPost = () => {
     titleInputRef.current = "";
     contentInputRef.current = "";
     setImageUrl("")
-
+    
     const resetAnimalTags = animalTags.map((tag) => ({ ...tag, isSelected: false }));
     setAnimalTags(resetAnimalTags);
-
+    
     const resetCategoryTags = categoryTags.map((tag) => ({ ...tag, isSelected: false }));
     setCategoryTags(resetCategoryTags);
   }
-
+  
   return (
     <View style={{flex : 1}}>
       <WritingPostContainer>
@@ -301,7 +304,7 @@ const ContentsInput = styled.TextInput`
 
 /**게시물 작성 완료 버튼에 해당하는 태그 */
 const PostSendButton = styled.TouchableOpacity`
-    background-color: #6495ED90; 
+    background-color: #1399895f; 
     border-radius: 10px; 
     border-width:1px;
     padding : 5px 10px;

@@ -11,30 +11,25 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import Login from './screen/LoginKakao'
-import {KakaoLoginRedirect} from './screen/LoginKakao'
-import Home from "./screen/Home/home";
-import RecordDialog from "./screen/Home/RecordDialog";
-import WalkRecord from "./screen/Home/WalkRecord";
-import Calendars from "./screen/Home/calendars"
-import Hospital from "./screen/Hospital";
-import Counseling from "./screen/Counseling/Counsel";
-import Comunity from "./screen/Community/Comunity";
-import CommunityPost from "./screen/Community/CommunityPost";
-import CommunityWritingPost from "./screen/Community/CommunityWritingPost";
-import Menu from "./screen/Menu/Menu";
-import HospitalDetail from "./screen/HospitalDetail";
-import DoctorDetail from "./screen/Counseling/DoctorDetail";
-import ChangeProfileScreen from "./screen/Menu/Menu_ChangeProfile";
-import PetManagementScreen from "./screen/Menu/Menu_PetManagment";
-import SharedParentingScreen from "./screen/Menu/Menu_SharedParenting";
-import PostManagementScreen from "./screen/Menu/Menu_PostManagement";
-import ConsultationHistoryScreen from "./screen/Menu/Menu_ConsultationHistory";
-import OwnedConsultationsScreen from "./screen/Menu/Menu_OwnedConsultations";
-import PaymentMethodsScreen from "./screen/Menu/Menu_PaymentMethods";
-import VetCertificationScreen from "./screen/Menu/Menu_VetCertification";
-import RecordList from "./screen/Home/RecordList";
-
+import Home from './screen/Home/home';
+import RecordDialog from './screen/Home/RecordDialog'
+import Hospital from './screen/Hospital';
+import Counseling from './screen/Counseling/Counsel';
+import Comunity from './screen/Community/Comunity';
+import CommunityPost from './screen/Community/CommunityPost';
+import CommunityWritingPost from './screen/Community/CommunityWritingPost'
+import Menu from './screen/Menu/Menu';
+import HospitalDetail from './screen/HospitalDetail';
+import DoctorDetail from './screen/Counseling/DoctorDetail';
+import ChangeProfileScreen from './screen/Menu/Menu_ChangeProfile';
+import PetManagementScreen from './screen/Menu/Menu_PetManagment';
+import SharedParentingScreen from './screen/Menu/Menu_SharedParenting';
+import PostManagementScreen from './screen/Menu/Menu_PostManagement';
+import ConsultationHistoryScreen from './screen/Menu/Menu_ConsultationHistory';
+import OwnedConsultationsScreen from './screen/Menu/Menu_OwnedConsultations';
+import PaymentMethodsScreen from './screen/Menu/Menu_PaymentMethods';
+import VetCertificationScreen from './screen/Menu/Menu_VetCertification';
+ 
 const HomeStack = createNativeStackNavigator();
 const HospitalStack = createNativeStackNavigator();
 const CounselingStack = createNativeStackNavigator();
@@ -90,46 +85,14 @@ function MenuStackScreen() {
   return (
     <MenuStack.Navigator screenOptions={commonHeader}>
       <MenuStack.Screen name="Menu" component={Menu} />
-      <MenuStack.Screen
-        name="ChangeProfile"
-        component={ChangeProfileScreen}
-        options={{ title: "프로필 변경" }}
-      />
-      <MenuStack.Screen
-        name="PetManagement"
-        component={PetManagementScreen}
-        options={{ title: "반려동물 관리" }}
-      />
-      <MenuStack.Screen
-        name="SharedParenting"
-        component={SharedParentingScreen}
-        options={{ title: "공동 육아" }}
-      />
-      <MenuStack.Screen
-        name="PostManagement"
-        component={PostManagementScreen}
-        options={{ title: "작성 글 관리" }}
-      />
-      <MenuStack.Screen
-        name="ConsultationHistory"
-        component={ConsultationHistoryScreen}
-        options={{ title: "나의 상담 내역" }}
-      />
-      <MenuStack.Screen
-        name="OwnedConsultations"
-        component={OwnedConsultationsScreen}
-        options={{ title: "보유한 상담권" }}
-      />
-      <MenuStack.Screen
-        name="PaymentMethods"
-        component={PaymentMethodsScreen}
-        options={{ title: "결제 수단 관리" }}
-      />
-      <MenuStack.Screen
-        name="VetCertification"
-        component={VetCertificationScreen}
-        options={{ title: "수의사 인증" }}
-      />
+      <MenuStack.Screen name='ChangeProfile' component={ChangeProfileScreen} options={{title: "프로필 변경"}} />
+      <MenuStack.Screen name="PetManagement" component={PetManagementScreen} options={{title: "반려동물 관리"}} />
+      <MenuStack.Screen name='SharedParenting' component={SharedParentingScreen} options={{title: "공동 육아"}} />
+      <MenuStack.Screen name='PostManagement' component={PostManagementScreen} options={{title: "작성 글 관리"}} />
+      <MenuStack.Screen name='ConsultationHistory' component={ConsultationHistoryScreen} options={{title: "나의 상담 내역"}} />
+      <MenuStack.Screen name='OwnedConsultations' component={OwnedConsultationsScreen} options={{title: "보유한 상담권"}} />
+      <MenuStack.Screen name='PaymentMethods' component={PaymentMethodsScreen} options={{title: "결제 수단 관리"}} />
+      <MenuStack.Screen name='VetCertification' component={VetCertificationScreen} options={{title: "수의사 인증"}} />
     </MenuStack.Navigator>
   );
 }
