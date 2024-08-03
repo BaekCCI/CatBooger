@@ -208,15 +208,37 @@ export const usersProfile =
   { 
     id : 0,
     isDoctor : false,
-    doctorProfile : {hospitalName : '올리몰스 동물메디컬 센터'},
+    doctorProfile : null,
     NickName: 'Admin',
     profilePicture : null,
+    writtenPostsId : [0, 1],
+    writtenPostCommentsId : ['0-0']
   },
   { 
     id : 1,
     isDoctor : true,
     doctorProfile : {hospitalName : '올리몰스 동물메디컬 센터'},
-    NickName: '나 오예준 아니다다',
+    NickName: '길',
     profilePicture : {uri : 'https://cdn.pixabay.com/photo/2020/05/17/20/21/cat-5183427_1280.jpg'},
+    writtenPostsId : [],
+    writtenPostCommentsId : ['1-0']
+  },
+  {
+    id : 2,
+    isDoctor : false,
+    doctorProfile : null,
+    NickName: '괴문서맵게하는집',
+    profilePicture : {uri : 'https://cdn.pixabay.com/photo/2023/09/19/12/34/dog-8262506_1280.jpg'},
+    writtenPostsId동 : [2],
+    writtenPostCommentsId : ['2-0']
+  },
+  {
+    id : 3,
+    isDoctor : false,
+    doctorProfile : null,
+    NickName: '해리미',
+    profilePicture : {uri : 'https://cdn.pixabay.com/photo/2023/12/15/21/47/cat-8451431_1280.jpg'},
+    writtenPostsId동 : [3,4],
+    writtenPostCommentsId : ['3-0', '4-0', '2-1']
   }
 ]
