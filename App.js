@@ -11,6 +11,8 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
+import { UserProvider } from "./UseContext";
+
 import Main from './screen/Main';
 import AddAnimal from './screen/AddAnimal';
 
@@ -271,12 +273,14 @@ function MyTabs() {
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <NavigationContainer theme={navTheme}>
-        {/* <MyTabs /> */}
-        <LoginStackScreen />
-      </NavigationContainer>
-    </SafeAreaView>
+    <UserProvider>
+      <SafeAreaView style={styles.safeArea}>
+        <NavigationContainer theme={navTheme}>
+          {/* <MyTabs /> */}
+          <LoginStackScreen />
+        </NavigationContainer>
+      </SafeAreaView>
+    </UserProvider>
   );
 }
 

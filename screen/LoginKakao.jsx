@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 // import * as WebBrowser from 'expo-web-browser';
 // import * as AuthSession from 'expo-auth-session';
@@ -6,6 +6,8 @@ import { Button, View, Text, StyleSheet, ActivityIndicator } from 'react-native'
 import {WebView} from 'react-native-webview'
 import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { UserContext } from '../UseContext';
 
 import { CLIENT_ID, REDIRECT_URI } from '@env';
 
@@ -48,10 +50,13 @@ export default function Login({ navigation }) {
   );
 }
 
-export function KakaoLoginRedirect({ navigation, route }) {
+export function KakaoLoginRedirect() {
+  const navigation = useNavigation();
+  const route = useRoute();
   // params로 인가 코드 넘어옴
   const { code } = route.params;
   // const code = route.params.code;
+  const { setUserId } = useContext(UserContext);
   
   useEffect(() => {
     // 인가 코드가 정상적으로 넘어왔다면 백엔드 서버로 전달
@@ -63,6 +68,7 @@ export function KakaoLoginRedirect({ navigation, route }) {
         .get(`http://172.17.1.123:5000/oauth?code=${code}`)
         .then((getRes) => {
           console.log("login successful: ", getRes.data.id);
+          setUserId(getRes.data.id);
           //getRes.data를 넘겨주고 싶어요.... 이게 userid인데....git
           navigation.navigate('MyTabs', {
             userId: getRes.data.id, 
