@@ -38,6 +38,10 @@ const MenuScreen = ({navigation}) => {
               <MenuText>스크랩 글 목록</MenuText>
               <Icon name="chevron-forward-outline" size={24} color="#000" />
             </MenuItem>
+            <MenuItem onPress={() => navigation.navigate('CommentedPostsManagement')}>
+              <MenuText>댓글단 글 목록</MenuText>
+              <Icon name="chevron-forward-outline" size={24} color="#000" />
+            </MenuItem>
           </Section>
           <Section>
             <SectionHeader>

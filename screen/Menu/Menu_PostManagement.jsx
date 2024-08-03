@@ -9,6 +9,38 @@ const PetManagementScreen = ({ navigation }) => {
   /**커뮤니티 공용 데이터 */
   const {Posts, AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
   
+  /**좋아요의 개수를 표시할 태그*/
+  const LikeTag = ({ likeNumber }) => {
+    return (
+      <View style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}>
+        <Image source={require('../../assets/community/like_logo.png')} style = {{width : 15, height : 15}}/>
+        <Text style={{fontSize : 15}}>
+          {likeNumber}
+        </Text>
+      </View>
+    );
+  };
+
+  /**스크랩의 개수를 표시할 태그 */
+  const ScrapeTag = ({ scrapeNumber }) => {
+    return (
+      <View style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop : '1%'
+      }}>
+        <Image source={require('../../assets/community/scrape_logo.png')} style = {{width : 15, height : 15}}/>
+        <Text style={{fontSize : 15}}>
+          {scrapeNumber}
+        </Text>
+      </View>
+    );
+  };
+
+
   /**왜 안가지지? */
   const MoveToPost = (postDataId) => navigation.navigate('../Community/CommunityPost', {postDataId : postDataId});
   return (
@@ -17,11 +49,10 @@ const PetManagementScreen = ({ navigation }) => {
         <Container>
           <Title>작성 글 관리</Title>
           <HorizontalLine/>
-        </Container>
 
           {Posts.filter((post) => usersProfile[currentUserId].writtenPostsId.includes(post.id))
           .map((postData, index) => (
-          <Post key={index}>
+            <Post key={index}>
             <PostButton onPress={() => alert("게시물 이동")} style={{flexDirection:'row', alignItems:'center', gap : 5}}>
               <View style={{flex:3}}>
                 <View style={{marginBottom : '1%'}}>
@@ -45,11 +76,24 @@ const PetManagementScreen = ({ navigation }) => {
                   ))}
                 </TagsContainer>
 
+                <PostUnderContent>
+                <NickNameText>
+                  {usersProfile[postData.writerID] 
+                    ? usersProfile[postData.writerID].nickName 
+                    : 'Unknown User'}
+                </NickNameText>
+                <View style={{flexDirection:'row', gap : 5, top : 1.5}}>
+                  <LikeTag likeNumber={postData.likeNumber} />
+                  <ScrapeTag scrapeNumber={postData.scrapeNumber} />
+                </View>
+              </PostUnderContent>
+
               </View>
               {postData.img !== "" ? <PostImg source={postData.img}/> : null}
             </PostButton>
           </Post>
         ))}
+        </Container> 
       </SafeAreaView>
     </ScrollView>
   );

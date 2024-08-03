@@ -167,16 +167,16 @@ const CommunityPost = ({navigation}) => {
                       onPress={() => alert(usersProfile[comment.writerID].nickName + " 의사 프로필로 이동")}
                       style={{backgroundColor : '#5cc4b849', padding : '5%', borderRadius : 10, 
                             gap : 15, flexDirection : 'row', alignItems : 'center'}}>
-                        {usersProfile[comment.writerID].profilePicture === null ? 
+                        {usersProfile[comment.writerID].doctorProfile.profilePicture === null ? 
                           <Image source={basicProfilePicture}
                                 style={{width : 60, height : 60}} />
                         :
-                          <Image source={usersProfile[comment.writerID].profilePicture}
+                          <Image source={usersProfile[comment.writerID].doctorProfile.profilePicture}
                                 style={{width : 60, height : 60}} />
                         }
                         <View>
                           <Text style={{fontSize : 18, fontWeight : 'bold'}}>{usersProfile[comment.writerID].nickName + " 선생님"}</Text>
-                          <Text style={{color : '#595959'}}>{usersProfile[comment.writerID].doctorProfile.hospitalName}</Text>
+                          <Text ste={{color : '#595959'}}>{usersProfile[comment.writerID].doctorProfile.hospitalName}</Text>
                         </View>
                       </TouchableOpacity>
                     </View>
@@ -187,13 +187,6 @@ const CommunityPost = ({navigation}) => {
                     <TouchableOpacity 
                     onPress={() => alert(usersProfile[comment.writerID].nickName + " 개인 프로필로 이동")}
                     style={{flexDirection : 'row', gap : 5, alignSelf: 'flex-start'}}>
-                        {usersProfile[comment.writerID].profilePicture === null ? 
-                        <Image source={basicProfilePicture}
-                              style={{width : 20, height : 20, borderRadius : 50}} />
-                      :
-                        <Image source={usersProfile[comment.writerID].profilePicture}
-                              style={{width : 20, height : 20, borderRadius : 50}} />
-                      }
                       <ProfileNickName style={{lineHeight : 21}}>{usersProfile[comment.writerID].nickName}</ProfileNickName>
                     </TouchableOpacity>
                     <CommentText>{comment.content}</CommentText>
@@ -236,13 +229,6 @@ const CommunityPost = ({navigation}) => {
               <TouchableOpacity 
               onPress={() => alert(usersProfile[postData.writerID].nickName + " 개인 프로필로 이동")}
               style={{flexDirection:'row', gap : 5, alignItems : 'center'}}>
-                {usersProfile[postData.writerID].profilePicture === null ? 
-                    <Image source={basicProfilePicture}
-                          style={{width : 20, height : 20, borderRadius : 50}} />
-                  : 
-                    <Image source={usersProfile[postData.writerID].profilePicture}
-                          style={{width : 20, height : 20, borderRadius : 50}} />
-                  }
                 <ProfileNickName>{usersProfile[postData.writerID].nickName}</ProfileNickName>
               </TouchableOpacity>
               <PostedTime>{postData.postTime}</PostedTime>

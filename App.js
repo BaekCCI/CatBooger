@@ -23,6 +23,7 @@ import OwnedConsultationsScreen from './screen/Menu/Menu_OwnedConsultations';
 import PaymentMethodsScreen from './screen/Menu/Menu_PaymentMethods';
 import VetCertificationScreen from './screen/Menu/Menu_VetCertification';
 import ScrapedPostManagement from './screen/Menu/Menu_ScrapedPostManagement'
+import CommentedPostsManagement from './screen/Menu/Menu_CommentedPostsManagement'
 
 const HomeStack = createNativeStackNavigator();
 const HospitalStack = createNativeStackNavigator();
@@ -76,6 +77,7 @@ function MenuStackScreen() {
       <MenuStack.Screen name='SharedParenting' component={SharedParentingScreen} options={{title: "공동 육아"}} />
       <MenuStack.Screen name='PostManagement' component={PostManagementScreen} options={{title: "작성 글 관리"}} />
       <MenuStack.Screen name='ScrapedPostManagement' component={ScrapedPostManagement} options={{title: "스크랩 글 목록"}} />
+      <MenuStack.Screen name='CommentedPostsManagement' component={CommentedPostsManagement} options={{title: "댓글단 글 목록"}} />
       <MenuStack.Screen name='ConsultationHistory' component={ConsultationHistoryScreen} options={{title: "나의 상담 내역"}} />
       <MenuStack.Screen name='OwnedConsultations' component={OwnedConsultationsScreen} options={{title: "보유한 상담권"}} />
       <MenuStack.Screen name='PaymentMethods' component={PaymentMethodsScreen} options={{title: "결제 수단 관리"}} />
