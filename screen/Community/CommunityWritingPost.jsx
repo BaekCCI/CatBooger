@@ -26,7 +26,7 @@ const CommunityWritingPost = () => {
 
   const Tags = () => {
     return(
-      <View>
+      <View style={{paddingTop : 10, paddingBottom : 10}}>
         <View style={{flexDirection:'row', gap : 5, marginBottom : 5}}>
           <Text style={{fontSize : 15, fontWeight:'bold'}}>
             동물 :
@@ -37,7 +37,7 @@ const CommunityWritingPost = () => {
               onPress={() => SelectTag(animalTags, setAnimalTags, index)}
               style=
               {{borderWidth : 1, borderRadius:5, width : 50, height : 25,
-                backgroundColor : tag.isSelected ? '#c5e8ff' : null
+                backgroundColor : tag.isSelected ? '#c5e8ff' : null, justifyContent : 'center'
               }}>
               
               <Text style={{textAlign : 'center'}}>
@@ -59,7 +59,7 @@ const CommunityWritingPost = () => {
                 onPress={() => SelectTag(categoryTags, setCategoryTags, index)}
                 style=
                 {{borderWidth : 1, borderRadius:5, width : 50, height : 25,
-                  backgroundColor : tag.isSelected ? '#c5e8ff' : null,
+                  backgroundColor : tag.isSelected ? '#c5e8ff' : null, justifyContent : 'center',
                   marginRight : 5
                 }}>
                 
@@ -226,11 +226,12 @@ const CommunityWritingPost = () => {
   return (
     <View style={{flex : 1}}>
       <WritingPostContainer>
+          <TitleInputContainerTag/>
+
           <SelectTagsContainer>
             <Tags/>
+            <HorizontalLine style={{marginBottom : 0, marginTop : 0}}/>
           </SelectTagsContainer>
-
-          <TitleInputContainerTag/>
 
           <ImageInputContainerTag/>
 
@@ -242,7 +243,7 @@ const CommunityWritingPost = () => {
 
       <PostSendButton 
         onPress={() => {RegisterPost()}}>
-        <Text style={{fontSize : 14, fontWeight : 'bold'}}>
+        <Text style={{fontSize : 16, fontWeight : 'bold'}}>
           등록
         </Text>
       </PostSendButton>
@@ -279,7 +280,6 @@ font-size : 18px;
 /**글 태그 선택창을 담는 태그 */
 const SelectTagsContainer = styled.View`
   /* border : 1px solid #787878; */
-  margin-bottom : 2%;
   border-radius : 7px;
 `
 
@@ -312,6 +312,7 @@ const PostSendButton = styled.TouchableOpacity`
     justify-content:center;
     align-items:center;
     position : absolute;
+    width : 60px;
     bottom : 2%;
     right : 4%;
 `
