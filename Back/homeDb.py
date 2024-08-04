@@ -417,3 +417,72 @@ def delete_weight_event(user_id, weight_kg_id):
 
 if __name__ == '__main__':   
     app.run(host="0.0.0.0", port=5001)
+
+
+#animal db
+@app.route('/add_animal', methods=['POST'])
+def add_animal():
+    data = request.json
+
+    user_id = data.get('userId')
+    birth_date = data.get('birthDate')
+    breed = data.get('breed')
+    gender = data.get('gender')
+    name = data.get('name')
+    type_ = data.get('type')
+
+    if not all([birth_date, breed, gender, name, type_]):
+        return jsonify({"error": "Missing data fields"}), 400
+
+    try:
+        # 사용자 ID에 해당하는 경로 생성
+        user_ref = db_ref.child('users').child(user_id).child('animals')
+
+        # 동물 데이터 추가 (새로운 animalId 생성)
+        new_animal_ref = user_ref.push({
+            'birthDate': birth_date,
+            'breed': breed,
+            'gender': gender,
+            'name': name,
+            'type': type_
+        })
+
+        return jsonify({"message": "Animal added successfully", "animalId": new_animal_ref.key}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/get_animals/<user_id>', methods=['GET'])
+def get_animals(user_id):
+    try:
+        # 사용자 ID에 해당하는 동물 데이터 경로
+        user_ref = db_ref.child('users').child(user_id).child('animals')
+        
+        # 데이터 가져오기
+        animals = user_ref.get()
+
+        if animals is None:
+            return jsonify({"message": "No animals found for this user."}), 404
+
+        return jsonify(animals), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/delete_animal/<user_id>/<animal_id>', methods=['DELETE'])
+def delete_animal(user_id, animal_id):
+    try:
+        # 사용자 ID와 동물 ID에 해당하는 경로 설정
+        animal_ref = db_ref.child('users').child(user_id).child('animals').child(animal_id)
+        
+        # 데이터 존재 여부 확인
+        if animal_ref.get() is None:
+            return jsonify({"message": "Animal not found."}), 404
+        
+        # 데이터 삭제
+        animal_ref.delete()
+
+        return jsonify({"message": "Animal deleted successfully."}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':   
+    app.run(host="0.0.0.0", port=5001, debug=True)
