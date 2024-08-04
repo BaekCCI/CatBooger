@@ -13,9 +13,13 @@ import { CLIENT_ID, REDIRECT_URI } from '@env';
 
 // WebBrowser.maybeCompleteAuthSession();
 
-const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
 export default function Login({ navigation }) {
+
+  const id = CLIENT_ID;
+  const reu = REDIRECT_URI;
+
+const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
   console.log("-------------------------------")
   console.log(REDIRECT_URI);
 

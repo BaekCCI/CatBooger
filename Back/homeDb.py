@@ -84,6 +84,76 @@ def delete_bathing_event(user_id, bathing_id):
         return jsonify({"error": str(e)}), 500
 
 #defecation db
+@app.route('/add_defecation_event', methods=['POST'])
+def add_defecation_event():
+    data = request.json
+
+    user_id = data.get('userId')
+    defecation_id = data.get('defecationId')
+    date = data.get('date')
+    color = data.get('color')
+    color_p = data.get('colorP')
+    memo = data.get('memo')
+    type_ = data.get('type')
+
+    if not all([user_id, date]): #null값은 여기서 빼기
+        return jsonify({"error": "Missing data fields"}), 400
+
+    try:
+        # 사용자 ID에 해당하는 경로 생성
+        user_ref = db_ref.child('checklists').child(user_id).child('defecation')
+
+        # 배변 이벤트 추가
+        new_defecation_ref = user_ref.push({
+            'defecationId': defecation_id,
+            'dates': [
+                {
+                    'date': date,
+                    'color': color,
+                    'colorP': color_p,
+                    'memo': memo,
+                    'type': type_
+                }
+            ]
+        })
+
+        return jsonify({"message": "Defecation event added successfully", "id": new_defecation_ref.key}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/get_defecation_events/<user_id>', methods=['GET'])
+def get_defecation_events(user_id):
+    try:
+        # 사용자 ID에 해당하는 배변 데이터 경로
+        user_ref = db_ref.child('checklists').child(user_id).child('defecation')
+        
+        # 데이터 가져오기
+        defecation_events = user_ref.get()
+
+        if defecation_events is None:
+            return jsonify({"message": "No data found for this user."}), 404
+
+        return jsonify(defecation_events), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/delete_defecation_event/<user_id>/<defecation_id>', methods=['DELETE'])
+def delete_defecation_event(user_id, defecation_id):
+    try:
+        # 사용자 ID와 배변 기록 ID에 해당하는 경로 설정
+        defecation_ref = db_ref.child('checklists').child(user_id).child('defecation').child(defecation_id)
+        
+        # 데이터 존재 여부 확인
+        if defecation_ref.get() is None:
+            return jsonify({"message": "Defecation event not found."}), 404
+        
+        # 데이터 삭제
+        defecation_ref.delete()
+
+        return jsonify({"message": "Defecation event deleted successfully."}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 #feeding db
 @app.route('/add_feeding_event', methods=['POST'])
@@ -159,9 +229,8 @@ def add_medication_event():
     medication_id = data.get('medicationId')
     date = data.get('date')
     memo = data.get('memo')
-    name = data.get('name')
 
-    if not all([user_id, medication_id, date, memo, name]):
+    if not all([user_id, medication_id, date, memo]):
         return jsonify({"error": "Missing data fields"}), 400
 
     try:
@@ -175,7 +244,6 @@ def add_medication_event():
                 {
                     'date': date,
                     'memo': memo,
-                    'name': name
                 }
             ]
         })
