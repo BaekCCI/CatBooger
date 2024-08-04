@@ -7,7 +7,6 @@ import RNPickerSelect from 'react-native-picker-select';
 import axios from 'axios';
 import { UserContext } from '../../UseContext';
 
-
 const Uip = '192.168.1.172'
 
 export default function WalkRecord(){

@@ -83,7 +83,6 @@ def delete_bathing_event(user_id, bathing_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-#defecation db
 @app.route('/add_defecation_event', methods=['POST'])
 def add_defecation_event():
     data = request.json
@@ -153,7 +152,6 @@ def delete_defecation_event(user_id, defecation_id):
         return jsonify({"message": "Defecation event deleted successfully."}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 #feeding db
 @app.route('/add_feeding_event', methods=['POST'])
@@ -244,6 +242,7 @@ def add_medication_event():
                 {
                     'date': date,
                     'memo': memo,
+                    'name': name
                 }
             ]
         })
