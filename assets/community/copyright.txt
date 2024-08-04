@@ -1,8 +1,3 @@
 펜 아이콘
 <a href=://www.flaticon.com/free-icons/pencil" title="pencil icons">Pencil icons created by iconixar - Flaticon</a>
 
-카메라 아이콘
-<a href="https://www.flaticon.com/kr/free-icons/" title="카메라 아이콘">카메라 아이콘 제작자: Freepik - Flaticon</a>
-
-갤러리 아이콘
-<a href="https://www.flaticon.com/kr/free-icons/" title="사진 아이콘">사진 아이콘 제작자: Andrean Prabowo - Flaticon</a>
