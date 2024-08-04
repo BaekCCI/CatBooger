@@ -14,6 +14,10 @@ CORS(app)
 
 db_ref = db.reference()
 
+@app.route('/')
+def index():
+    return 'gehg'
+
 #목욕db
 @app.route('/add', methods=['POST'])
 def add_bathing_event():
@@ -226,6 +230,10 @@ def add_medication_event():
     medication_id = data.get('medicationId')
     date = data.get('date')
     memo = data.get('memo')
+    name = data.get('name')
+
+    if not all([user_id, medication_id, date, memo, name]):
+        return jsonify({"error": "Missing data fields"}), 400
 
     if not all([user_id, date]):
     try:
@@ -367,7 +375,7 @@ def add_walking_event():
             'walkingId': walking_id,
             'dates': [
                 {
-                    'date': date, #산책 시간 타입 설정
+                    'date': date,
                     'memo': memo
                 }
             ]
