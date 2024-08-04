@@ -47,10 +47,10 @@ const PetManagementScreen = ({ navigation }) => {
     <ScrollView>
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
         <Container>
-          <Title>작성 글 관리</Title>
+          <Title>스크랩 목록 확인</Title>
           <HorizontalLine/>
 
-          {Posts.filter((post) => usersProfile[currentUserId].writtenPostsId.includes(post.id))
+          {Posts.filter((post) => usersProfile[currentUserId].scrapedPosts.includes(post.id))
           .map((postData, index) => (
             <Post key={index}>
             <PostButton onPress={() => alert("게시물 이동")} style={{flexDirection:'row', alignItems:'center', gap : 5}}>

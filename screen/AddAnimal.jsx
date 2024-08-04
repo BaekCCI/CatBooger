@@ -7,6 +7,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import axios from 'axios';
 
+
 const UIp = '172.30.1.71';
 const userId = 'test';
 
@@ -37,7 +38,6 @@ export default function AddAnimal(){
         setIsModified(name!=='' && breed!=='' && gender!=='' && type!=='');
     }, [name, breed, gender, type]);
 
-
     //const { userId } = useContext(UserContext);
     useEffect(() => {
         console.log('userId:', userId, UIp); // userId가 제대로 설정되었는지 확인
@@ -63,21 +63,6 @@ export default function AddAnimal(){
             console.error('Error adding defection event:', error.response ? error.response.data : error.message);
         }
     };
-    /*
-            try{
-            const newAnimal = firebase.database().ref(`users/${userId}/animals`).push();
-            await newAnimal.set({
-                name,
-                birthDate : birth.toISOString(),
-                breed,
-                gender,
-                type
-            });
-            console.log('Animal added successfully');
-        }catch(error){
-            console.error('Error adding animal: ', error);
-        }
-    */
 
     return(
         <MainView>

@@ -228,8 +228,6 @@ def add_medication_event():
     memo = data.get('memo')
 
     if not all([user_id, date]):
-        return jsonify({"error": "Missing data fields"}), 400
-
     try:
         # 사용자 ID에 해당하는 경로 생성
         user_ref = db_ref.child('checklists').child(user_id).child('medication')
@@ -369,7 +367,7 @@ def add_walking_event():
             'walkingId': walking_id,
             'dates': [
                 {
-                    'date': date,
+                    'date': date, #산책 시간 타입 설정
                     'memo': memo
                 }
             ]
