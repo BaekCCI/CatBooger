@@ -11,25 +11,33 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import Home from './screen/Home/home';
-import RecordDialog from './screen/Home/RecordDialog'
-import Hospital from './screen/Hospital';
-import Counseling from './screen/Counseling/Counsel';
-import Comunity from './screen/Community/Comunity';
-import CommunityPost from './screen/Community/CommunityPost';
-import CommunityWritingPost from './screen/Community/CommunityWritingPost'
-import Menu from './screen/Menu/Menu';
-import HospitalDetail from './screen/HospitalDetail';
-import DoctorDetail from './screen/Counseling/DoctorDetail';
-import ChangeProfileScreen from './screen/Menu/Menu_ChangeProfile';
-import PetManagementScreen from './screen/Menu/Menu_PetManagment';
-import SharedParentingScreen from './screen/Menu/Menu_SharedParenting';
-import PostManagementScreen from './screen/Menu/Menu_PostManagement';
-import ConsultationHistoryScreen from './screen/Menu/Menu_ConsultationHistory';
-import OwnedConsultationsScreen from './screen/Menu/Menu_OwnedConsultations';
-import PaymentMethodsScreen from './screen/Menu/Menu_PaymentMethods';
-import VetCertificationScreen from './screen/Menu/Menu_VetCertification';
- 
+import Main from './screen/Main';
+import AddAnimal from './screen/AddAnimal';
+
+import Login from './screen/LoginKakao'
+import {KakaoLoginRedirect} from './screen/LoginKakao'
+import Home from "./screen/Home/home";
+import RecordDialog from "./screen/Home/RecordDialog";
+import WalkRecord from "./screen/Home/WalkRecord";
+import Calendars from "./screen/Home/calendars"
+import Hospital from "./screen/Hospital";
+import Counseling from "./screen/Counseling/Counsel";
+import Chatting from "./screen/Counseling/Chatting";
+import Comunity from "./screen/Community/Comunity";
+import CommunityPost from "./screen/Community/CommunityPost";
+import CommunityWritingPost from "./screen/Community/CommunityWritingPost";
+import Menu from "./screen/Menu/Menu";
+import HospitalDetail from "./screen/HospitalDetail";
+import DoctorDetail from "./screen/Counseling/DoctorDetail";
+import ChangeProfileScreen from "./screen/Menu/Menu_ChangeProfile";
+import PetManagementScreen from "./screen/Menu/Menu_PetManagment";
+import SharedParentingScreen from "./screen/Menu/Menu_SharedParenting";
+import PostManagementScreen from "./screen/Menu/Menu_PostManagement";
+import ConsultationHistoryScreen from "./screen/Menu/Menu_ConsultationHistory";
+import OwnedConsultationsScreen from "./screen/Menu/Menu_OwnedConsultations";
+import PaymentMethodsScreen from "./screen/Menu/Menu_PaymentMethods";
+import VetCertificationScreen from "./screen/Menu/Menu_VetCertification";
+
 const HomeStack = createNativeStackNavigator();
 const HospitalStack = createNativeStackNavigator();
 const CounselingStack = createNativeStackNavigator();
@@ -64,6 +72,7 @@ function CounselingStackScreen() {
     <CounselingStack.Navigator screenOptions={commonHeader}>
       <CounselingStack.Screen name="Counseling" component={Counseling} />
       <CounselingStack.Screen name="DoctorDetail" component={DoctorDetail} />
+      <CounselingStack.Screen name="Chatting" component={Chatting} />
     </CounselingStack.Navigator>
   );
 }
@@ -96,7 +105,10 @@ function MenuStackScreen() {
     </MenuStack.Navigator>
   );
 }
-
+/* 시작화면
+  <LoginStack.Screen name="Main" component={Main} options={{headerShown:false}}/>
+  <LoginStack.Screen name="AddAnimal" component={AddAnimal} options={{headerShown:false}}/>
+*/
 function LoginStackScreen() {
   return (
     <LoginStack.Navigator>
