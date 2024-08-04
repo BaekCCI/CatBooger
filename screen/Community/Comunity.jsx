@@ -2,7 +2,7 @@ import React, { useContext, useState, useSyncExternalStore } from "react";
 import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, SafeAreaView, Alert, Pressable, TextInput, PanResponder } from "react-native";
 import styled from "styled-components/native";
 import { HorizontalLine } from "./CommunityCommonStyles.jsx";
-import {PostsContext, PostsProvider, basicProfilePicture, initialAnimalTags, initialCategoryTags, usersProfile} from './CommunityCommonData.jsx'
+import {GetPost, PostsContext, PostsProvider, basicProfilePicture, initialAnimalTags, initialCategoryTags, usersProfile} from './CommunityCommonData.jsx'
 
 const Community = ({ navigation }) => {
   /**커뮤니티 공용 데이터 */
@@ -391,7 +391,6 @@ const Community = ({ navigation }) => {
         <SafeAreaView style={{flex : 1}}>
           <ScrollView style={{ backgroundColor: 'white'}} stickyHeaderIndices={[1]}>
             <StatusBar/>
-
             <View style=
             {{
               backgroundColor:'white', padding : '4%', paddingBottom : 5,
@@ -403,7 +402,17 @@ const Community = ({ navigation }) => {
                 <CommunityTagsContainer />
               </View>
             </View>
-
+            <TouchableOpacity onPress={async () => {
+                    const post = await GetPost("postId1");
+                    if (post) {
+                      alert("함수 외부 : " + post.title);
+                    } else {
+                      alert("포스트를 가져오지 못했습니다.");
+                    }
+                  }}
+              >
+              <Text>asdffdsa</Text>
+            </TouchableOpacity>
             <CommunityContainer>
               <CommunityPosts/>
               <FilterModalTag />

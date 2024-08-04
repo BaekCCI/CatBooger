@@ -1,4 +1,5 @@
 import { createContext, useState } from "react";
+import axios from 'axios';
 
 // 태그 데이터
 export const initialAnimalTags = [
@@ -255,3 +256,24 @@ export const usersProfile =
     scrapedPosts : []
   }
 ]
+//서버 데이터 가져오기
+
+const Uip = '192.168.137.14';
+
+export const GetPost = async (postId) => {
+  try {
+    const response = await axios.get(`http://${Uip}:5001/posts/${postId}`);
+    console.log('Response:', response.data);
+    alert("함수 내부 : " + response.data.title)
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      alert('게시물을 가져오는데 실패했습니다.');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching posts:', error.response ? error.response.data : error.message);
+    alert('게시물을 가져오는 과정에서 문제가 발생했습니다.');
+    return null;
+  }
+};
