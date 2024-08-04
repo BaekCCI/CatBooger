@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {View,Text,ImageBackground,Modal,TouchableWithoutFeedback, TouchableHighlight, StyleSheet } from "react-native";
 import styled from "styled-components";
 import { useNavigation } from "@react-navigation/native";
 import RNPickerSelect from 'react-native-picker-select';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
+import axios from 'axios';
 
+
+const UIp = '172.30.1.71';
+const userId = 'test';
 
 export default function AddAnimal(){
     const navigation = useNavigation();
@@ -33,13 +37,32 @@ export default function AddAnimal(){
     useEffect(() => {
         setIsModified(name!=='' && breed!=='' && gender!=='' && type!=='');
     }, [name, breed, gender, type]);
-    
 
-    const handleConfirm = () => {
+    //const { userId } = useContext(UserContext);
+    useEffect(() => {
+        console.log('userId:', userId, UIp); // userId가 제대로 설정되었는지 확인
+      }, [userId]);
 
+    const handleConfirm = async () => {
+        try{
+            const response = await axios.post(`http://${UIp}:5001/add_animal`,{
+                userId:String(userId),
+                name : name,
+                birthDate : birth.toISOString(),
+                breed : breed,
+                gender : gender,
+                type : type,             
+            });
+            console.log('Response: ', response.data);
+            if(response.status === 201){
+                alert('등록 완료');
+            }else{
+                alert('추가실패');
+            }
+        }catch(error){
+            console.error('Error adding defection event:', error.response ? error.response.data : error.message);
+        }
     };
-    
-
 
     return(
         <MainView>
