@@ -1,18 +1,28 @@
-import React, { useState, useSyncExternalStore } from "react";
+import React, { useContext, useRef, useState, useSyncExternalStore } from "react";
 import { View, ScrollView, Touchable, TouchableOpacity, Image, Modal,Text,TextInput} from "react-native";
 import { useRoute } from '@react-navigation/native';
 import styled from "styled-components";
 import { HorizontalLine} from "./CommunityCommonStyles.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {Posts, originPosts, setOriginPosts} from './CommunityCommonData.jsx'
+import {basicProfilePicture, currentUserId, GetDate, initialPosts, originPosts, PostsContext, PostsProvider, setOriginPosts, usersProfile} from './CommunityCommonData.jsx'
 
 /**이미지 데이터 */
-commentIcon = require('../../assets/community/comment_icon.png')
-sendCommentIcon = require('../../assets/community/send_comment_icon.png')
+const commentIcon = require('../../assets/community/comment_icon.png')
+const sendCommentIcon = require('../../assets/community/send_comment_icon.png')
+const adoptedCommentIcon = require('../../assets/community/adopted_comment_icon.png')
+const profilePircure =  {uri : 'https://cdn.pixabay.com/photo/2020/05/17/20/21/cat-5183427_1280.jpg'}
 
-const CommunityPost = () => {
+const CommunityPost = ({navigation}) => {
+  /**커뮤니티 공용 데이터 */
+  const {Posts, AddPost, UpdatePost, DeletePost, AddComment} = useContext(PostsContext)
+
   const route = useRoute();
-  const { postData } = route.params;
+  const { postDataId } = route.params;
+  const postData = Posts[postDataId]
+
+  const inputCommentRef = useRef("");
+
+  const MoveToDoctorPage = () => navigation.navigate('../Counseling/DoctorDetail')
 
   /**게시글 사진을 담는 태그 */
   const PostImgContainer = () => {  
@@ -27,109 +37,170 @@ const CommunityPost = () => {
     )
   }
 
-  /**댓글 쓰기 창의 열고 닫힘을 확인하는 state */
-  const [isWriteCommentOpened, setIsWriteCommentOpened] = useState(false);
-  const OpenWriteComment = () => setIsWriteCommentOpened(true);
-  const CloseWriteComment = () => setIsWriteCommentOpened(false);
+  /**댓글 등록할 때의 기능을 담은 함수 (매개변수 : 게시물 ID, 댓글 쓴 사람 닉네임, 댓글 내용, 댓글 등록 시간*/
+  const RegisterComment = (postId, writerID, content, date) => {
+    AddComment(postId, writerID, content, date);
+  }
 
   /**댓글 쓰기 버튼에 해당하는 태그 */
   const WriteCommentButton = () => {
     return(
-      isWriteCommentOpened 
-      ? 
       <CommentWritingContainer>
-        <CommentWritingButton
-        onPress={CloseWriteComment}
-        style={{
-          backgroundColor:'#6495ED90',
-          right : 10,
-          bottom : 5
-          }}
-          >
-            <Image source={commentIcon} style={{width:40,height:40}}/>
-        </CommentWritingButton>
-        
-        <View style={{width : '100%', borderTopWidth : 3, backgroundColor : '#ffffff', borderColor : '#c2c2c25c'}}>
+        <View style={{width : '100%'}}>
           <CommentWritingBox
               flexDirection="row"
               style = {{width : '95%', alignSelf : 'center'}}>
               <ScrollView >
-                <TextInput multiline={true} autoFocus={true} placeholder="댓글 작성" style={{height:40}} />
+                <TextInput 
+                onChangeText={(newText) => {inputCommentRef.current = newText}}
+                multiline={true} placeholder="댓글 작성" 
+                style={{height:40}}/>
               </ScrollView>
 
               <CommentSendButton 
-              onPress={() => alert("댓글 등록!")}>
+              onPress={() => {RegisterComment(postDataId, currentUserId, inputCommentRef.current, GetDate())}}>
               <Text style={{fontWeight:'bold'}}>
-                등록
+                댓글 등록
               </Text>
               </CommentSendButton>
           </CommentWritingBox>
         </View>
-
       </CommentWritingContainer>
-      :
-        <CommentWritingButton
-        onPress={OpenWriteComment}
-        style={{
-          position:'absolute', 
-          bottom:10, right:10, 
-          backgroundColor:'#ffffffdc'}}>
-          
-          <Image source={commentIcon} style={{width:40,height:40}} />
-        </CommentWritingButton>
     )
   }
     /**좋아요의 개수를 표시할 태그*/
   const LikeTag = ({ likeNumber }) => {
     return (
-      <View style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}>
-        <Image source={require('../../assets/community/like_logo.png')} style = {{width : 23, height : 23}}/>
-        <Text style={{fontSize : 16}}>
-          {" " + likeNumber + "     "}
-        </Text>
-      </View>
+      <TouchableOpacity onPress={() => {UpdatePost(postDataId, {...postData, likeNumber : likeNumber + 1})}}>
+        <View style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+          <Image source={require('../../assets/community/like_logo.png')} style = {{width : 23, height : 23}}/>
+          <Text style={{fontSize : 16}}>
+            {" " + likeNumber + "     "}
+          </Text>
+        </View>
+      </TouchableOpacity>
     );
   };
 
   /**스크랩의 개수를 표시할 태그 */
   const ScrapeTag = ({ scrapeNumber }) => {
     return (
-      <View style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}>
-        <Image source={require('../../assets/community/scrape_logo.png')} style = {{width : 23, height : 23}}/>
-        <Text style={{fontSize : 16}}>
-          {"" + scrapeNumber + " "}
-        </Text>
-      </View>
+      <TouchableOpacity onPress={() => {UpdatePost(postDataId, {...postData, scrapeNumber : scrapeNumber + 1})}}>
+        <View style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+          <Image source={require('../../assets/community/scrape_logo.png')} style = {{width : 23, height : 23}}/>
+          <Text style={{fontSize : 16}}>
+            {"" + scrapeNumber + " "}
+          </Text>
+        </View>
+      </TouchableOpacity>
     );
   };
 
+  const PostTitleContainer = () => {
+    return(
+      <View style={{flexDirection:'row', justifyContent : 'space-between', alignItems : 'baseline'}}>
+        <PostTitle>{postData.title}</PostTitle>
+        {postData.isQuestion ? 
+          postData.isQuestionSolved ?
+            <View>
+              <Text style={{color : 'white', fontWeight : '600', fontSize : 13, backgroundColor : '#23C6B3', 
+                paddingLeft : '2%', paddingRight : '2%', paddingBottom : '1%', marginBottom : '1%', paddingTop : '1%',
+                 borderRadius : 5, lineHeight : 17  }}>채택 완료</Text>
+            </View>
+          : null
+        :
+        null  
+      }
+      </View>
+    )
+  }
+
+  const Comments = () => {
+    return(
+      <CommentsContainer>
+      <CommentsContainerTitle>{'댓글 ' + postData.comments.length}</CommentsContainerTitle>
+      <HorizontalLine/>
+      {postData.comments.map((comment, index) => (
+        <View key={index}>
+            <Comment>
+              { 
+                usersProfile[comment.writerID].isDoctor ? 
+                  <View>
+                    <View>
+                      <TouchableOpacity 
+                      onPress={() => alert(usersProfile[comment.writerID].nickName + " 의사 프로필로 이동")}
+                      style={{backgroundColor : '#5cc4b849', padding : '5%', borderRadius : 10, 
+                            gap : 15, flexDirection : 'row', alignItems : 'center'}}>
+                        {usersProfile[comment.writerID].doctorProfile.profilePicture === null ? 
+                          <Image source={basicProfilePicture}
+                                style={{width : 60, height : 60}} />
+                        :
+                          <Image source={usersProfile[comment.writerID].doctorProfile.profilePicture}
+                                style={{width : 60, height : 60}} />
+                        }
+                        <View>
+                          <Text style={{fontSize : 18, fontWeight : 'bold'}}>{usersProfile[comment.writerID].nickName + " 선생님"}</Text>
+                          <Text ste={{color : '#595959'}}>{usersProfile[comment.writerID].doctorProfile.hospitalName}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                    <CommentText >{comment.content}</CommentText>
+                  </View>
+                :
+                  <View>
+                    <TouchableOpacity 
+                    onPress={() => alert(usersProfile[comment.writerID].nickName + " 개인 프로필로 이동")}
+                    style={{flexDirection : 'row', gap : 5, alignSelf: 'flex-start'}}>
+                      <ProfileNickName style={{lineHeight : 21}}>{usersProfile[comment.writerID].nickName}</ProfileNickName>
+                    </TouchableOpacity>
+                    <CommentText>{comment.content}</CommentText>
+                  </View>
+              }
+
+              {comment.isAdopted && 
+                <View style={{flexDirection : 'row', gap : 5}}>
+                  <Image source={adoptedCommentIcon} style={{width : 15, height : 15}}/>
+                  <Text style={{lineHeight : 16, color : '#595959'}}>채택된 답변</Text>
+                </View>
+              }
+
+              <CommentPostedTime>{comment.postTime}</CommentPostedTime>
+            </Comment>
+          <HorizontalLine />
+        </View>
+      ))}
+    </CommentsContainer>
+    )
+  }
   /**--------------------Post창의 메인 화면--------------------*/
   return (
-    <View style={{flex : 1}}>
-      <ScrollView backgroundColor='white'>
+    <View style={{flex : 1}}> 
+      <ScrollView backgroundColor='white' style={{flex : 1}}>
         <Post>
-          <PostTitle>{postData.title}</PostTitle>
-          <HorizontalLine />
-
+          <PostTitleContainer/>
+          <HorizontalLine/>
           <PostContent>{postData.content}</PostContent>
 
           <PostImgContainer/>
-
           <TagsContainer>
             {postData.tags.map((tag, index) => (
               <Tag key={index}>{'#' + tag}</Tag>
             ))}
           </TagsContainer>
-          
+            
           <PostUnderContainer>
             <PostUnderLeftContainer>
-              <ProfileNickName>{postData.profileNickName}</ProfileNickName>
+              <TouchableOpacity 
+              onPress={() => alert(usersProfile[postData.writerID].nickName + " 개인 프로필로 이동")}
+              style={{flexDirection:'row', gap : 5, alignItems : 'center'}}>
+                <ProfileNickName>{usersProfile[postData.writerID].nickName}</ProfileNickName>
+              </TouchableOpacity>
               <PostedTime>{postData.postTime}</PostedTime>
             </PostUnderLeftContainer>
             <PostUnderRightContainer>
@@ -141,31 +212,24 @@ const CommunityPost = () => {
 
         <HorizontalLine style={{
           height: 10,
-          backgroundColor: '#a6cbc6'
+          backgroundColor: '#96d3cb'
         }} />
 
-        <CommentsContainer>
-          <CommentsContainerTitle>{'댓글 ' + postData.comments.length}</CommentsContainerTitle>
-          <HorizontalLine />
-          {postData.comments.map((comment, index) => (
-            <View key={index}>
-              <Comment>
-                <ProfileNickName>{comment.profileNickName}</ProfileNickName>
-                <CommentText>{comment.content}</CommentText>
-                <CommentPostedTime>{comment.postTime}</CommentPostedTime>
-              </Comment>
-              <HorizontalLine />
-            </View>
-          ))}
-        </CommentsContainer>
+        <Comments/>
       </ScrollView>
-
       <WriteCommentButton/>
     </View>
   );
 };
 
-export default CommunityPost;
+const CommunityPostWithPostProvider = () => (
+  <PostsProvider>
+    <CommunityPost/>
+  </PostsProvider>
+)
+
+
+export default CommunityPostWithPostProvider;
 
 /**------게시물의 기본 내용을 담을 태그------*/
 const Post = styled.View`
@@ -263,8 +327,6 @@ const CommentText = styled.Text`
 
 /**게시물 댓글 쓰기 창의 내용들을 담을 태그 */
 const CommentWritingContainer = styled.View`
-  position : absolute;
-  bottom : 0;
   width : 100%;
 `
 /**게시물 댓글 쓰기 버튼에 해당하는 태그 */
@@ -278,7 +340,6 @@ const CommentWritingButton = styled.TouchableOpacity`
 /**게시물 댓글 쓰기를 활성화 시켰을 때 나오는 댓글 쓰기창에 해당하는 태그*/
 const CommentWritingBox = styled.View`
     margin : 10px;
-    flex: 1px; 
     border-width : 2px; 
     border-radius: 10px; 
     background-color: #fafafaeb; 
@@ -289,7 +350,7 @@ const CommentWritingBox = styled.View`
 const CommentSendButton = styled.TouchableOpacity`
     margin : 5px;
     margin-right : 10px;
-    width : 40px;
+    padding : 0 5px;
     height: 30px;
     background-color: #6495ED90; 
     border-radius:5px; 

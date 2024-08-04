@@ -12,7 +12,8 @@ export default function Main(){
             <CenterView>
             <LogoImg source={require('../assets/Home_active.png')}/>
             </CenterView>
-            <LoginBtn onPress={() => navigation.navigate('AddAnimal')}>
+            <LoginBtn onPress={() => navigation.navigate('Login')}> 
+             {/* 원래는 AddAnimal */}
                 <LoginTxt>시작하기</LoginTxt>
             </LoginBtn>
         </MainView>
