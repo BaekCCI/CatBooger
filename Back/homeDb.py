@@ -236,24 +236,24 @@ def add_medication_event():
         return jsonify({"error": "Missing data fields"}), 400
 
     if not all([user_id, date]):
-    try:
-        # 사용자 ID에 해당하는 경로 생성
-        user_ref = db_ref.child('checklists').child(user_id).child('medication')
+        try:
+            # 사용자 ID에 해당하는 경로 생성
+            user_ref = db_ref.child('checklists').child(user_id).child('medication')
 
-        # 약물 이벤트 추가
-        new_medication_ref = user_ref.push({
-            'medicationId': medication_id,
-            'dates': [
-                {
-                    'date': date,
-                    'memo': memo,
-                }
-            ]
-        })
+            # 약물 이벤트 추가
+            new_medication_ref = user_ref.push({
+                'medicationId': medication_id,
+                'dates': [
+                    {
+                        'date': date,
+                        'memo': memo,
+                    }
+                ]
+            })
 
-        return jsonify({"message": "Medication event added successfully", "id": new_medication_ref.key}), 201
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+            return jsonify({"message": "Medication event added successfully", "id": new_medication_ref.key}), 201
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
 @app.route('/get_medication_events/<user_id>', methods=['GET'])
 def get_medication_events(user_id):

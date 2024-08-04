@@ -66,17 +66,14 @@ def oauth_api():
         userRef.push(user)
         print("New user inserted")
 
-    # resp = make_response(render_template('index.html'))
-    # # access_token = create_access_token(identity=user.id)
-    # # refresh_token = create_refresh_token(identity=user.id)
-    # access_token = create_access_token(identity=user['id'])
-    # refresh_token = create_refresh_token(identity=user['id'])
-    # resp.set_cookie("logined", "true")
-    # set_access_cookies(resp, access_token)
-    # set_refresh_cookies(resp, refresh_token)
 
-    # return resp
-    return jsonify(user)
+    response_data = {
+        'user': user['id'],
+        'exists': exist
+    }
+
+    return jsonify(response_data)
+    # return jsonify(user)
 
 
 if __name__=='__main__':

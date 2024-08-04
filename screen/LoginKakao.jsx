@@ -65,14 +65,24 @@ export function KakaoLoginRedirect() {
       console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
       console.log(code);
       axios
-        .get(`http://172.30.1.71:5000/oauth?code=${code}`)
+        .get(`http://172.30.1.80:5000/oauth?code=${code}`)
         .then((getRes) => {
-          console.log("login successful: ", getRes.data.id);
-          setUserId(getRes.data.id);
-          //getRes.data를 넘겨주고 싶어요.... 이게 userid인데....git
-          navigation.navigate('MyTabs', {
-            userId: getRes.data.id, 
-          });
+          // console.log("login successful: ", getRes.data.id);
+          const { user, exists } = getRes.data;
+          // setUserId(getRes.data.id);
+          setUserId(user);
+
+          console.log(user + "-----------" + exists)
+          if (exists === null){
+            navigation.navigate('AddAnimal');
+          }
+          else {
+            navigation.navigate('MyTabs');
+          }
+
+          // navigation.navigate('MyTabs', {
+          //   userId: user, 
+          // });
           // navigation.navigate('Home');
         })
         .catch((error) => {
