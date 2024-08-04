@@ -5,7 +5,7 @@ import { basicProfilePicture, currentUserId, PostsContext, PostsProvider, usersP
 import { HorizontalLine } from '../Community/CommunityCommonStyles';
 
 
-const PetManagementScreen = ({ navigation }) => {
+const CommentedPostsManagementScreen = ({ navigation }) => {
   /**커뮤니티 공용 데이터 */
   const {Posts, AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
   
@@ -47,10 +47,10 @@ const PetManagementScreen = ({ navigation }) => {
     <ScrollView>
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
         <Container>
-          <Title>작성 글 관리</Title>
+          <Title>댓글단 글 목록</Title>
           <HorizontalLine/>
 
-          {Posts.filter((post) => usersProfile[currentUserId].writtenPostsId.includes(post.id))
+          {Posts.filter((post) => usersProfile[currentUserId].CommentedPostsId.includes(post.id))
           .map((postData, index) => (
             <Post key={index}>
             <PostButton onPress={() => alert("게시물 이동")} style={{flexDirection:'row', alignItems:'center', gap : 5}}>
@@ -99,15 +99,15 @@ const PetManagementScreen = ({ navigation }) => {
   );
 };
 
-const PetManagementScreenWithPostsProvider = ({ navigation }) => {
+const CommentedPostsManagementScreenWithPostsProvider = ({ navigation }) => {
   return(
     <PostsProvider>
-      <PetManagementScreen navigation={navigation}/>
+      <CommentedPostsManagementScreen navigation={navigation}/>
     </PostsProvider>
   )
 }
 
-export default PetManagementScreenWithPostsProvider;
+export default CommentedPostsManagementScreenWithPostsProvider;
 
 const Container = styled.View`
   flex: 1;

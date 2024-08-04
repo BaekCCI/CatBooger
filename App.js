@@ -53,6 +53,7 @@ function HomeStackScreen() {
       <HomeStack.Screen name="RecordDialog" component={RecordDialog} />
       <HomeStack.Screen name="WalkRecord" component={WalkRecord}/>
       <HomeStack.Screen name="Calendars" component={Calendars} />
+      <HomeStack.Screen name="RecordList" component={RecordList} />
     </HomeStack.Navigator>
   );
 }
@@ -93,46 +94,14 @@ function MenuStackScreen() {
   return (
     <MenuStack.Navigator screenOptions={commonHeader}>
       <MenuStack.Screen name="Menu" component={Menu} />
-      <MenuStack.Screen
-        name="ChangeProfile"
-        component={ChangeProfileScreen}
-        options={{ title: "프로필 변경" }}
-      />
-      <MenuStack.Screen
-        name="PetManagement"
-        component={PetManagementScreen}
-        options={{ title: "반려동물 관리" }}
-      />
-      <MenuStack.Screen
-        name="SharedParenting"
-        component={SharedParentingScreen}
-        options={{ title: "공동 육아" }}
-      />
-      <MenuStack.Screen
-        name="PostManagement"
-        component={PostManagementScreen}
-        options={{ title: "작성 글 관리" }}
-      />
-      <MenuStack.Screen
-        name="ConsultationHistory"
-        component={ConsultationHistoryScreen}
-        options={{ title: "나의 상담 내역" }}
-      />
-      <MenuStack.Screen
-        name="OwnedConsultations"
-        component={OwnedConsultationsScreen}
-        options={{ title: "보유한 상담권" }}
-      />
-      <MenuStack.Screen
-        name="PaymentMethods"
-        component={PaymentMethodsScreen}
-        options={{ title: "결제 수단 관리" }}
-      />
-      <MenuStack.Screen
-        name="VetCertification"
-        component={VetCertificationScreen}
-        options={{ title: "수의사 인증" }}
-      />
+      <MenuStack.Screen name='ChangeProfile' component={ChangeProfileScreen} options={{title: "프로필 변경"}} />
+      <MenuStack.Screen name="PetManagement" component={PetManagementScreen} options={{title: "반려동물 관리"}} />
+      <MenuStack.Screen name='SharedParenting' component={SharedParentingScreen} options={{title: "공동 육아"}} />
+      <MenuStack.Screen name='PostManagement' component={PostManagementScreen} options={{title: "작성 글 관리"}} />
+      <MenuStack.Screen name='ConsultationHistory' component={ConsultationHistoryScreen} options={{title: "나의 상담 내역"}} />
+      <MenuStack.Screen name='OwnedConsultations' component={OwnedConsultationsScreen} options={{title: "보유한 상담권"}} />
+      <MenuStack.Screen name='PaymentMethods' component={PaymentMethodsScreen} options={{title: "결제 수단 관리"}} />
+      <MenuStack.Screen name='VetCertification' component={VetCertificationScreen} options={{title: "수의사 인증"}} />
     </MenuStack.Navigator>
   );
 }
