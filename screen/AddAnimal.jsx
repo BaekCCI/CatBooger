@@ -37,23 +37,20 @@ export default function AddAnimal(){
         setIsModified(name!=='' && breed!=='' && gender!=='' && type!=='');
     }, [name, breed, gender, type]);
 
-
     //const { userId } = useContext(UserContext);
     useEffect(() => {
-        console.log('userId:', userId, uIp); // userId가 제대로 설정되었는지 확인
+        console.log('userId:', userId, UIp); // userId가 제대로 설정되었는지 확인
       }, [userId]);
 
     const handleConfirm = async () => {
         try{
-            const response = await axios.post(`http://${uIp}:5001/add_animal`,{
+            const response = await axios.post(`http://${UIp}:5001/add_animal`,{
                 userId:String(userId),
+                name : name,
                 birthDate : birth.toISOString(),
-                name : name,                
                 breed : breed,
                 gender : gender,
                 type : type,             
-            }, {
-                timeout: 10000 // 10초로 타임아웃 설정
             });
             console.log('Response: ', response.data);
             if(response.status === 201){
@@ -65,21 +62,6 @@ export default function AddAnimal(){
             console.error('Error adding defection event:', error.response ? error.response.data : error.message);
         }
     };
-    /*
-            try{
-            const newAnimal = firebase.database().ref(`users/${userId}/animals`).push();
-            await newAnimal.set({
-                name,
-                birthDate : birth.toISOString(),
-                breed,
-                gender,
-                type
-            });
-            console.log('Animal added successfully');
-        }catch(error){
-            console.error('Error adding animal: ', error);
-        }
-    */
 
     return(
         <MainView>

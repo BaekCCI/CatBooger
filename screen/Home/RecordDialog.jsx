@@ -1,8 +1,9 @@
-import React , {useState, useEffect} from 'react';
+import React , {useState, useEffect, useContext} from 'react';
 import { View, Keyboard,Text, Modal, TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useNavigationContainerRef, useRoute } from '@react-navigation/native';
 import axios from 'axios';
+import { UserContext } from '../../UseContext';
 
 export default function RecordDialog(){
     const navigation = useNavigation();
@@ -44,7 +45,7 @@ export default function RecordDialog(){
 
 }
 
-const Uip = '172.17.1.123'
+const Uip = '172.30.1.71'
 
 //급여
 const Feed = ({info}) => {
@@ -59,9 +60,28 @@ const Feed = ({info}) => {
     }, [text, bobCount, waterCount]);
 
     //완료 버튼 동작 (bobCount, waterCount, text 변수 저장해야함)
-    const handleComplete=()=>{
-            
-    }
+    const handleComplete = async () => {
+        try {
+          const response = await axios.post(`http://${Uip}:5001/add_medication_event`, {
+            userId: String(userId), // 실제 사용자 ID로 대체
+            feedingId: 'generated_id', // 실제 예방접종 ID로 대체
+            date: new Date().toISOString(), // 현재 날짜와 시간을 ISO 형식으로 변환
+            memo: text,
+          });
+          console.log('Response:', response.data);
+          if (response.status === 201) {
+            alert('급여 정보를 추가하였습니다!');
+            setText(''); // 완료 후 입력 필드 초기화
+            setIsModified(false); // 완료 후 버튼 비활성화
+            navigation.navigate('Home'); // 홈 화면으로 이동
+          } else {
+            alert('급여 정보 추가를 실패했습니다.');
+          }
+        } catch (error) {
+            console.error('Error adding feeding event:', error.response ? error.response.data : error.message);
+          alert('급여 정보를 추가하는 과정에서 문제가 발생했습니다.');
+        }
+    };
 
     const handleCount=(type)=>{
         switch(type){
@@ -136,6 +156,8 @@ const Feed = ({info}) => {
 const Medicine = ({info}) => {
     const [text, setText] = useState('');
     const [isModified, setIsModified] = useState(false);
+    const navigation = useNavigation();
+    const { userId } = useContext(UserContext);
 
     useEffect(() => {
         // Check if there are any changes in the input or counts
@@ -143,9 +165,28 @@ const Medicine = ({info}) => {
     }, [text]);
 
     //완료 버튼 동작 (text 변수 저장해야함)
-    const handleComplete=()=>{
-            
-    }
+    const handleComplete = async () => {
+        try {
+          const response = await axios.post(`http://${Uip}:5001/add_medication_event`, {
+            userId: String(userId), // 실제 사용자 ID로 대체
+            medicationId: 'generated_id', // 실제 예방접종 ID로 대체
+            date: new Date().toISOString(), // 현재 날짜와 시간을 ISO 형식으로 변환
+            memo: text,
+          });
+          console.log('Response:', response.data);
+          if (response.status === 201) {
+            alert('약 정보를 추가하였습니다!');
+            setText(''); // 완료 후 입력 필드 초기화
+            setIsModified(false); // 완료 후 버튼 비활성화
+            navigation.navigate('Home'); // 홈 화면으로 이동
+          } else {
+            alert('약 정보 추가를 실패했습니다.');
+          }
+        } catch (error) {
+            console.error('Error adding medication event:', error.response ? error.response.data : error.message);
+          alert('약 정보를 추가하는 과정에서 문제가 발생했습니다.');
+        }
+    };
     
 
     return(
@@ -174,6 +215,8 @@ const Kg = ({info}) => {
     const [text, setText] = useState('');
     const [isModified, setIsModified] = useState(false);
     const [kg, setKg]=useState(0);
+    const navigation = useNavigation();
+    const { userId } = useContext(UserContext);
 
     useEffect(() => {
         // Check if there are any changes in the input or counts
@@ -181,9 +224,29 @@ const Kg = ({info}) => {
     }, [text, kg]);
 
     //완료 버튼 동작 (kg, text 변수 저장해야함)
-    const handleComplete=()=>{
-            
-    }
+    const handleComplete = async () => {
+        try {
+          const response = await axios.post(`http://${Uip}:5001/add_weight_event`, {
+            userId: String(userId), // 실제 사용자 ID로 대체
+            weightKgId: 'generated_id', // 실제 예방접종 ID로 대체
+            date: new Date().toISOString(), // 현재 날짜와 시간을 ISO 형식으로 변환
+            memo: text,
+            weightKg: kg,
+          });
+          console.log('Response:', response.data);
+          if (response.status === 201) {
+            alert('체중 정보를 추가하였습니다!');
+            setText(''); // 완료 후 입력 필드 초기화
+            setIsModified(false); // 완료 후 버튼 비활성화
+            navigation.navigate('Home'); // 홈 화면으로 이동
+          } else {
+            alert('체중 정보 추가를 실패했습니다.');
+          }
+        } catch (error) {
+            console.error('Error adding weight event:', error.response ? error.response.data : error.message);
+          alert('체중 정보를 추가하는 과정에서 문제가 발생했습니다.');
+        }
+    };
 
 
     return(
@@ -231,6 +294,8 @@ const Poop = ({info}) => {
     const [poopColor, setPoopColor]=useState('none');
     const [poopStatus, setPoopStatus] = useState('none');
     const [peeColor, setPeeColor] = useState('none');
+    const navigation = useNavigation();
+    const { userId } = useContext(UserContext);
 
 
     useEffect(() => {
@@ -256,9 +321,32 @@ const Poop = ({info}) => {
     }
 
     //완료 버튼 동작 ( poopColor, poopStatus, peeColor, text 변수 저장해야함)
-    const handleComplete=()=>{
-            
-    }
+    const handleComplete = async () => {
+        try {
+          const response = await axios.post(`http://${Uip}:5001/add_defecation_event`, {
+            userId: String(userId), 
+            defecationId: 'generated_id', 
+            date: new Date().toISOString(), // 현재 날짜와 시간을 ISO 형식으로 변환
+            color: poopColor,
+            colorP: peeColor,
+            memo: text,
+            state: poopStatus,
+            type: poopBtn ? 'poop' : (peeBtn ? 'pee' : 'none'),
+          });
+          console.log('Response:', response.data);
+          if (response.status === 201) {
+            alert('대소변 정보를 추가하였습니다!');
+            setText(''); // 완료 후 입력 필드 초기화
+            setIsModified(false); // 완료 후 버튼 비활성화
+            navigation.navigate('Home'); // 홈 화면으로 이동
+          } else {
+            alert('대소변 정보 추가를 실패했습니다.');
+          }
+        } catch (error) {
+            console.error('Error adding defection event:', error.response ? error.response.data : error.message);
+          alert('대소변 정보를 추가하는 과정에서 문제가 발생했습니다.');
+        }
+    };
 
 
     return(
@@ -370,6 +458,8 @@ const Poop = ({info}) => {
 const Vaccine = ({info}) => {
     const [text, setText] = useState('');
     const [isModified, setIsModified] = useState(false);
+    const navigation = useNavigation();
+    const { userId } = useContext(UserContext);
 
     useEffect(() => {
         // Check if there are any changes in the input or counts
@@ -377,9 +467,28 @@ const Vaccine = ({info}) => {
     }, [text]);
 
     //완료 버튼 동작 (text 변수 저장해야함)
-    const handleComplete=()=>{
-            
-    }
+    const handleComplete = async () => {
+        try {
+          const response = await axios.post(`http://${Uip}:5001/add_vaccination_event`, {
+            userId: String(userId), // 실제 사용자 ID로 대체
+            vaccinationId: 'generated_id', // 실제 예방접종 ID로 대체
+            date: new Date().toISOString().split('T')[0], // 현재 날짜를 'YYYY-MM-DD' 형식으로 변환
+            memo: text,
+          });
+          console.log('Response:', response.data);
+          if (response.status === 201) {
+            alert('백신 정보를 추가하였습니다!');
+            setText(''); // 완료 후 입력 필드 초기화
+            setIsModified(false); // 완료 후 버튼 비활성화
+            navigation.navigate('Home'); // 홈 화면으로 이동
+          } else {
+            alert('백신 정보 추가를 실패했습니다.');
+          }
+        } catch (error) {
+            console.error('Error adding vaccination event:', error.response ? error.response.data : error.message);
+          alert('백신 정보를 추가하는 과정에서 문제가 발생했습니다.');
+        }
+    };
 
 
 
@@ -411,19 +520,24 @@ const Bath = ({info}) => {
     const [text, setText] = useState('');
     const [isModified, setIsModified] = useState(false);
     const navigation = useNavigation();
+    const { userId } = useContext(UserContext);
 
     useEffect(() => {
         // Check if there are any changes in the input or counts
         setIsModified(text !== '');
     }, [text]);
 
+    useEffect(() => {
+        console.log('userId:', userId); // userId가 제대로 설정되었는지 확인
+      }, [userId]);
+
     //완료 버튼 동작 (text 변수 저장해야함)
     const handleComplete = async () => {
         try {
           const response = await axios.post(`http://${Uip}:5001/add`, {
-            userId: '3647105059', // 실제 사용자 ID로 대체
+            userId: String(userId), // 실제 사용자 ID로 대체
             bathingId: 'generated_id', // 실제 목욕 ID로 대체
-            date: new Date().toISOString().split('T')[0], // 현재 날짜를 'YYYY-MM-DD' 형식으로 변환
+            date: new Date().toISOString(), // 현재 날짜를 'YYYY-MM-DD' 형식으로 변환
             memo: text,
           });
           console.log('Response:', response.data);
@@ -433,11 +547,11 @@ const Bath = ({info}) => {
             setIsModified(false); // 완료 후 버튼 비활성화
             navigation.navigate('Home'); // 홈 화면으로 이동
           } else {
-            alert('Failed to add bathing event');
+            alert('목욕 정보 추가를 실패했습니다.');
           }
         } catch (error) {
-          console.error('Error adding bathing event:', error);
-          alert('An error occurred while adding the bathing event');
+            console.error('Error adding bathing event:', error.response ? error.response.data : error.message);
+          alert('목욕 정보를 추가하는 과정에서 문제가 발생했습니다.');
         }
     };
 
