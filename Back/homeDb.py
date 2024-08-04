@@ -355,9 +355,10 @@ def add_walking_event():
     user_id = data.get('userId')
     walking_id = data.get('walkingId')
     date = data.get('date')
+    time = data.get('time')
     memo = data.get('memo')
 
-    if not all([user_id, date]):
+    if not all([user_id, date, time]):
         return jsonify({"error": "Missing data fields"}), 400
 
     try:
@@ -370,6 +371,7 @@ def add_walking_event():
             'dates': [
                 {
                     'date': date,
+                    'time': time,
                     'memo': memo
                 }
             ]

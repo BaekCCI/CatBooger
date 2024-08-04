@@ -1,52 +1,87 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, Modal, StyleSheet } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import styled from 'styled-components/native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-
-const initialSchedules = {
-  '2024-08-01': [
-    { time: '09:30', title: '미용실 가기', icon: '🐶' },
-    { time: '10:30', title: '병원 예방접종', icon: '🐱' },
-  ],
-  '2024-08-02': [
-    { time: '09:00', title: '출근', icon: '🐶' },
-    { time: '18:00', title: '퇴근', icon: '🐱' },
-  ],
-  // 추가 일정 데이터
-};
+import React, { useState, useEffect, useContext } from "react";
+import {
+  SafeAreaView,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+  Modal,
+  StyleSheet,
+} from "react-native";
+import { Calendar } from "react-native-calendars";
+import styled from "styled-components/native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { UserContext } from "../../UseContext";
+import { ref, set, onValue } from "firebase/database";
+import { database } from "../../firebaseConfig";
 
 const CalendarScreen = () => {
-  const [selectedDate, setSelectedDate] = useState('');
-  const [schedules, setSchedules] = useState(initialSchedules);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [schedules, setSchedules] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
-  const [newSchedule, setNewSchedule] = useState({ time: '', title: '' });
+  const [newSchedule, setNewSchedule] = useState({ title: "", memo: "" });
+  const [selectedTime, setSelectedTime] = useState(null);
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
+  const { userId } = useContext(UserContext);
 
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
   };
 
-  const renderScheduleItem = ({ item }) => (
-    <ScheduleItem>
-      <ScheduleTime>{item.time}</ScheduleTime>
-      <ScheduleTitle>{item.title}</ScheduleTitle>
-      <ScheduleIcon>{item.icon}</ScheduleIcon>
-    </ScheduleItem>
-  );
+  const fetchSchedules = (date) => {
+    const scheduleRef = ref(database, `calendar/${userId}`);
+    onValue(scheduleRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setSchedules((prevSchedules) => ({
+          ...prevSchedules,
+          [date]: Object.values(data).filter(event => event.date.startsWith(date)),
+        }));
+      } else {
+        setSchedules((prevSchedules) => ({
+          ...prevSchedules,
+          [date]: [],
+        }));
+      }
+    });
+  };
 
-  const selectedSchedules = schedules[selectedDate] || [];
+  useEffect(() => {
+    if (selectedDate) {
+      fetchSchedules(selectedDate);
+    }
+  }, [selectedDate]);
 
   const addSchedule = () => {
-    if (newSchedule.time && newSchedule.title) {
+    if (selectedTime && newSchedule.title) {
       const updatedSchedules = { ...schedules };
       if (!updatedSchedules[selectedDate]) {
         updatedSchedules[selectedDate] = [];
       }
-      updatedSchedules[selectedDate].push({ ...newSchedule, icon: '🐾' });
-      setSchedules(updatedSchedules);
-      setNewSchedule({ time: '', title: '' });
-      setModalVisible(false);
+
+      const newId = Date.now().toString(); // 고유한 ID 생성
+      const scheduleData = {
+        ...newSchedule,
+        date: `${selectedDate}T${selectedTime}:00`, // 선택한 날짜와 입력한 시간을 결합
+        notificationTime: new Date().toISOString(), // 일정을 게시한 시간을 ISO 형식으로 변환
+      };
+
+      updatedSchedules[selectedDate].push(scheduleData);
+
+      // Firebase에 새 일정 추가
+      const scheduleRef = ref(database, `calendar/${userId}/${newId}`);
+      set(scheduleRef, scheduleData)
+        .then(() => {
+          setSchedules(updatedSchedules);
+          setNewSchedule({ title: "", memo: "" });
+          setSelectedTime(null);
+          setModalVisible(false);
+          fetchSchedules(selectedDate); // 최신 데이터를 다시 불러옴
+        })
+        .catch((error) => {
+          console.error("Failed to add schedule:", error);
+        });
     }
   };
 
@@ -61,10 +96,20 @@ const CalendarScreen = () => {
   const handleTimeConfirm = (time) => {
     const hours = time.getHours();
     const minutes = time.getMinutes();
-    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    setNewSchedule({ ...newSchedule, time: formattedTime });
+    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+    setSelectedTime(formattedTime);
     hideTimePicker();
   };
+
+  const renderScheduleItem = ({ item }) => (
+    <ScheduleItem>
+      <ScheduleTime>{new Date(item.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</ScheduleTime>
+      <ScheduleTitle>{item.title}</ScheduleTitle>
+      <ScheduleMemo>{item.memo}</ScheduleMemo>
+    </ScheduleItem>
+  );
+
+  const selectedSchedules = schedules[selectedDate] || [];
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -72,7 +117,11 @@ const CalendarScreen = () => {
         <Calendar
           onDayPress={onDayPress}
           markedDates={{
-            [selectedDate]: { selected: true, marked: true, selectedColor: 'blue' },
+            [selectedDate]: {
+              selected: true,
+              marked: true,
+              selectedColor: "blue",
+            },
           }}
         />
         {selectedDate ? (
@@ -108,12 +157,22 @@ const CalendarScreen = () => {
             <ModalView>
               <ModalTitle>새 일정 추가</ModalTitle>
               <TouchableOpacity onPress={showTimePicker} style={styles.input}>
-                <Text>{newSchedule.time ? newSchedule.time : "시간 선택"}</Text>
+                <Text>{selectedTime ? selectedTime : "시간 선택"}</Text>
               </TouchableOpacity>
               <TextInput
                 placeholder="일정 제목"
                 value={newSchedule.title}
-                onChangeText={(text) => setNewSchedule({ ...newSchedule, title: text })}
+                onChangeText={(text) =>
+                  setNewSchedule({ ...newSchedule, title: text })
+                }
+                style={styles.input}
+              />
+              <TextInput
+                placeholder="메모"
+                value={newSchedule.memo}
+                onChangeText={(text) =>
+                  setNewSchedule({ ...newSchedule, memo: text })
+                }
                 style={styles.input}
               />
               <ModalSection>
@@ -193,8 +252,10 @@ const ScheduleTitle = styled.Text`
   flex: 1;
 `;
 
-const ScheduleIcon = styled.Text`
-  font-size: 24px;
+const ScheduleMemo = styled.Text`
+  font-size: 16px;
+  color: #333;
+  flex: 1;
 `;
 
 const ModalContainer = styled.View`
@@ -241,11 +302,11 @@ const ModalButtonText = styled.Text`
 
 const styles = StyleSheet.create({
   input: {
-    width: '100%',
+    width: "100%",
     padding: 10,
     marginVertical: 5,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 5,
   },
 });
