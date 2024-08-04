@@ -13,9 +13,13 @@ import { CLIENT_ID, REDIRECT_URI } from '@env';
 
 // WebBrowser.maybeCompleteAuthSession();
 
-const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
 export default function Login({ navigation }) {
+  const id = CLIENT_ID;
+  const reu = REDIRECT_URI;
+
+const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
   console.log("-------------------------------")
   console.log(REDIRECT_URI);
 
@@ -66,8 +70,7 @@ export function KakaoLoginRedirect() {
       console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
       console.log(code);
       axios
-        .get(`http://172.30.1.26:5000/oauth?code=${code}`)
-
+        .get(`http://192.168.1.172:5000/oauth?code=${code}`)
         .then((getRes) => {
           console.log("login successful: ", getRes.data.id);
           setUserId(getRes.data.id);
