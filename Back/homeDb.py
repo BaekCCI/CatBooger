@@ -28,7 +28,7 @@ def add_bathing_event():
     date = data.get('date')
     memo = data.get('memo')
 
-    if not all([user_id, date]):
+    if not all([user_id, bathing_id, date, memo]):
         return jsonify({"error": "Missing data fields"}), 400
 
     try:
@@ -84,77 +84,6 @@ def delete_bathing_event(user_id, bathing_id):
         return jsonify({"error": str(e)}), 500
 
 #defecation db
-@app.route('/add_defecation_event', methods=['POST'])
-def add_defecation_event():
-    data = request.json
-
-    user_id = data.get('userId')
-    defecation_id = data.get('defecationId')
-    date = data.get('date')
-    color = data.get('color')
-    color_p = data.get('colorP')
-    memo = data.get('memo')
-    state = data.get('state')
-    type_ = data.get('type')
-
-    if not all([user_id, date]): #null값은 여기서 빼기
-        return jsonify({"error": "Missing data fields"}), 400
-
-    try:
-        # 사용자 ID에 해당하는 경로 생성
-        user_ref = db_ref.child('checklists').child(user_id).child('defecation')
-
-        # 배변 이벤트 추가
-        new_defecation_ref = user_ref.push({
-            'defecationId': defecation_id,
-            'dates': [
-                {
-                    'date': date,
-                    'color': color,
-                    'colorP': color_p,
-                    'memo': memo,
-                    'state': state,
-                    'type': type_
-                }
-            ]
-        })
-
-        return jsonify({"message": "Defecation event added successfully", "id": new_defecation_ref.key}), 201
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/get_defecation_events/<user_id>', methods=['GET'])
-def get_defecation_events(user_id):
-    try:
-        # 사용자 ID에 해당하는 배변 데이터 경로
-        user_ref = db_ref.child('checklists').child(user_id).child('defecation')
-        
-        # 데이터 가져오기
-        defecation_events = user_ref.get()
-
-        if defecation_events is None:
-            return jsonify({"message": "No data found for this user."}), 404
-
-        return jsonify(defecation_events), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/delete_defecation_event/<user_id>/<defecation_id>', methods=['DELETE'])
-def delete_defecation_event(user_id, defecation_id):
-    try:
-        # 사용자 ID와 배변 기록 ID에 해당하는 경로 설정
-        defecation_ref = db_ref.child('checklists').child(user_id).child('defecation').child(defecation_id)
-        
-        # 데이터 존재 여부 확인
-        if defecation_ref.get() is None:
-            return jsonify({"message": "Defecation event not found."}), 404
-        
-        # 데이터 삭제
-        defecation_ref.delete()
-
-        return jsonify({"message": "Defecation event deleted successfully."}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 #feeding db
 @app.route('/add_feeding_event', methods=['POST'])
@@ -166,7 +95,7 @@ def add_feeding_event():
     date = data.get('date')
     memo = data.get('memo')
 
-    if not all([user_id, date]):
+    if not all([user_id, feeding_id, date, memo]):
         return jsonify({"error": "Missing data fields"}), 400
 
     try:
@@ -235,7 +164,6 @@ def add_medication_event():
     if not all([user_id, medication_id, date, memo, name]):
         return jsonify({"error": "Missing data fields"}), 400
 
-    if not all([user_id, date]):
     try:
         # 사용자 ID에 해당하는 경로 생성
         user_ref = db_ref.child('checklists').child(user_id).child('medication')
@@ -247,6 +175,7 @@ def add_medication_event():
                 {
                     'date': date,
                     'memo': memo,
+                    'name': name
                 }
             ]
         })
@@ -298,7 +227,7 @@ def add_vaccination_event():
     date = data.get('date')
     memo = data.get('memo')
 
-    if not all([user_id, date]):
+    if not all([user_id, vaccination_id, date, memo]):
         return jsonify({"error": "Missing data fields"}), 400
 
     try:
@@ -361,9 +290,10 @@ def add_walking_event():
     user_id = data.get('userId')
     walking_id = data.get('walkingId')
     date = data.get('date')
+    time = data.get('time')
     memo = data.get('memo')
 
-    if not all([user_id, date]):
+    if not all([user_id, date, time]):
         return jsonify({"error": "Missing data fields"}), 400
 
     try:
@@ -376,6 +306,7 @@ def add_walking_event():
             'dates': [
                 {
                     'date': date,
+                    'time': time,
                     'memo': memo
                 }
             ]
@@ -429,7 +360,7 @@ def add_weight_event():
     memo = data.get('memo')
     weight_kg = data.get('weightKg')
 
-    if not all([user_id, date]):
+    if not all([user_id, weight_kg_id, date, memo, weight_kg]):
         return jsonify({"error": "Missing data fields"}), 400
 
     try:
@@ -485,6 +416,11 @@ def delete_weight_event(user_id, weight_kg_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+if __name__ == '__main__':   
+    app.run(host="0.0.0.0", port=5001)
+
+
 #animal db
 @app.route('/add_animal', methods=['POST'])
 def add_animal():
@@ -498,7 +434,7 @@ def add_animal():
     type_ = data.get('type')
 
     if not all([birth_date, breed, gender, name, type_]):
-      return jsonify({"error": "Missing data fields"}), 400
+        return jsonify({"error": "Missing data fields"}), 400
 
     try:
         # 사용자 ID에 해당하는 경로 생성
