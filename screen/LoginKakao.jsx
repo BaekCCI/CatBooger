@@ -16,6 +16,7 @@ import { CLIENT_ID, REDIRECT_URI } from '@env';
 const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
 export default function Login({ navigation }) {
+  console.log("-------------------------------")
   console.log(REDIRECT_URI);
 
   return (

@@ -1,8 +1,14 @@
-import React , {useState, useEffect} from 'react';
+import React , {useState, useEffect, useContext} from 'react';
 import { View, Keyboard,Text, Modal, TouchableOpacity, TouchableWithoutFeedback, Button, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import RNPickerSelect from 'react-native-picker-select';
+
+import axios from 'axios';
+import { UserContext } from '../../UseContext';
+
+
+const Uip = '172.30.1.26'
 
 export default function WalkRecord(){
     const navigation = useNavigation();
@@ -11,11 +17,12 @@ export default function WalkRecord(){
     const {time} = route.params;
 
     const [text, setText] = useState('');
-    const [saveTime, setSaveTime] = useState('00:00:00');
 
     const [selectedHour, setSelectedHour] = useState(null);
     const [selectedMinute, setSelectedMinute] = useState(null);
     const [selectedSecond, setSelectedSecond] = useState(null);
+ 
+    const { userId } = useContext(UserContext);
   
     // useEffect를 사용하여 초기 값을 설정
     useEffect(() => {
@@ -46,8 +53,30 @@ export default function WalkRecord(){
     }
 
     //완료 버튼 동작 (saveTime, text 변수 저장해야함)
-    const handleComplete=()=>{
-        setSaveTime(`${selectedHour}:${selectedMinute}:${selectedSecond}`);
+    const handleComplete= async ()=>{
+        const time = `${selectedHour}:${selectedMinute}:${selectedSecond}`;
+
+        try {
+            const response = await axios.post(`http://${Uip}:5001/add_walking_event`, {
+              userId: String(userId), // 실제 사용자 ID로 대체
+              walkingId: 'generated_id', // 실제 예방접종 ID로 대체
+              date: new Date().toISOString(),
+              time : time,
+              memo: text,
+            });
+            console.log('Response:', response.data);
+            if (response.status === 201) {
+              alert('산책 정보를 추가하였습니다!');
+              setText(''); // 완료 후 입력 필드 초기화
+              setIsModified(false); // 완료 후 버튼 비활성화
+              navigation.navigate('Home'); // 홈 화면으로 이동
+            } else {
+              alert('산책 정보 추가를 실패했습니다.');
+            }
+          } catch (error) {
+              console.error('Error adding walking event:', error.response ? error.response.data : error.message);
+            alert(`산책 정보를 추가하는 과정에서 문제가 발생했습니다.`);
+          }
     }
 
     return (
