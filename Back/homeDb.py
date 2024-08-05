@@ -251,6 +251,7 @@ def add_medication_event():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.route('/get_medication_events/<user_id>', methods=['GET'])
 def get_medication_events(user_id):
     try:

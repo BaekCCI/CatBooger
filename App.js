@@ -29,6 +29,7 @@ import Comunity from "./screen/Community/Comunity";
 import CommunityPost from "./screen/Community/CommunityPost";
 import CommunityWritingPost from "./screen/Community/CommunityWritingPost";
 import Menu from "./screen/Menu/Menu";
+import {KakaoLogout} from "./screen/Menu/Menu";
 import HospitalDetail from "./screen/HospitalDetail";
 import DoctorDetail from "./screen/Counseling/DoctorDetail";
 import ChangeProfileScreen from "./screen/Menu/Menu_ChangeProfile";
@@ -134,6 +135,8 @@ function MenuStackScreen() {
         component={VetCertificationScreen}
         options={{ title: "수의사 인증" }}
       />
+      <MenuStack.Screen name="KakaoLogout" component={KakaoLogout}/>
+      <MenuStack.Screen name="loginstack" component={LoginStackScreen}/>
     </MenuStack.Navigator>
   );
 }
@@ -144,6 +147,8 @@ function MenuStackScreen() {
 function LoginStackScreen() {
   return (
     <LoginStack.Navigator>
+      <LoginStack.Screen name="Main" component={Main} options={{headerShown:false}}/>
+      <LoginStack.Screen name="AddAnimal" component={AddAnimal} options={{headerShown:false}}/>
       <LoginStack.Screen name="Login" component={Login} options={{headerShown:false}}/>
       <LoginStack.Screen name="KakaoLoginRedirect" component={KakaoLoginRedirect} options={{headerShown:false}}/>
       <LoginStack.Screen name="MyTabs" component={MyTabs} screenOptions={commonHeader} options={{headerShown:false}}/>
