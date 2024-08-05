@@ -13,12 +13,6 @@ import { CLIENT_ID, REDIRECT_URI } from '@env';
 
 import * as SecureStore from 'expo-secure-store';
 
-// WebBrowser.maybeCompleteAuthSession();
-
-// const id = CLIENT_ID;
-// const reu = REDIRECT_URI;
-
-// const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${id}&redirect_uri=${reu}&response_type=code`;
 
 async function saveToken(token, uid) {
   await SecureStore.setItemAsync('authToken', token);
