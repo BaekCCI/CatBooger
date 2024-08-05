@@ -7,8 +7,8 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import axios from 'axios';
 
+const UIp = '192.168.1.172';
 
-const UIp = '172.30.1.80';
 const userId = 'test';
 
 export default function AddAnimal(){
@@ -40,12 +40,12 @@ export default function AddAnimal(){
 
     //const { userId } = useContext(UserContext);
     useEffect(() => {
-        console.log('userId:', userId, UIp); // userId가 제대로 설정되었는지 확인
+        console.log('userId:', userId, uIp); // userId가 제대로 설정되었는지 확인
       }, [userId]);
 
     const handleConfirm = async () => {
         try{
-            const response = await axios.post(`http://${UIp}:5001/add_animal`,{
+            const response = await axios.post(`http://${uIp}:5001/add_animal`,{
                 userId:String(userId),
                 name : name,
                 birthDate : birth.toISOString(),

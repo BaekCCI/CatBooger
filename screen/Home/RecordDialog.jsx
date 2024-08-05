@@ -45,24 +45,25 @@ export default function RecordDialog(){
 
 }
 
-const Uip = '172.30.1.71'
+const Uip = '192.168.1.172'
 
 //급여
 const Feed = ({info}) => {
-    const [bobCount, setBobCount] = useState(0);
-    const [waterCount, setWaterCount] = useState(0);
     const [text, setText] = useState('');
     const [isModified, setIsModified] = useState(false);
+    const navigation = useNavigation();
+    const { userId } = useContext(UserContext);
 
     useEffect(() => {
         // Check if there are any changes in the input or counts
-        setIsModified(text !== '' || bobCount !== 0 || waterCount !== 0);
-    }, [text, bobCount, waterCount]);
+        setIsModified(text !== '');
+    }, [text]);
 
-    //완료 버튼 동작 (bobCount, waterCount, text 변수 저장해야함)
+
+    //완료 버튼 동작 (text 변수 저장해야함)
     const handleComplete = async () => {
         try {
-          const response = await axios.post(`http://${Uip}:5001/add_medication_event`, {
+          const response = await axios.post(`http://${Uip}:5001/add_feeding_event`, {
             userId: String(userId), // 실제 사용자 ID로 대체
             feedingId: 'generated_id', // 실제 예방접종 ID로 대체
             date: new Date().toISOString(), // 현재 날짜와 시간을 ISO 형식으로 변환
@@ -83,70 +84,22 @@ const Feed = ({info}) => {
         }
     };
 
-    const handleCount=(type)=>{
-        switch(type){
-            case 'BobPlus':
-                setBobCount(bobCount+1);
-                break;
-            case 'BobMinus':
-                if (bobCount > 0) {
-                    setBobCount(bobCount - 1);
-                }
-                break;
-            case 'WaterPlus':
-                setWaterCount(waterCount+1);
-                break;
-            case 'WaterMinus':
-                if (waterCount > 0) {
-                    setWaterCount(waterCount - 1);
-                }
-                break;
-        }
-
-    }
-    
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View>
-            <RowView>
-                <TypeText>사료 추가</TypeText>
-                <Component color={bobCount === 0 ? '#d9d9d9' : 'black'}>{bobCount}</Component>
-                <Component>회</Component>
-                <CountBtn onPress={()=>handleCount('BobPlus')}>
-                    <BtnImg source={require('../../assets/Home/PlusBtn.png')}/>
-                </CountBtn>
-                <CountBtn onPress={()=>handleCount('BobMinus')}>
-                    <BtnImg source={require('../../assets/Home/MinusBtn.png')}/>
-                </CountBtn>
-            </RowView>
-            <RowView>
-                <TypeText>물 추가</TypeText>
-                <Component color={waterCount === 0 ? '#d9d9d9' : 'black'}>{waterCount}</Component>
-                <Component>회</Component>
-                <CountBtn onPress={()=>handleCount('WaterPlus')}>
-                    <BtnImg source={require('../../assets/Home/PlusBtn.png')}/>
-                </CountBtn>
-                <CountBtn onPress={()=>handleCount('WaterMinus')}>
-                    <BtnImg source={require('../../assets/Home/MinusBtn.png')}/>
-                </CountBtn>
-            </RowView>
-            <Line/>
-
             <TypeText>메모</TypeText>
             <InputWrap>
             <InputMemo
                 value={text}
                 onChangeText={setText}
-                placeholder="예)사료 200g 급여"
+                placeholder="예)오전 7시 사료 200g 급여"
                 placeholderTextColor="#888"
                 multiline={true} /* 여러 줄 입력을 허용 */
             />
             </InputWrap>
             <CompleteBtn disabled={!isModified} isModified={isModified} onPress={handleComplete}>
                 <CompleText >완료하기</CompleText>
-
             </CompleteBtn>
-          
         </View>
         </TouchableWithoutFeedback>
       );
@@ -327,11 +280,10 @@ const Poop = ({info}) => {
             userId: String(userId), 
             defecationId: 'generated_id', 
             date: new Date().toISOString(), // 현재 날짜와 시간을 ISO 형식으로 변환
-            color: poopColor,
-            colorP: peeColor,
+            color: poopBtn ? poopColor : null,
+            type: poopBtn ? poopStatus : null,
+            colorP: peeBtn ? peeColor : null,
             memo: text,
-            state: poopStatus,
-            type: poopBtn ? 'poop' : (peeBtn ? 'pee' : 'none'),
           });
           console.log('Response:', response.data);
           if (response.status === 201) {
@@ -344,7 +296,7 @@ const Poop = ({info}) => {
           }
         } catch (error) {
             console.error('Error adding defection event:', error.response ? error.response.data : error.message);
-          alert('대소변 정보를 추가하는 과정에서 문제가 발생했습니다.');
+          alert(`대소변 정보를 추가하는 과정에서 문제가 발생했습니다.`);
         }
     };
 
