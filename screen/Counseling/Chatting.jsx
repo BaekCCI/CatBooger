@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import styled from 'styled-components/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-const Chatting = () => {
+export default function Chatting () {
+
+  const route = useRoute();
+  const { chatId } = route.params; //ChatList에 있는 chatData객체의 id, 아마 의사 아이디 일듯..?
+
   const [messages, setMessages] = useState([
     { id: '1', text: '보여?', time: '오후 22:26', sender: 'other' },
     { id: '2', text: '진짜 돼?', time: '오후 22:26', sender: 'me' },
@@ -124,4 +129,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Chatting;
