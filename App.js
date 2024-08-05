@@ -13,8 +13,11 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { UserProvider } from "./UseContext";
 
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+
 import Main from './screen/Main';
 import AddAnimal from './screen/AddAnimal';
+import NickName from "./screen/NickName";
 
 import Login from './screen/LoginKakao'
 import {KakaoLoginRedirect} from './screen/LoginKakao'
@@ -73,7 +76,13 @@ function CounselingStackScreen() {
     <CounselingStack.Navigator screenOptions={commonHeader}>
       <CounselingStack.Screen name="Counseling" component={Counseling} />
       <CounselingStack.Screen name="DoctorDetail" component={DoctorDetail} />
-      <CounselingStack.Screen name="Chatting" component={Chatting} />
+      <CounselingStack.Screen 
+        name="Chatting" 
+        component={Chatting} 
+        options={({ route }) => ({
+          tabBarStyle: { display: 'none' },
+        })} 
+      />
     </CounselingStack.Navigator>
   );
 }
@@ -100,6 +109,12 @@ function MenuStackScreen() {
         component={ChangeProfileScreen}
         options={{ title: "프로필 변경" }}
       />
+      <MenuStack.Screen
+        name="NickName"
+        component={NickName}
+        options={{ title: "프로필 변경2" }}
+      />
+
       <MenuStack.Screen
         name="PetManagement"
         component={PetManagementScreen}
@@ -171,12 +186,21 @@ const commonHeader = {
   headerTitle: "",
 };
 
+function getTabBarStyle(route) {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? '';
+  if (routeName === 'Chatting') {
+    return { display: 'none' };
+  }
+  return {};
+}
+
 //하단바
 function MyTabs() {
   return (
     <Tab.Navigator
       initialRouteName="HomeTab"
       screenOptions={({ route }) => ({
+        tabBarStyle: getTabBarStyle(route),
         tabBarIcon: ({ focused }) => {
           let iconName;
           switch (route.name) {

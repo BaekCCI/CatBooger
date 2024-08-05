@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect } from "react";
 import {
+  SafeAreaView,
   View,
   Text,
   FlatList,
@@ -11,12 +13,13 @@ import {
 } from "react-native";
 import styled from "styled-components/native";
 import { firestore } from "../../firebaseConfig";
-import { collection, doc, setDoc, onSnapshot } from "firebase/firestore";
+import { collection, doc, addDoc, setDoc, onSnapshot } from "firebase/firestore";
 
 const Chatting = ({ route }) => {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
   let userId = "userId5"; // 현재 사용자의 ID
+
   const chatId = route.params.id; // 현재 채팅방의 ID
 
   useEffect(() => {
@@ -37,6 +40,28 @@ const Chatting = ({ route }) => {
           console.error("Chat document does not exist");
           setMessages([]);
         }
+  //const chatId = route.params.id; // 현재 채팅방의 ID
+  const { chatId, name } = route.params || {};
+
+  useEffect(() => {
+    // Firestore의 메시지 데이터를 실시간으로 구독하는 함수
+    const fetchMessages = () => {
+      const messagesCollectionRef = collection(
+        firestore,
+        "users",
+        userId,
+        "chats",
+        chatId,
+        "messages"
+      );
+
+      // Firestore의 실시간 업데이트를 구독
+      const unsubscribe = onSnapshot(messagesCollectionRef, (snapshot) => {
+        const messagesData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setMessages(messagesData);
       });
 
       // 컴포넌트 언마운트 시 구독 해제
@@ -61,10 +86,9 @@ const Chatting = ({ route }) => {
 
     try {
       // Firestore에 메시지 추가
-      await setDoc(
-        doc(firestore, "users", userId, "chats", chatId),
-        { [`messages.${newMessageId}`]: newMessage },
-        { merge: true }
+      await addDoc(
+        collection(firestore, "users", userId, "chats", chatId, "messages"),
+        newMessage
       );
       setInputText(""); // 메시지 전송 후 입력란 비우기
     } catch (error) {
