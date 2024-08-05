@@ -180,15 +180,20 @@ export const PostsProvider = ({ children }) => {
   const [Posts, setPosts] = useState([]);
 
   const Uip = '192.168.137.14';
+  const [isReloading, setIsReloading] = useState(false);
 
   useEffect(() => {
+    if (isReloading) {
       try {
         GetPostsFromServer();
       } catch (err) {
         setError('게시물을 불러오는 데 실패했습니다.');
         console.error('Error fetching posts:', err);
+      } finally {
+        setIsReloading(false);
       }
-  }, []);
+    }
+  }, [isReloading]);
   
   const GetPostsFromServer = async () => {
     try {
@@ -244,7 +249,7 @@ export const PostsProvider = ({ children }) => {
   }
 
   return (
-    <PostsContext.Provider value={{ Posts,GetPostsFromServer,GetPostFromServer,GetPosts, AddPost, UpdatePost, DeletePost, AddComment }}>
+    <PostsContext.Provider value={{ Posts,setIsReloading,GetPostsFromServer,GetPostFromServer,GetPosts, AddPost, UpdatePost, DeletePost, AddComment }}>
       {children}
     </PostsContext.Provider>
   );

@@ -17,7 +17,7 @@ const Community = ({ navigation }) => {
         setError('게시물을 불러오는 데 실패했습니다.');
         console.error('Error fetching posts:', err);
       }
-  }, []);
+  }, [Posts]);
 
   const ReLoadPosts = async() =>{
     GetPostsFromServer()
