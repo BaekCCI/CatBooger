@@ -7,7 +7,8 @@ import RNPickerSelect from 'react-native-picker-select';
 import axios from 'axios';
 import { UserContext } from '../../UseContext';
 
-const Uip = '192.168.1.172'
+
+const Uip = '192.168.1.23'
 
 export default function WalkRecord(){
     const navigation = useNavigation();
@@ -56,10 +57,14 @@ export default function WalkRecord(){
         const time = `${selectedHour}:${selectedMinute}:${selectedSecond}`;
 
         try {
+            const currentDate = new Date();
+            currentDate.setDate(currentDate.getDate() + 1);
+            const formattedDate = currentDate.toISOString();
+
             const response = await axios.post(`http://${Uip}:5001/add_walking_event`, {
               userId: String(userId), // 실제 사용자 ID로 대체
               walkingId: 'generated_id', // 실제 예방접종 ID로 대체
-              date: new Date().toISOString(),
+              date: formattedDate,
               time : time,
               memo: text,
             });

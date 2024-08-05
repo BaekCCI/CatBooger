@@ -8,25 +8,37 @@ import {
   TextInput,
   Modal,
   StyleSheet,
+  Image,
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 import styled from "styled-components/native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import axios from "axios";
 import { UserContext } from "../../UseContext";
 import { ref, set, onValue } from "firebase/database";
 import { database } from "../../firebaseConfig";
 
+const Uip = '192.168.1.23';
+
 const CalendarScreen = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [schedules, setSchedules] = useState({});
+  const [bathingRecords, setBathingRecords] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [newSchedule, setNewSchedule] = useState({ title: "", memo: "" });
   const [selectedTime, setSelectedTime] = useState(null);
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
+  const [expandedScheduleId, setExpandedScheduleId] = useState(null);
+  const [isRecordVisible, setIsRecordVisible] = useState(false); // 기록 탭 상태 관리
   const { userId } = useContext(UserContext);
 
   const onDayPress = (day) => {
+    const adjustedDate = new Date(day.dateString);
+    adjustedDate.setDate(adjustedDate.getDate() - 1);
+    const adjustedDateString = adjustedDate.toISOString().split('T')[0];
     setSelectedDate(day.dateString);
+    setExpandedScheduleId(null);
+    fetchBathingRecords(adjustedDateString);
   };
 
   const fetchSchedules = (date) => {
@@ -36,7 +48,9 @@ const CalendarScreen = () => {
       if (data) {
         setSchedules((prevSchedules) => ({
           ...prevSchedules,
-          [date]: Object.values(data).filter(event => event.date.startsWith(date)),
+          [date]: Object.entries(data)
+            .filter(([_, event]) => event.date.startsWith(date))
+            .map(([id, event]) => ({ ...event, id })),
         }));
       } else {
         setSchedules((prevSchedules) => ({
@@ -45,6 +59,34 @@ const CalendarScreen = () => {
         }));
       }
     });
+  };
+
+  const fetchBathingRecords = async (date) => {
+    try {
+      const response = await axios.get(`http://${Uip}:5001/get_bathing_events/${userId}`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        const bathingEvents = response.data;
+        const filteredRecords = [];
+
+        Object.values(bathingEvents).forEach(event => {
+          Object.values(event.dates).forEach(record => {
+            console.log(record);
+            if (record.date.startsWith(date)) {
+              filteredRecords.push(record);
+            }
+          });
+        });
+
+        console.log('Filtered Records:', filteredRecords); // 로그 출력 추가
+        setBathingRecords(filteredRecords);
+      } else {
+        setBathingRecords([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch records: ", error.response ? error.response.data : error.message);
+      setBathingRecords([]);
+    }
   };
 
   useEffect(() => {
@@ -67,7 +109,7 @@ const CalendarScreen = () => {
         notificationTime: new Date().toISOString(), // 일정을 게시한 시간을 ISO 형식으로 변환
       };
 
-      updatedSchedules[selectedDate].push(scheduleData);
+      updatedSchedules[selectedDate].push({ ...scheduleData, id: newId });
 
       // Firebase에 새 일정 추가
       const scheduleRef = ref(database, `calendar/${userId}/${newId}`);
@@ -102,11 +144,26 @@ const CalendarScreen = () => {
   };
 
   const renderScheduleItem = ({ item }) => (
-    <ScheduleItem>
-      <ScheduleTime>{new Date(item.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</ScheduleTime>
-      <ScheduleTitle>{item.title}</ScheduleTitle>
-      <ScheduleMemo>{item.memo}</ScheduleMemo>
-    </ScheduleItem>
+    <View>
+      <TouchableOpacity onPress={() => setExpandedScheduleId(expandedScheduleId === item.id ? null : item.id)}>
+        <ScheduleItem>
+          <ScheduleTime>{new Date(item.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</ScheduleTime>
+          <ScheduleTitle>{item.title}</ScheduleTitle>
+        </ScheduleItem>
+      </TouchableOpacity>
+      {expandedScheduleId === item.id && (
+        <MemoContainer>
+          <ScheduleMemo>{item.memo}</ScheduleMemo>
+        </MemoContainer>
+      )}
+    </View>
+  );
+
+  const renderRecordItem = ({ item }) => (
+    <RecordItem>
+      <RecordTime>{new Date(item.date).toLocaleString()}</RecordTime>
+      <RecordMemo>{item.memo}</RecordMemo>
+    </RecordItem>
   );
 
   const selectedSchedules = schedules[selectedDate] || [];
@@ -135,14 +192,36 @@ const CalendarScreen = () => {
               <FlatList
                 data={selectedSchedules}
                 renderItem={renderScheduleItem}
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item) => item.id}
               />
             ) : (
               <NoScheduleText>일정이 없습니다</NoScheduleText>
             )}
+            <TouchableOpacity onPress={() => setIsRecordVisible(!isRecordVisible)}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+                <Text style={{ fontSize: 25}}>기록 {isRecordVisible ? '▲' : '▼'}</Text>
+              </View>
+            </TouchableOpacity>
+            {isRecordVisible && (
+              <>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+                  <Image source={require('../../assets/Home/BathIcon.png')} style={{ width: 30, height: 30 }} />
+                  <Text style={{ fontSize: 18, marginLeft: 10 }}>목욕</Text>
+                </View>
+                {bathingRecords.length > 0 ? (
+                  <FlatList
+                    data={bathingRecords}
+                    renderItem={renderRecordItem}
+                    keyExtractor={(item, index) => index.toString()}
+                  />
+                ) : (
+                  <NoRecordText>기록이 없습니다.</NoRecordText>
+                )}
+              </>
+            )}
           </>
         ) : (
-          <SelectedDateText>날짜를 선택하세요</SelectedDateText>
+          <SelectedDateText></SelectedDateText>
         )}
 
         <Modal
@@ -223,6 +302,7 @@ const AddScheduleItem = styled.TouchableOpacity`
 const PlusText = styled.Text`
   font-size: 16px;
   color: rgba(47, 106, 176, 1);
+  margin-bottom : 3%;
 `;
 
 const NoScheduleText = styled.Text`
@@ -236,14 +316,14 @@ const ScheduleItem = styled.View`
   flex-direction: row;
   align-items: center;
   padding: 3%;
-  border-bottom-width: 1px;
+  border-bottom-width : 1px;
   border-bottom-color: #eee;
 `;
 
 const ScheduleTime = styled.Text`
   font-size: 16px;
   color: #555;
-  width: 20%;
+  width: 30%;
 `;
 
 const ScheduleTitle = styled.Text`
@@ -252,10 +332,41 @@ const ScheduleTitle = styled.Text`
   flex: 1;
 `;
 
+const MemoContainer = styled.View`
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-top-width: 1px;
+  border-top-color: #eee;
+`;
+
 const ScheduleMemo = styled.Text`
   font-size: 16px;
   color: #333;
   flex: 1;
+`;
+
+const RecordItem = styled.View`
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+  margin-vertical: 5px;
+`;
+
+const RecordTime = styled.Text`
+  font-size: 14px;
+  color: #555;
+`;
+
+const RecordMemo = styled.Text`
+  font-size: 14px;
+  color: #333;
+`;
+
+const NoRecordText = styled.Text`
+  margin-top: 4%;
+  font-size: 18px;
+  text-align: center;
+  color: #888;
 `;
 
 const ModalContainer = styled.View`
