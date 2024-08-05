@@ -4,24 +4,12 @@ import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { auth, firestore } from './../../firebaseConfig'
 
+import axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
+import { CLIENT_ID, LOGOUT_REDIRECT } from '@env';
+import { WebView } from 'react-native-webview';
+
 const MenuScreen = ({navigation}) => {
-  // const [nickname, setNickname] = useState('');
-
-  // useEffect(() => {
-  //   const fetchUserNickname = async () => {
-  //     const user = auth().currentUser;
-  //     if (user) {
-  //       const userDoc = await firestore().collection('users').doc(user.uid).get();
-  //       if (userDoc.exists) {
-  //         setNickname(userDoc.data().nickname);
-  //       }
-  //     }
-  //   };
-
-  //   fetchUserNickname();
-  // }, []);
-  
-  // 로그인 구현 후 파이어베이스 연결 함수
 
   const handleLogout = () => {
     Alert.alert(
@@ -36,8 +24,14 @@ const MenuScreen = ({navigation}) => {
           text: "네",
           onPress: async () => {
             try {
-              await auth().signOut();
-              navigation.navigate('Login'); // 로그아웃 후 로그인 화면으로 이동
+              const token = await SecureStore.getItemAsync('authToken');
+              console.log(token);
+              if(token){
+                await SecureStore.deleteItemAsync('uid');
+                await SecureStore.deleteItemAsync('authToken');
+              }
+              console.log('delete');
+              navigation.navigate('KakaoLogout');
             } catch (error) {
               console.error(error);
             }
@@ -51,13 +45,13 @@ const MenuScreen = ({navigation}) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <Container>
+      <ScrollView>
         <Header>
         <HeaderTitle>고양이 코딱지</HeaderTitle>
         <IconWrapper onPress={() => navigation.navigate('ChangeProfile')}>
         <Icon name="settings-outline" size={32} color="#000" />
         </IconWrapper>
         </Header>
-        <ScrollView>
           <Section>
             <SectionHeader>
             </SectionHeader>
@@ -105,6 +99,32 @@ const MenuScreen = ({navigation}) => {
           </LogoutButton>
         </ScrollView>
       </Container>
+    </SafeAreaView>
+  );
+};
+
+function KakaoLogout({navigation}) {
+  const key = CLIENT_ID;
+  const uri = LOGOUT_REDIRECT;
+  const api = `https://kauth.kakao.com/oauth/logout?client_id=${key}&logout_redirect_uri=${uri}`;
+
+  return(
+    <SafeAreaView style={{ flex: 1, justifyContent: 'center' }}>
+      <WebView
+        style={{flex: 1, width: '100%'}}
+        source={{ uri: api }}
+        onNavigationStateChange={(e) => {
+          if (e.url.startsWith(uri)) {
+            // 로그아웃 후 리다이렉트 URI로 돌아왔을 때 추가 작업 처리
+            console.log("Logout redirect successful", e.url);
+            // 예: 로그아웃 후 로그인 화면으로 이동
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Main' }],
+            });
+          }
+        }}
+      />
     </SafeAreaView>
   );
 };
@@ -174,3 +194,4 @@ const LogoutText = styled.Text`
 `;
 
 export default MenuScreen;
+export { KakaoLogout };

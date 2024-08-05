@@ -1,5 +1,5 @@
 import React , { useState }from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import styled from "styled-components/native";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -22,8 +22,21 @@ export default function DoctorDetail({ route }){
             </View>
         );
     }
+    const docName = doctor.name;
+    const handleCounsel =() =>{
+        Alert.alert(
+            '',
+            '상담신청이 완료되었습니다.',
+            [
+                {
+                  text: '확인',
+                  onPress: () => navigation.navigate('ChatList')
+                }
+              ]
+        )
+        //navigation.navigate('Chatting' ,{docName});
+    };
 
-    const onPress = () => navigation.navigate('Home');
     const handleButton = (category, setActiveButton) => {
         setActiveButton(category);
     };
@@ -33,7 +46,7 @@ export default function DoctorDetail({ route }){
         <Wrap>
             <DoctorWrap>
                 <DoctorLeftWrap>
-                    <DoctorName>{doctor.name}</DoctorName>
+                    <DoctorName>{docName}</DoctorName>
                     <TextStyling color="gray">{doctor.hospital}</TextStyling>
                     <Line/>
 
@@ -43,7 +56,7 @@ export default function DoctorDetail({ route }){
                 <DoctorRightWrap>
                     <DoctorImg source={require('../../assets/DefaultProfile.png')}/> 
                     <CounselBtn
-                        onPress= {()=>onPress()}>
+                        onPress= {handleCounsel}>
                         <ButtonText>상담 신청하기</ButtonText>
                     </CounselBtn>
                 </DoctorRightWrap>

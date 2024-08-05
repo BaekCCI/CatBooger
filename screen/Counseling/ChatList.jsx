@@ -3,14 +3,19 @@ import { SafeAreaView, View, Text, FlatList, StyleSheet, Image, TouchableOpacity
 import styled from 'styled-components/native';
 
 const chatData = [
-  { id: '1', name: '길동', status: '대기중' },
+  { id: '1', name: '길d동', status: '대기중' },
   { id: '2', name: '홍길동', status: '상담중' },
   { id: '3', name: '홍길동', status: '상담종료' },
 ];
 
 const ChatList = ({ navigation }) => {
+
+  const handleChat =(item)=>{
+    navigation.navigate('Chatting', { chatId: item.id});
+  }
+
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.itemContainer} onPress={() => navigation.navigate('Chatting', { chatId: item.id, name: item.name })}>
+    <TouchableOpacity style={styles.itemContainer} onPress={() => handleChat(item)}>
       <Image source={{ uri: 'https://via.placeholder.com/50' }} style={styles.avatar} />
       <View style={styles.textContainer}>
         <Text style={styles.name}>{item.name}</Text>

@@ -7,7 +7,8 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import axios from 'axios';
 
-const UIp = '192.168.1.172';
+const uIp = '192.168.1.51';
+
 const userId = 'test';
 
 export default function AddAnimal(){
@@ -55,6 +56,7 @@ export default function AddAnimal(){
             console.log('Response: ', response.data);
             if(response.status === 201){
                 alert('등록 완료');
+                navigation.navigate('MyTabs');
             }else{
                 alert('추가실패');
             }
