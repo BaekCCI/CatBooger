@@ -3,6 +3,8 @@ import { SafeAreaView, ScrollView, View, Text, Image, TouchableOpacity } from 'r
 import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MapView, { Marker } from 'react-native-maps';
+import { useRoute } from '@react-navigation/native';
+
 
 const hospitalDetails = [
   {
@@ -18,15 +20,19 @@ const hospitalDetails = [
 ]
 
 const HospitalDetail = () => {
+
+  const route = useRoute();
+  const { hospital } = route.params;
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       {hospitalDetails.map((hospitalDetail, index) => (
         <ScrollView key={index}>
           <Header>
-            <HospitalImage source={{ uri: hospitalDetail.image }} />
+            <HospitalImage source={{ uri: hospital.image }} />
           </Header>
           <Content>
-            <Rating>
+            {/* <Rating>
               <Icon name="star" size={20} color="#ffd700" />
               <Icon name="star" size={20} color="#ffd700" />
               <Icon name="star" size={20} color="#ffd700" />
@@ -37,33 +43,33 @@ const HospitalDetail = () => {
               <HeartButton>
               <Icon name="heart-outline" size={24} color="#000" />
               </HeartButton>
-            </Rating>
-            <HospitalName>{hospitalDetail.name}</HospitalName>
+            </Rating> */}
+            <HospitalName>{hospital.name}</HospitalName>
             <PhoneNumber>
               <Icon name="call-outline" size={20} color="#777" />
-              <PhoneNumberText>{hospitalDetail.phonenumber}</PhoneNumberText>
+              <PhoneNumberText>{hospital.phonenumber}</PhoneNumberText>
             </PhoneNumber>
             <Status>
               <Icon name="time-outline" size={20} color="#777" />
-              <StatusText>{hospitalDetail.status}</StatusText>
+              <StatusText>{hospital.status}</StatusText>
             </Status>
-            <OpeningHours>{hospitalDetail.openingHours}</OpeningHours>
+            <OpeningHours>{hospital.openingHours}</OpeningHours>
             <Address>
               <Icon name="location-outline" size={20} color="#777" />
-              <AddressText>{hospitalDetail.address}</AddressText>
+              <AddressText>{hospital.address}</AddressText>
             </Address>
             <MapContainer>
               <MapView
                 style={{ height: 200 }}
                 initialRegion={{
-                  latitude: 37.78825,
-                  longitude: -122.4324,
-                  latitudeDelta: 0.0922,
-                  longitudeDelta: 0.0421,
+                  latitude: hospital.latitude,
+                  longitude: hospital.longitude,
+                  latitudeDelta: 0.03,
+                  longitudeDelta: 0.03,
                 }}
               >
                 <Marker
-                  coordinate={{ latitude: 37.78825, longitude: -122.4324 }}
+                  coordinate={{ latitude: hospital.latitude, longitude: hospital.longitude }}
                   title={hospitalDetail.name}
                   description={hospitalDetail.address}
                 />

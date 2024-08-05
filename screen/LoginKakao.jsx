@@ -21,10 +21,19 @@ import * as SecureStore from 'expo-secure-store';
 // const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${id}&redirect_uri=${reu}&response_type=code`;
 
 async function saveToken(token, uid) {
-  await SecureStore.setItemAsync('authToken', token);
-  await SecureStore.setItemAsync('uid', uid);
-  const save = await SecureStore.getItemAsync('authToken');
-  console.log("saved: ", save);
+  try {
+    const tokenString = JSON.stringify(token);
+    const uidString = JSON.stringify(uid);
+
+    await SecureStore.setItemAsync('authToken', tokenString);
+    await SecureStore.setItemAsync('uid', uidString);
+    const save = await SecureStore.getItemAsync('authToken');
+    const save2 = await SecureStore.getItemAsync('uid');
+    console.log("saved: ", save);
+    console.log("saved: ", save2);
+  } catch (error) {
+    console.error("Error saving token:", error);
+  }
 } 
 
 export default function Login({ navigation }) {
