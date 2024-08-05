@@ -45,7 +45,7 @@ export default function RecordDialog(){
 
 }
 
-const Uip = '10.55.1.188'
+const Uip = '192.168.1.172'
 
 //급여
 const Feed = ({info}) => {
@@ -63,7 +63,7 @@ const Feed = ({info}) => {
     //완료 버튼 동작 (text 변수 저장해야함)
     const handleComplete = async () => {
         try {
-          const response = await axios.post(`http://${Uip}:5001/add_medication_event`, {
+          const response = await axios.post(`http://${Uip}:5001/add_feeding_event`, {
             userId: String(userId), // 실제 사용자 ID로 대체
             feedingId: 'generated_id', // 실제 예방접종 ID로 대체
             date: new Date().toISOString(), // 현재 날짜와 시간을 ISO 형식으로 변환
