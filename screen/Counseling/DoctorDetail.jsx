@@ -25,6 +25,8 @@ export default function DoctorDetail({ route }){
     }
     const docName = doctor.name;
     const handleCounsel =() =>{
+
+        
         Alert.alert(
             '',
             '상담신청이 완료되었습니다.',
