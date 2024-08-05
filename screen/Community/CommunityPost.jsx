@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState, useSyncExternalStore } from "react";
+import React, { useContext, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { View, ScrollView, Touchable, TouchableOpacity, Image, Modal,Text,TextInput} from "react-native";
 import { useRoute } from '@react-navigation/native';
 import styled from "styled-components";
@@ -14,11 +14,48 @@ const profilePircure =  {uri : 'https://cdn.pixabay.com/photo/2020/05/17/20/21/c
 
 const CommunityPost = ({navigation}) => {
   /**커뮤니티 공용 데이터 */
-  const {Posts, AddPost, UpdatePost, DeletePost, AddComment} = useContext(PostsContext)
+  const {Posts, AddPost, GetPostFromServer, UpdatePost, DeletePost, AddComment} = useContext(PostsContext)
+
+  const [postData, setPostData] = useState({})
 
   const route = useRoute();
   const { postDataId } = route.params;
-  const postData = Posts[postDataId]
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const fetchedPostData = await GetPostFromServer(postDataId);
+        console.log("게시물 데이터 : " + JSON.stringify(fetchedPostData))
+        if (fetchedPostData !== null) {
+          setPostData(fetchedPostData);
+        } else {
+          console.log('게시물을 가져오는데 실패했습니다.');
+        }
+      } catch (error) {
+        console.log('게시물 가져오기 오류: ' + error.message);
+      }
+    };
+
+    fetchPost();
+  }, []);
+
+  const GetPost = async (postDataId) =>{
+    try {
+      const postData = await GetPostFromServer(postDataId);
+      
+      if (postData !== null) {
+        console.log('가져온 게시물:', postData);
+        return postData
+
+      } else {
+        console.log('게시물을 가져오는데 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('게시물 가져오기 오류:', error);
+    }
+  }
+  
+
 
   const inputCommentRef = useRef("");
 
@@ -188,18 +225,18 @@ const CommunityPost = ({navigation}) => {
           <PostContent>{postData.content}</PostContent>
 
           <PostImgContainer/>
-          <TagsContainer>
+          {/* <TagsContainer>
             {postData.tags.map((tag, index) => (
               <Tag key={index}>{'#' + tag}</Tag>
             ))}
           </TagsContainer>
-            
+             */}
           <PostUnderContainer>
             <PostUnderLeftContainer>
               <TouchableOpacity 
               onPress={() => alert(usersProfile[postData.writerID].nickName + " 개인 프로필로 이동")}
               style={{flexDirection:'row', gap : 5, alignItems : 'center'}}>
-                <ProfileNickName>{usersProfile[postData.writerID].nickName}</ProfileNickName>
+                <ProfileNickName>{postData.author}</ProfileNickName>
               </TouchableOpacity>
               <PostedTime>{postData.postTime}</PostedTime>
             </PostUnderLeftContainer>
@@ -215,7 +252,7 @@ const CommunityPost = ({navigation}) => {
           backgroundColor: '#96d3cb'
         }} />
 
-        <Comments/>
+        {/* <Comments/> */}
       </ScrollView>
       <WriteCommentButton/>
     </View>

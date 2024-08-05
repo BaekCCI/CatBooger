@@ -9,7 +9,7 @@ const CommunityWritingPost = () => {
   const cameraIcon = require("../../assets/community/camera_icon.png");
   const galleryIcon = require("../../assets/community/gallery_icon.png")
 
-  const {Posts, AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
+  const {Posts, AddPost, GetPostFromServer, UpdatePost, DeletePost} = useContext(PostsContext)
 
   const [animalTags, setAnimalTags] = useState(initialAnimalTags);
   const [categoryTags, setCategoryTags] = useState(initialCategoryTags);

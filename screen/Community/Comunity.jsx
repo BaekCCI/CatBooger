@@ -6,7 +6,7 @@ import {GetPosts, PostsContext, PostsProvider, basicProfilePicture, initialAnima
 
 const Community = ({ navigation }) => {
   /**커뮤니티 공용 데이터 */
-  const {Posts, AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
+  const {Posts, GetPostsFromServer, AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
 
   /**이미지 데이터 */
   xIcon = require('../../assets/community/x_icon.png');
@@ -158,47 +158,51 @@ const Community = ({ navigation }) => {
 
     // 필터링한 게시물들을 보여줌
     return (
-      filteredPosts.map((postData, index) => (
-        <Post key={index}>
-          <PostButton onPress={() => MoveToPost(postData.id)} style={{flexDirection:'row', gap : 5, alignItems : 'center'}}>
-            <View style={{flex:3}}>
-              <View style={{marginBottom : '1%'}}>
-                <PostTitle numberOfLines={1} ellipsizeMode="tail">
-                {postData.isQuestion
-                ? 
-                  <Text>
-                      <Text style={{color : postData.isQuestionSolved ? '#23C6B3' : '#989898'}}>Q.</Text>
-                      <Text>{postData.title}</Text>
-                  </Text>
-                : 
-                  <Text>{postData.title}</Text>}
-                </PostTitle>
-              </View>
-              
-              <PostContent numberOfLines={2} ellipsizeMode="tail">{postData.content}</PostContent>
-
-              <TagsContainer>
-                {postData.tags.map((tag, index) => (
-                <Tag key={index}>{'#' + tag}</Tag>
-                ))}
-              </TagsContainer>
-
-              <PostUnderContent>
-                <NickNameText>
-                  {usersProfile[postData.writerID] 
-                    ? usersProfile[postData.writerID].nickName 
-                    : 'Unknown User'}
-                </NickNameText>
-                <View style={{flexDirection:'row', gap : 5, top : 1.5}}>
-                  <LikeTag likeNumber={postData.likeNumber} />
-                  <ScrapeTag scrapeNumber={postData.scrapeNumber} />
+      filteredPosts.map((postDataWithId, index) => {
+        const postData = postDataWithId[1]
+        return(
+          <Post key={index}>
+            <PostButton onPress={() => MoveToPost(postDataWithId[0])} style={{flexDirection:'row', gap : 5, alignItems : 'center'}}>
+              <View style={{flex:3}}>
+                <View style={{marginBottom : '1%'}}>
+                  <PostTitle numberOfLines={1} ellipsizeMode="tail">
+                  {/* {postData.isQuestion
+                  ? 
+                    <Text>
+                        <Text style={{color : postData.isQuestionSolved ? '#23C6B3' : '#989898'}}>Q.</Text>
+                        <Text>{postData.title}</Text>
+                    </Text>
+                  : 
+                    <Text>{postData.title}</Text>} */}
+                    <Text>{postData.title}</Text>
+                  </PostTitle>
                 </View>
-              </PostUnderContent>
-            </View>
-            {postData.img !== "" ? <PostImg source={postData.img}/> : null}
-          </PostButton>
-        </Post>
-      ))
+                
+                <PostContent numberOfLines={2} ellipsizeMode="tail">{postData.content}</PostContent>
+
+                <TagsContainer>
+                  {postData.tags.map((tag, index) => (
+                  <Tag key={index}>{'#' + tag}</Tag>
+                  ))}
+                </TagsContainer>
+                
+
+                <PostUnderContent>
+                  <NickNameText>
+                    {postData.author}
+                  </NickNameText>
+                  
+                  <View style={{flexDirection:'row', gap : 5, top : 1.5}}>
+                    <LikeTag likeNumber={postData.star.length} />
+                    <ScrapeTag scrapeNumber={postData.scrapeNumber} />
+                  </View>
+                  
+                </PostUnderContent>
+              </View>
+              {/* {postData.img !== "" ? <PostImg source={postData.img}/> : null} */}
+            </PostButton>
+          </Post>
+      )})
     );
   };
 
@@ -411,7 +415,6 @@ const Community = ({ navigation }) => {
                     }
                   }}
               >
-              <Text>asdffdsa</Text>
             </TouchableOpacity>
             <CommunityContainer>
               <CommunityPosts/>
@@ -425,7 +428,7 @@ const Community = ({ navigation }) => {
 };
 
 const ProvidePosts =  () => { 
-  const {Posts, GetPostsFromServer} = useContext(PostsContext)
+  const {Posts, GetPostsFromServer,GetPostFromServer} = useContext(PostsContext)
 
   return(
     <View>
@@ -433,9 +436,10 @@ const ProvidePosts =  () => {
         <Text>
           {JSON.stringify(Posts)}
         </Text>
-        <Text>
-          {Posts[1].title}
-        </Text>
+        <HorizontalLine/>
+        <Text>{GetPostFromServer("postId2").title}</Text>
+        <Text>-------------------------</Text>
+
       </TouchableOpacity>
     </View>
   )
@@ -444,8 +448,8 @@ const ProvidePosts =  () => {
 const CommunityWithPostsProvider = ({ navigation }) => {
   return(
     <PostsProvider>
-      <ProvidePosts/>
-      {/* <Community navigation={navigation} /> */}
+      {/* <ProvidePosts/> */}
+      <Community navigation={navigation} />
     </PostsProvider>
   )
 }
