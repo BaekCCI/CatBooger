@@ -1,11 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {View,Text,ImageBackground,Modal,TouchableWithoutFeedback, TouchableHighlight, StyleSheet } from "react-native";
 import styled from "styled-components";
 import { useNavigation } from "@react-navigation/native";
+import { UserContext } from '../UseContext';
 
+import * as SecureStore from 'expo-secure-store';
+import axios from 'axios';
+
+async function getToken() {
+  const token = await SecureStore.getItemAsync('authToken');
+  console.log("Token: ", token);
+  return token;
+}
 
 export default function Main(){
     const navigation = useNavigation();
+    const { setUserId } = useContext(UserContext);
+
+    useEffect(() => {
+        const checkLogin = async () => {
+            const token = await SecureStore.getItemAsync('authToken');
+            if (token) {
+                const uid = await SecureStore.getItemAsync('uid');
+                setUserId(uid);
+                console.log("Token: ", token);
+                console.log("UID: ", uid);
+                navigation.navigate('Login');
+            } else {
+                console.log("로그인 필요");
+            }
+        }
+        checkLogin();
+    }, []);
 
     return(
         <MainView>

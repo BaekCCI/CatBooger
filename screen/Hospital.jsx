@@ -501,6 +501,12 @@ const htmlContent = `
 const Hospital = ({ navigation }) => {
   const [showMap, setShowMap] = useState(false);
 
+  const webViewRef = React.useRef(null);
+  const onMessage = (event) => {
+    const searchData = event.nativeEvent.data;
+    console.log('Received message from WebView:', searchData);
+  }
+
   const onPress = () => navigation.navigate('HospitalDetail');
   const toggleView = () => setShowMap(!showMap);
 
