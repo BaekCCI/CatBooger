@@ -12,11 +12,29 @@ const sendCommentIcon = require('../../assets/community/send_comment_icon.png')
 const adoptedCommentIcon = require('../../assets/community/adopted_comment_icon.png')
 const profilePircure =  {uri : 'https://cdn.pixabay.com/photo/2020/05/17/20/21/cat-5183427_1280.jpg'}
 
+
+const isDoctor = false;
 const CommunityPost = ({navigation}) => {
   /**커뮤니티 공용 데이터 */
   const {Posts, AddPost, GetPostFromServer, UpdatePost, DeletePost, AddComment} = useContext(PostsContext)
 
-  const [postData, setPostData] = useState({})
+  const [postData, setPostData] = useState({
+    "author": "",
+    "content": "",
+    "createdDate": "",
+    "mark": true,
+    "modifiedDate": "",
+    "replies": {
+      "replyId1": {
+        "acceptedAnswers": "false",
+        "author": "",
+        "content": "",
+        "createdDate": ""
+      },
+      "star": [],
+      "tags": [],
+      "title": ""
+    }})
 
   const route = useRoute();
   const { postDataId } = route.params;
@@ -25,8 +43,7 @@ const CommunityPost = ({navigation}) => {
     const fetchPost = async () => {
       try {
         const fetchedPostData = await GetPostFromServer(postDataId);
-        console.log("게시물 데이터 : " + JSON.stringify(fetchedPostData))
-        if (fetchedPostData !== null) {
+        if (fetchedPostData) {
           setPostData(fetchedPostData);
         } else {
           console.log('게시물을 가져오는데 실패했습니다.');
@@ -35,9 +52,9 @@ const CommunityPost = ({navigation}) => {
         console.log('게시물 가져오기 오류: ' + error.message);
       }
     };
-
+  
     fetchPost();
-  }, []);
+  }, [postDataId, GetPostFromServer]);
 
   const GetPost = async (postDataId) =>{
     try {
@@ -69,7 +86,7 @@ const CommunityPost = ({navigation}) => {
         alignItems: 'center',
         justifyContent: 'center'
       }}>
-          <PostImg source={postData.img} style={{resizeMode : 'contain'}}/>
+          <PostImg source={{uri : postData.imageUri}} style={{resizeMode : 'contain'}}/>
       </View>
     )
   }
@@ -161,13 +178,13 @@ const CommunityPost = ({navigation}) => {
   const Comments = () => {
     return(
       <CommentsContainer>
-      <CommentsContainerTitle>{'댓글 ' + postData.comments.length}</CommentsContainerTitle>
+      <CommentsContainerTitle>{'댓글 ' + Object.values(postData.replies).length}</CommentsContainerTitle>
       <HorizontalLine/>
-      {postData.comments.map((comment, index) => (
+      {Object.values(postData.replies).map((reply, index) => (
         <View key={index}>
             <Comment>
               { 
-                usersProfile[comment.writerID].isDoctor ? 
+                isDoctor ? 
                   <View>
                     <View>
                       <TouchableOpacity 
@@ -192,22 +209,21 @@ const CommunityPost = ({navigation}) => {
                 :
                   <View>
                     <TouchableOpacity 
-                    onPress={() => alert(usersProfile[comment.writerID].nickName + " 개인 프로필로 이동")}
                     style={{flexDirection : 'row', gap : 5, alignSelf: 'flex-start'}}>
-                      <ProfileNickName style={{lineHeight : 21}}>{usersProfile[comment.writerID].nickName}</ProfileNickName>
+                      <ProfileNickName style={{lineHeight : 21}}>{reply.author}</ProfileNickName>
                     </TouchableOpacity>
-                    <CommentText>{comment.content}</CommentText>
+                    <CommentText>{reply.content}</CommentText>
                   </View>
               }
 
-              {comment.isAdopted && 
+              {/* {comment.isAdopted && 
                 <View style={{flexDirection : 'row', gap : 5}}>
                   <Image source={adoptedCommentIcon} style={{width : 15, height : 15}}/>
                   <Text style={{lineHeight : 16, color : '#595959'}}>채택된 답변</Text>
                 </View>
-              }
+              } */}
 
-              <CommentPostedTime>{comment.postTime}</CommentPostedTime>
+              <CommentPostedTime>{reply.createdDate}</CommentPostedTime>
             </Comment>
           <HorizontalLine />
         </View>
@@ -225,12 +241,18 @@ const CommunityPost = ({navigation}) => {
           <PostContent>{postData.content}</PostContent>
 
           <PostImgContainer/>
-          {/* <TagsContainer>
-            {postData.tags.map((tag, index) => (
-              <Tag key={index}>{'#' + tag}</Tag>
-            ))}
+
+         <TagsContainer>
+            {postData.tags && postData.tags.length > 0 ? (
+              postData.tags.map((tag, index) => (
+                <Tag key={index}>{'#' + tag}</Tag>
+              ))
+            ) : (
+              // 태그가 없을 때 대체할 UI를 원한다면 여기에 작성
+              null
+            )}
           </TagsContainer>
-             */}
+
           <PostUnderContainer>
             <PostUnderLeftContainer>
               <TouchableOpacity 
@@ -252,7 +274,7 @@ const CommunityPost = ({navigation}) => {
           backgroundColor: '#96d3cb'
         }} />
 
-        {/* <Comments/> */}
+        <Comments/>
       </ScrollView>
       <WriteCommentButton/>
     </View>

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useSyncExternalStore } from "react";
+import React, { useContext, useEffect, useState, useSyncExternalStore } from "react";
 import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, SafeAreaView, Alert, Pressable, TextInput, PanResponder } from "react-native";
 import styled from "styled-components/native";
 import { HorizontalLine } from "./CommunityCommonStyles.jsx";
@@ -7,7 +7,14 @@ import {GetPosts, PostsContext, PostsProvider, basicProfilePicture, initialAnima
 const Community = ({ navigation }) => {
   /**커뮤니티 공용 데이터 */
   const {Posts, GetPostsFromServer, AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
-
+  useEffect(() => {
+      try {
+        GetPostsFromServer();
+      } catch (err) {
+        setError('게시물을 불러오는 데 실패했습니다.');
+        console.error('Error fetching posts:', err);
+      }
+  }, []);
   /**이미지 데이터 */
   xIcon = require('../../assets/community/x_icon.png');
   penIcon = require('../../assets/community/pen_icon.png');
@@ -106,16 +113,20 @@ const Community = ({ navigation }) => {
     const selectedAnimalTags = getSelectedTags(animalTags);
     const selectedCategoryTags = getSelectedTags(categoryTags);
 
-    const titleFilteredPosts = SearchingText ? Posts.filter(post => post.title.includes(SearchingText)) : Posts
+    const titleFilteredPosts = SearchingText ? Posts.filter(postWithId => {
+      const post = postWithId[1]
+      return post.title.includes(SearchingText)}) : Posts
 
     // 모든 태그가 비활성화된 경우 모든 게시물을 반환
     if (selectedAnimalTags.length === 0 && selectedCategoryTags.length === 0) {
       return titleFilteredPosts;
     }
-    
+
     // 활성화된 태그와 일치하는 게시물을 필터링
-    return Posts.filter(post =>
-      post.tags.some(tag => selectedAnimalTags.includes(tag) || selectedCategoryTags.includes(tag))
+    return Posts.filter(postWithId => {
+      const post = postWithId[1]
+      return post.tags.some(tag => selectedAnimalTags.includes(tag) || selectedCategoryTags.includes(tag))
+    }
     );
   };
 
@@ -199,7 +210,7 @@ const Community = ({ navigation }) => {
                   
                 </PostUnderContent>
               </View>
-              {/* {postData.img !== "" ? <PostImg source={postData.img}/> : null} */}
+              {postData.img !== "" ? <PostImg source={{uri : postData.imageUri}}/> : null}
             </PostButton>
           </Post>
       )})
