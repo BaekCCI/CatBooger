@@ -5,13 +5,6 @@ import { useNavigation } from "@react-navigation/native";
 import { UserContext } from '../UseContext';
 
 import * as SecureStore from 'expo-secure-store';
-import axios from 'axios';
-
-async function getToken() {
-  const token = await SecureStore.getItemAsync('authToken');
-  console.log("Token: ", token);
-  return token;
-}
 
 export default function Main(){
     const navigation = useNavigation();
