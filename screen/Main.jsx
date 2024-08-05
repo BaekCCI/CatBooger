@@ -15,7 +15,7 @@ export default function Main(){
             const token = await SecureStore.getItemAsync('authToken');
             const uid = await SecureStore.getItemAsync('uid');
 
-            if(uid == null){
+            if(uid == null || token == null){
                 console.log("uid : null");
             }
             else if (token) {

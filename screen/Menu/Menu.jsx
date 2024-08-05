@@ -120,7 +120,7 @@ function KakaoLogout({navigation}) {
             // 예: 로그아웃 후 로그인 화면으로 이동
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Login' }],
+              routes: [{ name: 'Main' }],
             });
           }
         }}

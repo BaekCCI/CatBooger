@@ -45,7 +45,7 @@ export default function RecordDialog(){
 
 }
 
-const Uip = '192.168.1.172'
+const Uip = '192.168.1.51'
 
 //급여
 const Feed = ({info}) => {

@@ -147,6 +147,8 @@ function MenuStackScreen() {
 function LoginStackScreen() {
   return (
     <LoginStack.Navigator>
+      <LoginStack.Screen name="Main" component={Main} options={{headerShown:false}}/>
+      <LoginStack.Screen name="AddAnimal" component={AddAnimal} options={{headerShown:false}}/>
       <LoginStack.Screen name="Login" component={Login} options={{headerShown:false}}/>
       <LoginStack.Screen name="KakaoLoginRedirect" component={KakaoLoginRedirect} options={{headerShown:false}}/>
       <LoginStack.Screen name="MyTabs" component={MyTabs} screenOptions={commonHeader} options={{headerShown:false}}/>

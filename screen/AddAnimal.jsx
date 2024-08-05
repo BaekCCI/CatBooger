@@ -7,7 +7,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import axios from 'axios';
 
-const UIp = '192.168.1.172';
+const uIp = '192.168.1.51';
 
 const userId = 'test';
 
