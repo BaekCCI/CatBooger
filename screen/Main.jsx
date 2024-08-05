@@ -20,8 +20,12 @@ export default function Main(){
     useEffect(() => {
         const checkLogin = async () => {
             const token = await SecureStore.getItemAsync('authToken');
-            if (token) {
-                const uid = await SecureStore.getItemAsync('uid');
+            const uid = await SecureStore.getItemAsync('uid');
+
+            if(uid == null){
+                console.log("uid : null");
+            }
+            else if (token) {
                 setUserId(uid);
                 console.log("Token: ", token);
                 console.log("UID: ", uid);
