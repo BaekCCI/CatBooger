@@ -1,3 +1,4 @@
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import firebase_admin
@@ -14,9 +15,6 @@ CORS(app)
 
 db_ref = db.reference()
 
-@app.route('/')
-def index():
-    return 'gehg'
 
 #목욕db
 @app.route('/add', methods=['POST'])
