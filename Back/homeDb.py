@@ -64,7 +64,7 @@ def get_bathing_events(user_id):
 
         return jsonify(bathing_events), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500 
     
 @app.route('/delete_bathing_event/<user_id>/<bathing_id>', methods=['DELETE'])
 def delete_bathing_event(user_id, bathing_id):
