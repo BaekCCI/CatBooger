@@ -48,7 +48,7 @@ const MenuScreen = ({navigation}) => {
       <ScrollView>
         <Header>
         <HeaderTitle>고양이 코딱지</HeaderTitle>
-        <IconWrapper onPress={() => navigation.navigate('ChangeProfile')}>
+        <IconWrapper onPress={() => navigation.navigate('NickName')}>
         <Icon name="settings-outline" size={32} color="#000" />
         </IconWrapper>
         </Header>
