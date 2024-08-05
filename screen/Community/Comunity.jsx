@@ -2,7 +2,7 @@ import React, { useContext, useState, useSyncExternalStore } from "react";
 import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, SafeAreaView, Alert, Pressable, TextInput, PanResponder } from "react-native";
 import styled from "styled-components/native";
 import { HorizontalLine } from "./CommunityCommonStyles.jsx";
-import {GetPost, PostsContext, PostsProvider, basicProfilePicture, initialAnimalTags, initialCategoryTags, usersProfile} from './CommunityCommonData.jsx'
+import {GetPosts, PostsContext, PostsProvider, basicProfilePicture, initialAnimalTags, initialCategoryTags, usersProfile} from './CommunityCommonData.jsx'
 
 const Community = ({ navigation }) => {
   /**커뮤니티 공용 데이터 */
@@ -424,11 +424,31 @@ const Community = ({ navigation }) => {
   );
 };
 
-const CommunityWithPostsProvider = ({ navigation }) => (
-  <PostsProvider>
-    <Community navigation={navigation} />
-  </PostsProvider>
-);
+const ProvidePosts =  () => { 
+  const {Posts, GetPostsFromServer} = useContext(PostsContext)
+
+  return(
+    <View>
+      <TouchableOpacity onPress={()=>GetPostsFromServer()}>
+        <Text>
+          {JSON.stringify(Posts)}
+        </Text>
+        <Text>
+          {Posts[1].title}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+const CommunityWithPostsProvider = ({ navigation }) => {
+  return(
+    <PostsProvider>
+      <ProvidePosts/>
+      {/* <Community navigation={navigation} /> */}
+    </PostsProvider>
+  )
+}
 
 export default CommunityWithPostsProvider;
 

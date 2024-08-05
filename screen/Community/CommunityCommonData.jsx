@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import axios from 'axios';
 
 // 태그 데이터
@@ -178,6 +178,41 @@ export const PostsContext = createContext();
 
 export const PostsProvider = ({ children }) => {
   const [Posts, setPosts] = useState(initialPosts);
+  const Uip = '192.168.137.14';
+
+  // useEffect(() => {
+  //   const fetchPosts = async () => {
+  //     try {
+  //       const fetchedPosts = await GetPostsFromServer();
+  //       setPosts(fetchedPosts);
+  //     } catch (err) {
+  //       setError('게시물을 불러오는 데 실패했습니다.');
+  //       console.error('Error fetching posts:', err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchPosts();
+  // }, []);
+  
+  const GetPostsFromServer = async () => {
+    try {
+      const response = await axios.get(`http://${Uip}:5001/posts`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        setPosts(Object.values(response.data));
+      } else {
+        alert('전체 게시물을 가져오는데 실패했습니다.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error.response ? error.response.data : error.message);
+      alert('전체 게시물을 가져오는 과정에서 문제가 발생했습니다.');
+      return null;
+    }
+  };
+
 
   const AddPost = (newPost) => {
     setPosts(prevPosts => [...prevPosts, { ...newPost, id: prevPosts.length}]);
@@ -200,7 +235,7 @@ export const PostsProvider = ({ children }) => {
   }
 
   return (
-    <PostsContext.Provider value={{ Posts, AddPost, UpdatePost, DeletePost, AddComment }}>
+    <PostsContext.Provider value={{ Posts,GetPostsFromServer,GetPosts, AddPost, UpdatePost, DeletePost, AddComment }}>
       {children}
     </PostsContext.Provider>
   );
@@ -260,20 +295,19 @@ export const usersProfile =
 
 const Uip = '192.168.137.14';
 
-export const GetPost = async (postId) => {
+export const GetPosts = async () => {
   try {
-    const response = await axios.get(`http://${Uip}:5001/posts/${postId}`);
+    const response = await axios.get(`http://${Uip}:5001/posts`);
     console.log('Response:', response.data);
-    alert("함수 내부 : " + response.data.title)
     if (response.status === 200) {
-      return response.data;
+      return Object.values(response.data);
     } else {
-      alert('게시물을 가져오는데 실패했습니다.');
+      alert('전체 게시물을 가져오는데 실패했습니다.');
       return null;
     }
   } catch (error) {
     console.error('Error fetching posts:', error.response ? error.response.data : error.message);
-    alert('게시물을 가져오는 과정에서 문제가 발생했습니다.');
+    alert('전체 게시물을 가져오는 과정에서 문제가 발생했습니다.');
     return null;
   }
 };
