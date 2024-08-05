@@ -60,28 +60,6 @@ const Feed = ({info}) => {
     }, [text, bobCount, waterCount]);
 
     //완료 버튼 동작 (bobCount, waterCount, text 변수 저장해야함)
-    const handleComplete = async () => {
-        try {
-          const response = await axios.post(`http://${Uip}:5001/add_medication_event`, {
-            userId: String(userId), // 실제 사용자 ID로 대체
-            feedingId: 'generated_id', // 실제 예방접종 ID로 대체
-            date: new Date().toISOString(), // 현재 날짜와 시간을 ISO 형식으로 변환
-            memo: text,
-          });
-          console.log('Response:', response.data);
-          if (response.status === 201) {
-            alert('급여 정보를 추가하였습니다!');
-            setText(''); // 완료 후 입력 필드 초기화
-            setIsModified(false); // 완료 후 버튼 비활성화
-            navigation.navigate('Home'); // 홈 화면으로 이동
-          } else {
-            alert('급여 정보 추가를 실패했습니다.');
-          }
-        } catch (error) {
-            console.error('Error adding feeding event:', error.response ? error.response.data : error.message);
-          alert('급여 정보를 추가하는 과정에서 문제가 발생했습니다.');
-        }
-    };
 
     const handleCount=(type)=>{
         switch(type){

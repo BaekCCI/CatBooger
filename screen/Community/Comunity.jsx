@@ -3,6 +3,9 @@ import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, Safe
 import styled from "styled-components/native";
 import { HorizontalLine } from "./CommunityCommonStyles.jsx";
 import {GetPosts, PostsContext, PostsProvider, basicProfilePicture, initialAnimalTags, initialCategoryTags, usersProfile} from './CommunityCommonData.jsx'
+import { UserProvider } from "../../UseContext.js";
+
+export const Uip = '192.168.137.14'
 
 const Community = ({ navigation }) => {
   /**커뮤니티 공용 데이터 */
@@ -15,6 +18,10 @@ const Community = ({ navigation }) => {
         console.error('Error fetching posts:', err);
       }
   }, []);
+
+  const ReLoadPosts = async() =>{
+    GetPostsFromServer()
+  }
   /**이미지 데이터 */
   xIcon = require('../../assets/community/x_icon.png');
   penIcon = require('../../assets/community/pen_icon.png');
@@ -169,7 +176,7 @@ const Community = ({ navigation }) => {
 
     // 필터링한 게시물들을 보여줌
     return (
-      filteredPosts.map((postDataWithId, index) => {
+      filteredPosts.reverse().map((postDataWithId, index) => {
         const postData = postDataWithId[1]
         return(
           <Post key={index}>
@@ -177,24 +184,27 @@ const Community = ({ navigation }) => {
               <View style={{flex:3}}>
                 <View style={{marginBottom : '1%'}}>
                   <PostTitle numberOfLines={1} ellipsizeMode="tail">
-                  {/* {postData.isQuestion
-                  ? 
-                    <Text>
-                        <Text style={{color : postData.isQuestionSolved ? '#23C6B3' : '#989898'}}>Q.</Text>
+                  
+                  {postData.tags ? 
+                  postData.tags.includes("QnA")
+                      ? 
+                        <Text>
+                            <Text style={{color : postData.mark ? '#23C6B3' : '#989898'}}>Q.</Text>
+                            <Text>{postData.title}</Text>
+                        </Text>
+                      : 
                         <Text>{postData.title}</Text>
-                    </Text>
-                  : 
-                    <Text>{postData.title}</Text>} */}
-                    <Text>{postData.title}</Text>
+                    :
+                      <Text>{postData.title}</Text>}
                   </PostTitle>
                 </View>
                 
                 <PostContent numberOfLines={2} ellipsizeMode="tail">{postData.content}</PostContent>
 
                 <TagsContainer>
-                  {postData.tags.map((tag, index) => (
+                  {postData.tags ? postData.tags.map((tag, index) => (
                   <Tag key={index}>{'#' + tag}</Tag>
-                  ))}
+                  )) : null}
                 </TagsContainer>
                 
 
@@ -204,13 +214,13 @@ const Community = ({ navigation }) => {
                   </NickNameText>
                   
                   <View style={{flexDirection:'row', gap : 5, top : 1.5}}>
-                    <LikeTag likeNumber={postData.star.length} />
-                    <ScrapeTag scrapeNumber={postData.scrapeNumber} />
+                    <LikeTag likeNumber={postData.likeNumber } />
+                    <ScrapeTag scrapeNumber={postData.star ? postData.star.length : 0} />
                   </View>
                   
                 </PostUnderContent>
               </View>
-              {postData.img !== "" ? <PostImg source={{uri : postData.imageUri}}/> : null}
+              {postData.imgUri === "" ? null : <PostImg source={{uri : postData.imageUri}}/>}
             </PostButton>
           </Post>
       )})
@@ -404,6 +414,11 @@ const Community = ({ navigation }) => {
   return (
       <View style={{flex : 1}}>
         <SafeAreaView style={{flex : 1}}>
+          <TouchableOpacity onPress={()=>ReLoadPosts()}>
+            <Text>
+              게시물 업데이트
+            </Text>
+          </TouchableOpacity>
           <ScrollView style={{ backgroundColor: 'white'}} stickyHeaderIndices={[1]}>
             <StatusBar/>
             <View style=
@@ -459,8 +474,8 @@ const ProvidePosts =  () => {
 const CommunityWithPostsProvider = ({ navigation }) => {
   return(
     <PostsProvider>
+        <Community navigation={navigation} />
       {/* <ProvidePosts/> */}
-      <Community navigation={navigation} />
     </PostsProvider>
   )
 }
@@ -510,6 +525,7 @@ const PostImg = styled.Image`
 
 const PostUnderContent = styled.View`
   flex-direction: row;
+  flex-wrap : wrap;
   align-items: center;
   gap : 5px;
 `;

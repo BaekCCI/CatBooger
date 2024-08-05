@@ -4,8 +4,14 @@ import styled from 'styled-components';
 import { HorizontalLine } from './CommunityCommonStyles';
 import { currentUserId, GetDate, initialAnimalTags, initialCategoryTags, PostsContext, PostsProvider } from './CommunityCommonData';
 import * as ImagePicker from 'expo-image-picker'
+import * as FileSystem from 'expo-file-system';
+import axios from 'axios';
+import { UserContext, UserProvider } from '../../UseContext';
 
 const CommunityWritingPost = () => {
+  const {userId} = useContext(UserContext)
+
+
   const cameraIcon = require("../../assets/community/camera_icon.png");
   const galleryIcon = require("../../assets/community/gallery_icon.png")
 
@@ -192,25 +198,42 @@ const CommunityWritingPost = () => {
   }
 
   /**서버 상에 게시물을 등록하는 기능 */
-  const RegisterPost = () => {
+  const RegisterPost = async () => {
     const selectedAnimalTags = (animalTags.filter((tag) => tag.isSelected)).map((selectedTag) => selectedTag.name);
     const selectedCategoryTags = (categoryTags.filter((tag) => tag.isSelected)).map((selectedTag) => selectedTag.name);
     const selectedTags = selectedAnimalTags.concat(selectedCategoryTags);
     const isQuestion = selectedCategoryTags.includes("QnA");
+    const createdDate = GetDate();
+    const Uip = "192.168.137.14"
+    const postId = "postId" + Date.now();
+    const AddPostToServer = async () => {
+      try {
+        const response = await axios.put(`http://${Uip}:5001/posts/${postId}`, {
+          author : userId,
+          content : contentInputRef.current,
+          createdDate : createdDate,
+          imgUri : imageUrl,
+          likeNumber : 0,
+          mark : false,
+          modifiedDate : null,
+          replies : null,
+          star : null,
+          tags : selectedTags,
+          title : titleInputRef.current
+        });
+        console.log('Response:', response.data);
+        if (response.status === 201) {
+          alert('게시물을 추가하였습니다!');
+        } else {
+          alert('게시물 추가를 실패했습니다.');
+        }
+      } catch (error) {
+          console.error('Error adding feeding event:', error.response ? error.response.data : error.message);
+        alert('게시물을 추가하는 과정에서 문제가 발생했습니다.');
+      }
+  };
 
-    AddPost({
-      writerID : currentUserId,
-      isQuestion : isQuestion,
-      isQuestionSolved : isQuestion ? false : null,
-      title : titleInputRef.current,
-      content : contentInputRef.current,
-      img : {uri : imageUrl},
-      tags : selectedTags,
-      postTime: GetDate(),
-      likeNumber: 0,
-      scrapeNumber: 0,
-      comments : []
-    })
+    AddPostToServer()
 
     titleInputRef.current = "";
     contentInputRef.current = "";
@@ -254,7 +277,7 @@ const CommunityWritingPost = () => {
 
 const CommunityWritingPostsWithPostsProvider = () => (
     <PostsProvider>
-      <CommunityWritingPost/>
+        <CommunityWritingPost/>
     </PostsProvider>
 )
 

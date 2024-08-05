@@ -1,11 +1,14 @@
 import React, { useContext, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { View, ScrollView, Touchable, TouchableOpacity, Image, Modal,Text,TextInput} from "react-native";
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import styled from "styled-components";
 import { HorizontalLine} from "./CommunityCommonStyles.jsx";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {basicProfilePicture, currentUserId, GetDate, initialPosts, originPosts, PostsContext, PostsProvider, setOriginPosts, usersProfile} from './CommunityCommonData.jsx'
+import axios from "axios";
+import { UserContext, UserProvider } from "../../UseContext";
 
+const Uip = '192.168.137.14'
 /**이미지 데이터 */
 const commentIcon = require('../../assets/community/comment_icon.png')
 const sendCommentIcon = require('../../assets/community/send_comment_icon.png')
@@ -15,9 +18,10 @@ const profilePircure =  {uri : 'https://cdn.pixabay.com/photo/2020/05/17/20/21/c
 
 const isDoctor = false;
 const CommunityPost = ({navigation}) => {
+  const {userId} = useContext(UserContext);
   /**커뮤니티 공용 데이터 */
   const {Posts, AddPost, GetPostFromServer, UpdatePost, DeletePost, AddComment} = useContext(PostsContext)
-
+  
   const [postData, setPostData] = useState({
     "author": "",
     "content": "",
@@ -56,6 +60,23 @@ const CommunityPost = ({navigation}) => {
     fetchPost();
   }, [postDataId, GetPostFromServer]);
 
+  const ReloadPost = async()  => {
+    const fetchPost = async () => {
+      try {
+        const fetchedPostData = await GetPostFromServer(postDataId);
+        if (fetchedPostData) {
+          setPostData(fetchedPostData);
+        } else {
+          console.log('게시물을 가져오는데 실패했습니다.');
+        }
+      } catch (error) {
+        console.log('게시물 가져오기 오류: ' + error.message);
+      }
+    };
+  
+    fetchPost();
+  }
+  
   const GetPost = async (postDataId) =>{
     try {
       const postData = await GetPostFromServer(postDataId);
@@ -71,17 +92,15 @@ const CommunityPost = ({navigation}) => {
       console.error('게시물 가져오기 오류:', error);
     }
   }
-  
-
 
   const inputCommentRef = useRef("");
-
+  
   const MoveToDoctorPage = () => navigation.navigate('../Counseling/DoctorDetail')
-
+  
   /**게시글 사진을 담는 태그 */
   const PostImgContainer = () => {  
     return(
-      postData.img === "" ?  null : 
+      postData.img == null ?  null : 
       <View style={{
         alignItems: 'center',
         justifyContent: 'center'
@@ -92,8 +111,79 @@ const CommunityPost = ({navigation}) => {
   }
 
   /**댓글 등록할 때의 기능을 담은 함수 (매개변수 : 게시물 ID, 댓글 쓴 사람 닉네임, 댓글 내용, 댓글 등록 시간*/
-  const RegisterComment = (postId, writerID, content, date) => {
-    AddComment(postId, writerID, content, date);
+  console.log("userID 확인 :", userId)
+  const navigationA = useNavigation();
+  const RegisterComment = () => {
+
+    const replyId = Date.now()
+    
+    const AddPostReplyToServer = async () => {
+      try {
+        const response = await axios.put(`http://${Uip}:5001/posts/${postDataId}/replies/replyId${replyId}`, {
+          acceptedAnswers: false,
+          author: String(userId),
+          content: inputCommentRef.current,
+          createdDate: new Date().toISOString()
+        });
+        console.log('Response:', response.data);
+        if (response.status === 200) {
+          alert('댓글을 추가하였습니다!');
+        } else {
+          alert('댓글 추가를 실패했습니다.' +  response.status);
+        }
+      } catch (error) {
+          console.error('Error adding feeding event:', error.response ? error.response.data : error.message);
+        alert('댓글을 추가하는 과정에서 문제가 발생했습니다.');
+      }
+  };
+
+    AddPostReplyToServer()
+    inputCommentRef.current = ""
+    ReloadPost()
+  }
+
+  const ClickLike = () => {
+    const ClickLikeFucntion = async () => {
+      try {
+        const response = await axios.put(`http://${Uip}:5001/posts/${postDataId}`, {
+          likeNumber : postData.likeNumber + 1
+        });
+        console.log('Response:', response.data);
+        ReloadPost()
+        if (response.status === 200) {
+          alert('좋아요을 추가하였습니다!');
+        } else {
+          alert('좋아요를 실패했습니다.' +  response.status);
+        }
+      } catch (error) {
+          console.error('Error adding feeding event:', error.response ? error.response.data : error.message);
+        alert('댓글을 추가하는 과정에서 문제가 발생했습니다.');
+      }
+  };
+
+  ClickLikeFucntion()
+  }
+
+  const ClickScrap = () => {
+    const ClickScrapFucntion = async () => {
+      try {
+        const response = await axios.put(`http://${Uip}:5001/posts/${postDataId}`, {
+          star : postData.star ? [...postData.star, userId] : [userId]
+        });
+        console.log('Response:', response.data);
+        ReloadPost()
+        if (response.status === 200) {
+          alert('스크랩 하였습니다!');
+        } else {
+          alert("스크랩 실패했습니다.' +  response.status");
+        }
+      } catch (error) {
+          console.error('Error adding feeding event:', error.response ? error.response.data : error.message);
+        alert('스크랩을 추가하는 과정에서 문제가 발생했습니다.');
+      }
+  };
+
+  ClickScrapFucntion()
   }
 
   /**댓글 쓰기 버튼에 해당하는 태그 */
@@ -112,7 +202,7 @@ const CommunityPost = ({navigation}) => {
               </ScrollView>
 
               <CommentSendButton 
-              onPress={() => {RegisterComment(postDataId, currentUserId, inputCommentRef.current, GetDate())}}>
+              onPress={() => {RegisterComment()}}>
               <Text style={{fontWeight:'bold'}}>
                 댓글 등록
               </Text>
@@ -125,7 +215,7 @@ const CommunityPost = ({navigation}) => {
     /**좋아요의 개수를 표시할 태그*/
   const LikeTag = ({ likeNumber }) => {
     return (
-      <TouchableOpacity onPress={() => {UpdatePost(postDataId, {...postData, likeNumber : likeNumber + 1})}}>
+      <TouchableOpacity onPress={() => {ClickLike()}}>
         <View style={{
           flexDirection: 'row',
           alignItems: 'center',
@@ -142,7 +232,7 @@ const CommunityPost = ({navigation}) => {
   /**스크랩의 개수를 표시할 태그 */
   const ScrapeTag = ({ scrapeNumber }) => {
     return (
-      <TouchableOpacity onPress={() => {UpdatePost(postDataId, {...postData, scrapeNumber : scrapeNumber + 1})}}>
+      <TouchableOpacity onPress={() => {ClickScrap()}}>
         <View style={{
           flexDirection: 'row',
           alignItems: 'center',
@@ -180,7 +270,7 @@ const CommunityPost = ({navigation}) => {
       <CommentsContainer>
       <CommentsContainerTitle>{'댓글 ' + Object.values(postData.replies).length}</CommentsContainerTitle>
       <HorizontalLine/>
-      {Object.values(postData.replies).map((reply, index) => (
+      {Object.values(postData.replies).reverse().map((reply, index) => (
         <View key={index}>
             <Comment>
               { 
@@ -260,12 +350,12 @@ const CommunityPost = ({navigation}) => {
               style={{flexDirection:'row', gap : 5, alignItems : 'center'}}>
                 <ProfileNickName>{postData.author}</ProfileNickName>
               </TouchableOpacity>
-              <PostedTime>{postData.postTime}</PostedTime>
+              <PostedTime>{postData.createdDate}</PostedTime>
             </PostUnderLeftContainer>
-            <PostUnderRightContainer>
-              <LikeTag likeNumber={postData.likeNumber}/>
-              <ScrapeTag scrapeNumber={postData.scrapeNumber}/>
-            </PostUnderRightContainer>
+              <PostUnderRightContainer>
+                <LikeTag likeNumber={postData.likeNumber ? postData.likeNumber : 0}/>
+                <ScrapeTag scrapeNumber={postData.star ? postData.star.length : 0}/>
+              </PostUnderRightContainer>
           </PostUnderContainer>
         </Post>
 
@@ -274,7 +364,7 @@ const CommunityPost = ({navigation}) => {
           backgroundColor: '#96d3cb'
         }} />
 
-        <Comments/>
+        {postData.replies ? <Comments/> : null}
       </ScrollView>
       <WriteCommentButton/>
     </View>
@@ -283,7 +373,7 @@ const CommunityPost = ({navigation}) => {
 
 const CommunityPostWithPostProvider = () => (
   <PostsProvider>
-    <CommunityPost/>
+      <CommunityPost/>
   </PostsProvider>
 )
 
@@ -330,6 +420,7 @@ const Tag = styled.Text`
 
 /**----게시물의 아랫쪽을 담을 태그----*/
 const PostUnderContainer = styled.View`
+  flex-wrap : wrap;
   flex-direction: row;
   justify-content: space-between;
 `;

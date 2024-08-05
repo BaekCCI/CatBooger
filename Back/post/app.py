@@ -29,7 +29,7 @@ def create_post():
     return jsonify({'message': 'Post created successfully'}), 201
 
 @app.route('/posts/<post_id>')
-def 됨(post_id):
+def get_post(post_id):
     """Retrieves a specific post from the database."""
     post = db_ref.child('posts').child(post_id).get()
     return jsonify(post)
@@ -75,63 +75,41 @@ def remove_favorite_tag(user_id, tag):
     db_ref.child('users').child(user_id).child('favoriteTags').child(tag).delete()
     return jsonify({'message': 'Favorite tag removed successfully'}), 200
 
-@app.route('/posts/<post_id>/comments')
+@app.route('/posts/<post_id>/replies')
 def get_comments(post_id):
     """Retrieves comments for a specific post."""
-    comments = db_ref.child('posts').child(post_id).child('comments').get()
+    comments = db_ref.child('posts').child(post_id).child('replies').get()
     return jsonify(comments)
 
-@app.route('/posts/<post_id>/comments', methods=['POST'])
+@app.route('/posts/<post_id>/replies', methods=['POST'])
 def create_comment(post_id):
-    """Creates a new comment for a post."""
     data = request.get_json()
-    db_ref.child('posts').child(post_id).child('comments').push(data)
-    return jsonify({'message': 'Comment created successfully'}), 201
-
-@app.route('/posts/<post_id>/comments/<comment_id>', methods=['PUT'])
-def update_comment(post_id, comment_id):
-    """Updates an existing comment for a post."""
-    data = request.get_json()
-    db_ref.child('posts').child(post_id).child('comments').child(comment_id).update(data)
-    return jsonify({'message': 'Comment updated successfully'}), 200
-
-@app.route('/posts/<post_id>/comments/<comment_id>', methods=['DELETE'])
-def delete_comment(post_id, comment_id):
-    """Deletes a specific comment from a post."""
-    db_ref.child('posts').child(post_id).child('comments').child(comment_id).delete()
-    return jsonify({'message': 'Comment deleted successfully'}), 200
-
-@app.route('/posts/<post_id>/comments/<comment_id>/replies')
-def get_replies(post_id, comment_id):
-    """Retrieves replies for a specific comment."""
-    replies = db_ref.child('posts').child(post_id).child('comments').child(comment_id).child('replies').get()
-    return jsonify(replies)
-
-@app.route('/posts/<post_id>/comments/<comment_id>/replies', methods=['POST'])
-def create_reply(post_id, comment_id):
-    """Creates a new reply for a comment."""
-    data = request.get_json()
-    db_ref.child('posts').child(post_id).child('comments').child(comment_id).child('replies').push(data)
+    # 'acceptedAnswers' 속성을 False로 설정 예준님 data = request.get_json() 이 코드만 쓰고싶으면 acceptedAnswers = False로 값을 넣어야해요
+    # 아니면 data['acceptedAnswers'] = False 코드 주석 없애고 처음 data = request.get_json()에서 acceptedAnswers를 빼고 json코드를 작성하시면 됩니다.
+    #data['acceptedAnswers'] = False
+    db_ref.child('posts').child(post_id).child('replies').push(data)
     return jsonify({'message': 'Reply created successfully'}), 201
 
-@app.route('/posts/<post_id>/comments/<comment_id>/replies/<reply_id>', methods=['PUT'])
-def update_reply(post_id, comment_id, reply_id):
-    """Updates an existing reply for a comment."""
+@app.route('/posts/<post_id>/replies/<replies_id>', methods=['PUT'])
+def update_comment(post_id, replies_id):
+    """Updates an existing replies for a post."""
     data = request.get_json()
-    db_ref.child('posts').child(post_id).child('comments').child(comment_id).child('replies').child(reply_id).update(data)
-    return jsonify({'message': 'Reply updated successfully'}), 200
+    db_ref.child('posts').child(post_id).child('replies').child(replies_id).update(data)
+    return jsonify({'message': 'replies updated successfully'}), 200
 
-@app.route('/posts/<post_id>/comments/<comment_id>/replies/<reply_id>', methods=['DELETE'])
-def delete_reply(post_id, comment_id, reply_id):
-    """Deletes a specific reply from a comment."""
-    db_ref.child('posts').child(post_id).child('comments').child(comment_id).child('replies').child(reply_id).delete()
-    return jsonify({'message': 'Reply deleted successfully'}), 200
+@app.route('/posts/<post_id>/replies/<replies_id>', methods=['DELETE'])
+def delete_comment(post_id, replies_id):
+    """Deletes a specific replies from a post."""
+    db_ref.child('posts').child(post_id).child('replies').child(replies_id).delete()
+    return jsonify({'message': 'replies deleted successfully'}), 200
 
-@app.route('/posts/<post_id>/comments/<comment_id>/accept', methods=['POST'])
-def accept_comment(post_id, comment_id):
+@app.route('/posts/<post_id>/replies/<replies_id>/accept', methods=['POST'])
+def accept_comment(post_id, replies_id):
     """Accepts a specific comment for a post."""
-    db_ref.child('posts').child(post_id).child('comments').child(comment_id).update({'accepted': True})
+    # replies/{replies_id}/acceptedAnswers 값을 true로 업데이트
+    db_ref.child('posts').child(post_id).child('replies').child(replies_id).update({'acceptedAnswers': True})
     return jsonify({'message': 'Comment accepted successfully'}), 200
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5001, debug=True)

@@ -179,8 +179,8 @@ export const PostsContext = createContext();
 export const PostsProvider = ({ children }) => {
   const [Posts, setPosts] = useState([]);
 
-  const Uip = '172.22.155.176';
-  
+  const Uip = '192.168.137.14';
+
   useEffect(() => {
       try {
         GetPostsFromServer();
@@ -202,7 +202,7 @@ export const PostsProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error fetching posts:', error.response ? error.response.data : error.message);
-      alert('전체 게시물을 가져오는 과정에서 문제가 발생했습니다. ' + error);
+      console.log('전체 게시물을 가져오는 과정에서 문제가 발생했습니다. ' + error);
       return null;
     }
   };
