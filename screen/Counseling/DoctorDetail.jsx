@@ -15,6 +15,7 @@ export default function DoctorDetail({ route }){
 
     const { id } = route.params;
     const doctor = doctors.find(doc => doc.id === id);
+
     if (!doctor) {
         return (
             <View>
@@ -47,14 +48,14 @@ export default function DoctorDetail({ route }){
             <DoctorWrap>
                 <DoctorLeftWrap>
                     <DoctorName>{docName}</DoctorName>
-                    <TextStyling color="gray">{doctor.hospital}</TextStyling>
+                    <TextStyling color="gray">{doctor.hospitalId}</TextStyling>
                     <Line/>
 
                     <TextStyling>{doctor.explain}</TextStyling>
 
                 </DoctorLeftWrap>
                 <DoctorRightWrap>
-                    <DoctorImg source={require('../../assets/DefaultProfile.png')}/> 
+                    <DoctorImg source={doctor.imgUri}/> 
                     <CounselBtn
                         onPress= {handleCounsel}>
                         <ButtonText>상담 신청하기</ButtonText>
@@ -87,7 +88,7 @@ export default function DoctorDetail({ route }){
                         <Title>상담 정보</Title>
                         <WrapAnimals>
                             <ContentText color="black">금액 </ContentText>
-                            <ContentText>1회 {doctor.Price["1회"]} / 3회 {doctor.Price["3회"]} </ContentText>
+                            <ContentText>1회 {doctor.Price} </ContentText>
                         </WrapAnimals>
                         <WrapAnimals>
                             <ContentText color="black">상담시간 </ContentText>
@@ -98,6 +99,7 @@ export default function DoctorDetail({ route }){
                         <ContentText>{doctor.Career}</ContentText>
                         <Line/>
                         <Title>병원 정보</Title>
+                        <ContentText>{doctor.hospitalId}</ContentText>
                     
                     </ListWrap>
                     

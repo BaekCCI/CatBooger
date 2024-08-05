@@ -2,42 +2,20 @@ import React , { useState }from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { useNavigation } from '@react-navigation/native';
+import doctors from "./doctors";
 
 
-const doctors = [
-    {
-        id : "1",
-        name : "홍길동",
-        star : "1.8",
-        explain : "정성껏 진료하는 수의사입니다.정성껏 진료하는 수의사입니다.정성껏 진료하는 수의사입니다.정성껏 진료하는 수의사입니다.정성껏 진료하는 수의사입니다.",
-        time : "09:00 ~ 18:00"
-    },
-    {
-        id : "2",
-        name : "홍길동",
-        star : "0.8",
-        explain : "정성껏 진료하는 수의사입니다.",
-        time : "09:00 ~ 18:00"
-    },
-    {
-        id : "3",
-        name : "홍길동",
-        star : "2.8",
-        explain : "정성껏 진료하는 수의사입니다.",
-        time : "09:00 ~ 18:00"
-    }
-]
-
-const DoctorCard = ({id, name, star, explain, time}) => {
+const DoctorCard = ({id, name, imgUri, star, review, adopt, explain, time}) => {
     const navigation = useNavigation();
 
     const navigate2Detail = () => {
         navigation.navigate('DoctorDetail',{id});
     };
 
+
     return(
         <DoctorWrap onPress= {()=>navigate2Detail()}>
-            <ProfileImg source={require('../../assets/DefaultProfile.png')}/> 
+            <ProfileImg source= {imgUri!==''? imgUri : require('../../assets/DefaultProfile.png')} />
             <DoctorRight>
                 <DoctorTop>
                     <TextTop>{name}</TextTop>
@@ -57,15 +35,18 @@ const handleCategory = (category, setActiveCategory, setDoctorList) => {
     setActiveCategory(category);
 
     if (category === '리뷰') {
-        setDoctorList(doctors);
+        setDoctorList([...doctors].sort((a, b) => parseFloat(b.review) - parseFloat(a.review)));
     } else if (category === '별점') {
         setDoctorList([...doctors].sort((a, b) => parseFloat(b.star) - parseFloat(a.star)));
     } else if (category === '채택') {
-        setDoctorList(doctors);
+        setDoctorList([...doctors].sort((a, b) => parseFloat(b.adopt) - parseFloat(a.adopt)));
     } else {
         setDoctorList(doctors);
     }
   };
+
+  const recommendDoc = [...doctors].sort((a, b) => parseFloat(b.adopt) - parseFloat(a.adopt)).slice(0, 2);
+
 
 export default function DoctorList() {
 
@@ -78,13 +59,14 @@ export default function DoctorList() {
             <TopView>
                 <TittleText>검정콩 Pick</TittleText>
             </TopView>
-            {doctors
+            {recommendDoc
                 .slice(0, 2)
                 .map((doctor, index)=>(
                 <React.Fragment key={index}><DoctorCard
                     key={index}
                     id = {doctor.id}
                     name={doctor.name}
+                    imgUri={doctor.imgUri}
                     star={doctor.star}
                     explain={doctor.explain}
                     time={doctor.time} />
@@ -122,6 +104,7 @@ export default function DoctorList() {
                     key={index}
                     id = {doctor.id}
                     name={doctor.name}
+                    imgUri={doctor.imgUri}
                     star={doctor.star}
                     explain={doctor.explain}
                     time={doctor.time} />
