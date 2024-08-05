@@ -3,10 +3,11 @@ import {
   SafeAreaView,
   View,
   Text,
-  FlatList,
+  SectionList,
   TouchableOpacity,
   TextInput,
   Modal,
+  FlatList,
   StyleSheet,
   Image,
 } from "react-native";
@@ -24,6 +25,11 @@ const CalendarScreen = () => {
   const [selectedDate, setSelectedDate] = useState("");
   const [schedules, setSchedules] = useState({});
   const [bathingRecords, setBathingRecords] = useState([]);
+  const [feedingRecords, setFeedingRecords] = useState([]);
+  const [medicationRecords, setMedicationRecords] = useState([]);
+  const [vaccinationRecords, setVaccinationRecords] = useState([]);
+  const [weightRecords, setWeightRecords] = useState([]);
+  const [walkingRecords, setWalkingRecords] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [newSchedule, setNewSchedule] = useState({ title: "", memo: "" });
   const [selectedTime, setSelectedTime] = useState(null);
@@ -39,6 +45,11 @@ const CalendarScreen = () => {
     setSelectedDate(day.dateString);
     setExpandedScheduleId(null);
     fetchBathingRecords(adjustedDateString);
+    fetchFeedingRecords(adjustedDateString);
+    fetchMedicationRecords(adjustedDateString);
+    fetchVaccinationRecords(adjustedDateString);
+    fetchWeightRecords(adjustedDateString);
+    fetchWalkingRecords(adjustedDateString);
   };
 
   const fetchSchedules = (date) => {
@@ -84,8 +95,148 @@ const CalendarScreen = () => {
         setBathingRecords([]);
       }
     } catch (error) {
-      console.error("Failed to fetch records: ", error.response ? error.response.data : error.message);
+      console.error("Failed to fetch bathingRecords: ", error.response ? error.response.data : error.message);
       setBathingRecords([]);
+    }
+  };
+
+  const fetchFeedingRecords = async(date) => {
+    try {
+      const response = await axios.get(`http://${Uip}:5001/get_feeding_events/${userId}`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        const feedingEvents = response.data;
+        const filteredRecords = [];
+
+        Object.values(feedingEvents).forEach(event => {
+          Object.values(event.dates).forEach(record => {
+            console.log(record);
+            if (record.date.startsWith(date)) {
+              filteredRecords.push(record);
+            }
+          });
+        });
+
+        console.log('Filtered Records:', filteredRecords); // 로그 출력 추가
+        setFeedingRecords(filteredRecords);
+      } else {
+        setFeedingRecords([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch feedingRecords: ", error.response ? error.response.data : error.message);
+      setFeedingRecords([]);
+    }
+  };
+
+  const fetchMedicationRecords = async(date) => {
+    try {
+      const response = await axios.get(`http://${Uip}:5001/get_medication_events/${userId}`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        const medicationEvents = response.data;
+        const filteredRecords = [];
+
+        Object.values(medicationEvents).forEach(event => {
+          Object.values(event.dates).forEach(record => {
+            console.log(record);
+            if (record.date.startsWith(date)) {
+              filteredRecords.push(record);
+            }
+          });
+        });
+
+        console.log('Filtered Records:', filteredRecords); // 로그 출력 추가
+        setMedicationRecords(filteredRecords);
+      } else {
+        setMedicationRecords([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch medicationRecords: ", error.response ? error.response.data : error.message);
+      setMedicationRecords([]);
+    }
+  };
+
+  const fetchVaccinationRecords = async(date) => {
+    try {
+      const response = await axios.get(`http://${Uip}:5001/get_vaccination_events/${userId}`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        const vaccinationEvents = response.data;
+        const filteredRecords = [];
+
+        Object.values(vaccinationEvents).forEach(event => {
+          Object.values(event.dates).forEach(record => {
+            console.log(record);
+            if (record.date.startsWith(date)) {
+              filteredRecords.push(record);
+            }
+          });
+        });
+
+        console.log('Filtered Records:', filteredRecords); // 로그 출력 추가
+        setVaccinationRecords(filteredRecords);
+      } else {
+        setVaccinationRecords([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch vaccinationRecords: ", error.response ? error.response.data : error.message);
+      setVaccinationRecords([]);
+    }
+  };
+
+  const fetchWeightRecords = async(date) => {
+    try {
+      const response = await axios.get(`http://${Uip}:5001/get_weight_events/${userId}`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        const weightEvents = response.data;
+        const filteredRecords = [];
+
+        Object.values(weightEvents).forEach(event => {
+          Object.values(event.dates).forEach(record => {
+            console.log(record);
+            if (record.date.startsWith(date)) {
+              filteredRecords.push(record);
+            }
+          });
+        });
+
+        console.log('Filtered Records:', filteredRecords); // 로그 출력 추가
+        setWeightRecords(filteredRecords);
+      } else {
+        setWeightRecords([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch weightRecords: ", error.response ? error.response.data : error.message);
+      setWeightRecords([]);
+    }
+  };
+
+  const fetchWalkingRecords = async(date) => {
+    try {
+      const response = await axios.get(`http://${Uip}:5001/get_walking_events/${userId}`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        const walkingEvents = response.data;
+        const filteredRecords = [];
+
+        Object.values(walkingEvents).forEach(event => {
+          Object.values(event.dates).forEach(record => {
+            console.log(record);
+            if (record.date.startsWith(date)) {
+              filteredRecords.push(record);
+            }
+          });
+        });
+
+        console.log('Filtered Records:', filteredRecords); // 로그 출력 추가
+        setWalkingRecords(filteredRecords);
+      } else {
+        setWalkingRecords([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch walkingRecords: ", error.response ? error.response.data : error.message);
+      setWalkingRecords([]);
     }
   };
 
@@ -166,7 +317,135 @@ const CalendarScreen = () => {
     </RecordItem>
   );
 
+  const renderFeedingRecordItem = ({ item }) => (
+    <RecordItem>
+      <RecordTime>{new Date(item.date).toLocaleString()}</RecordTime>
+      <RecordMemo>{item.memo}</RecordMemo>
+    </RecordItem>
+  );
+
+  const renderMedicationRecordItem = ({ item }) => (
+    <RecordItem>
+      <RecordTime>{new Date(item.date).toLocaleString()}</RecordTime>
+      <RecordMemo>{item.memo}</RecordMemo>
+    </RecordItem>
+  );
+
+  const renderVaccinationRecordItem = ({ item }) => (
+    <RecordItem>
+      <RecordTime>{new Date(item.date).toLocaleString()}</RecordTime>
+      <RecordMemo>{item.memo}</RecordMemo>
+    </RecordItem>
+  );
+
+  const renderWeightRecordItem = ({ item }) => (
+    <RecordItem>
+      <RecordTime>{new Date(item.date).toLocaleString()}</RecordTime>
+      <RecordKg>체중: {item.weightKg}</RecordKg>
+      <RecordMemo>{item.memo}</RecordMemo>
+    </RecordItem>
+  );
+
+  const formatWalkingTime = (time) => {
+    const [hours, minutes, seconds] = time.split(":").map(Number);
+    let formattedTime = "";
+  
+    if (hours > 0) {
+      formattedTime += `${hours}시간 `;
+    }
+    if (minutes > 0) {
+      formattedTime += `${minutes}분 `;
+    }
+    if (seconds > 0) {
+      formattedTime += `${seconds}초`;
+    }
+  
+    return formattedTime.trim();
+  };
+  
+  const renderWalkingRecordItem = ({ item }) => (
+    <RecordItem>
+      <RecordTime>{new Date(item.date).toLocaleString()}</RecordTime>
+      <RecordKg>산책 시간: {formatWalkingTime(item.time)}</RecordKg>
+      <RecordMemo>{item.memo}</RecordMemo>
+    </RecordItem>
+  );
+
   const selectedSchedules = schedules[selectedDate] || [];
+
+  const sections = [];
+
+  if (bathingRecords.length > 0) {
+    sections.push({
+      title: (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+          <Image source={require('../../assets/Home/BathIcon.png')} style={{ width: 30, height: 30 }} />
+          <Text style={{ fontSize: 18, marginLeft: 10 }}>목욕</Text>
+        </View>
+      ),
+      data: bathingRecords
+    });
+  }
+
+  if (feedingRecords.length > 0) {
+    sections.push({
+      title: (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+          <Image source={require('../../assets/Home/FeedIcon.png')} style={{ width: 30, height: 30 }} />
+          <Text style={{ fontSize: 18, marginLeft: 10 }}>급여</Text>
+        </View>
+      ),
+      data: feedingRecords
+    });
+  }
+
+  if (medicationRecords.length > 0) {
+    sections.push({
+      title: (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+          <Image source={require('../../assets/Home/MedicineIcon.png')} style={{ width: 30, height: 30 }} />
+          <Text style={{ fontSize: 18, marginLeft: 10 }}>약</Text>
+        </View>
+      ),
+      data: medicationRecords
+    });
+  }
+
+  if (vaccinationRecords.length > 0) {
+    sections.push({
+      title: (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+          <Image source={require('../../assets/Home/VaccineIcon.png')} style={{ width: 30, height: 30 }} />
+          <Text style={{ fontSize: 18, marginLeft: 10 }}>예방접종</Text>
+        </View>
+      ),
+      data: vaccinationRecords
+    });
+  }
+
+  if (weightRecords.length > 0) {
+    sections.push({
+      title: (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+          <Image source={require('../../assets/Home/KgIcon.png')} style={{ width: 30, height: 30 }} />
+          <Text style={{ fontSize: 18, marginLeft: 10 }}>체중</Text>
+        </View>
+      ),
+      data: weightRecords
+    });
+  }
+
+  if (walkingRecords.length > 0) {
+    sections.push({
+      title: (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+          <Image source={require('../../assets/Home/WalkIcon.png')} style={{ width: 30, height: 30 }} />
+          <Text style={{ fontSize: 18, marginLeft: 10 }}>산책</Text>
+        </View>
+      ),
+      data: walkingRecords
+    });
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -203,21 +482,26 @@ const CalendarScreen = () => {
               </View>
             </TouchableOpacity>
             {isRecordVisible && (
-              <>
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
-                  <Image source={require('../../assets/Home/BathIcon.png')} style={{ width: 30, height: 30 }} />
-                  <Text style={{ fontSize: 18, marginLeft: 10 }}>목욕</Text>
-                </View>
-                {bathingRecords.length > 0 ? (
-                  <FlatList
-                    data={bathingRecords}
-                    renderItem={renderRecordItem}
-                    keyExtractor={(item, index) => index.toString()}
-                  />
-                ) : (
-                  <NoRecordText>기록이 없습니다.</NoRecordText>
-                )}
-              </>
+              <SectionList
+                sections={sections}
+                renderItem={({ item }) => {
+                  if (sections[0].data.includes(item)) {
+                    return renderRecordItem({ item });
+                  } else if (sections[1].data.includes(item)) {
+                    return renderFeedingRecordItem({ item });
+                  } else if (sections[2].data.includes(item)) {
+                    return renderMedicationRecordItem({ item });
+                  } else if (sections[3].data.includes(item)) {
+                    return renderVaccinationRecordItem({ item });
+                  } else if (sections[4].data.includes(item)) {
+                    return renderWeightRecordItem({ item });
+                  } else if (sections[5].data.includes(item)) {
+                    return renderWalkingRecordItem({ item });
+                  }
+                }}
+                renderSectionHeader={({ section: { title } }) => title}
+                keyExtractor={(item, index) => index.toString()}
+              />
             )}
           </>
         ) : (
@@ -353,8 +637,16 @@ const RecordItem = styled.View`
 `;
 
 const RecordTime = styled.Text`
-  font-size: 14px;
+  font-size: 12px;
   color: #555;
+  margin-bottom: 2%;
+`;
+
+const RecordKg = styled.Text`
+  font-size: 16px;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 1%;
 `;
 
 const RecordMemo = styled.Text`
