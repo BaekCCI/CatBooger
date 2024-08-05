@@ -45,13 +45,13 @@ const MenuScreen = ({navigation}) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <Container>
+      <ScrollView>
         <Header>
         <HeaderTitle>고양이 코딱지</HeaderTitle>
         <IconWrapper onPress={() => navigation.navigate('ChangeProfile')}>
         <Icon name="settings-outline" size={32} color="#000" />
         </IconWrapper>
         </Header>
-        <ScrollView>
           <Section>
             <SectionHeader>
             </SectionHeader>
