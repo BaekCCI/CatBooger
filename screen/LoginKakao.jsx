@@ -102,10 +102,18 @@ export function KakaoLoginRedirect() {
 
           console.log(user + "  -----------  " + exists + "  -----------  " + token);
           if (exists == null){
-            navigation.navigate('AddAnimal');
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'AddAnimal' }],
+            });
+            // navigation.navigate('AddAnimal');
           }
           else {
-            navigation.navigate('MyTabs');
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'MyTabs' }],
+            });
+            // navigation.navigate('MyTabs');
           }
         })
         .catch((error) => {

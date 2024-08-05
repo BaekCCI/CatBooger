@@ -11,7 +11,7 @@ const hospitals = [
     name: '도그스데이',
     phonenumber: '--',
     openingHours: '--', 
-    status: '진료중',
+    status: '--',
     address: '서울 서초구 양재동 317-1',
     image: 'https://img1.kakaocdn.net/cthumb/local/R0x420.q50/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fplace%2FB0BAB98B9FF444F98C587E3CA261C534', // 실제 이미지 URL로 대체하세요
     latitude: 37.4701939796152,
