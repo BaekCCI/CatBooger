@@ -11,16 +11,30 @@ import { UserContext } from '../UseContext';
 
 import { CLIENT_ID, REDIRECT_URI } from '@env';
 
+import * as SecureStore from 'expo-secure-store';
+
 // WebBrowser.maybeCompleteAuthSession();
 
 
+// const id = CLIENT_ID;
+// const reu = REDIRECT_URI;
+
+// const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${id}&redirect_uri=${reu}&response_type=code`;
+
+async function saveToken(token, uid) {
+  await SecureStore.setItemAsync('authToken', token);
+  await SecureStore.setItemAsync('uid', uid);
+  const save = await SecureStore.getItemAsync('authToken');
+  console.log("saved: ", save);
+} 
+
 export default function Login({ navigation }) {
+
   const id = CLIENT_ID;
   const reu = REDIRECT_URI;
 
-const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${id}&redirect_uri=${reu}&response_type=code`;
 
-  console.log("-------------------------------")
   console.log(REDIRECT_URI);
 
   return (
@@ -70,15 +84,24 @@ export function KakaoLoginRedirect() {
       console.log("~~~~~~~~~~~~~~~~~~~~~~~~");
       console.log(code);
       axios
-        .get(`http://192.168.1.172:5000/oauth?code=${code}`)
+        .get(`http://192.168.132.168:5000/oauth?code=${code}`)
         .then((getRes) => {
-          console.log("login successful: ", getRes.data.id);
-          setUserId(getRes.data.id);
-          //getRes.data를 넘겨주고 싶어요.... 이게 userid인데....git
-          navigation.navigate('MyTabs', {
-            userId: getRes.data.id, 
-          });
-          // navigation.navigate('Home');
+          // console.log("login successful: ", getRes.data.id);
+          const { user, exists, token } = getRes.data;
+          // setUserId(getRes.data.id);
+          setUserId(user);
+          saveToken(token, user);
+
+          console.log(user + "  -----------  " + exists + "  -----------  " + token);
+          if (exists === null){
+            navigation.navigate('AddAnimal');
+          }
+          else {
+            navigation.navigate('MyTabs');
+          }
+
+
+          navigation.navigate('MyTabs');
         })
         .catch((error) => {
           console.error("Failed to handle Kakao login:", error);
