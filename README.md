@@ -22,10 +22,9 @@
 <br/>
 
 **cmd창에 ipconfig 입력(window 기준) 후 무선 LAN 어댑터 Wi-Fi의 IPv4주소 복사해두기(이후 [ip]라 칭함)**
-
-* FrontApp의 ChatStart.jsx에서 107번째 줄의 fetch경로를 자신의 [ip]를 포함한 uri로 바꾼다. (ex: http://***[ip]***:5000/chat-api)
-* greaApp의 App.js에서 43번째 줄의 uri를 자신의 [ip]를 포함한 uri로 바꾼다.  (ex: http://***[ip]***:3000/)
-
+>Uip
+* /screen/Home/   calendars.jsx RecordDialog.jsx WalkRecord.jsx
+* /screen/   AddAnimal.jsx LoginKakao.jsx NickName.jsx
 
 <br/>
 
