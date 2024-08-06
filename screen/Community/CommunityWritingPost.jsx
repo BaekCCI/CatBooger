@@ -154,6 +154,7 @@ const CommunityWritingPost = () => {
         <TitleInputContainer>
           <OptimizedTextInput 
             multiline={true}
+            value = {titleRef.current}
             placeholder="제목 입력"
             onChangeText={(text) => { titleRef.current = text; }}
           />
@@ -198,6 +199,7 @@ const CommunityWritingPost = () => {
     return () => (
       <ContentsInputContainer>
         <OptimizedTextInput 
+          value = {contentRef.current}
           onChangeText={(text) => { contentRef.current = text; }}
           multiline={true}
           placeholder={"글내용 작성"}
@@ -242,7 +244,6 @@ const CommunityWritingPost = () => {
       console.log('Response:', response.data);
       if (response.status === 200) {
         alert('게시물을 추가하였습니다!');
-        // 성공 시에만 입력 필드를 초기화합니다
         titleRef.current = '';
         contentRef.current = '';
         setImageUrl('');

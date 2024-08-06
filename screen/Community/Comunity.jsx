@@ -10,6 +10,8 @@ export const Uip = '192.168.193.148'
 const Community = ({ navigation }) => {
   /**커뮤니티 공용 데이터 */
   const {Posts, GetPostsFromServer, AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
+  const [isFetched, setIsFetched] = useState(false);
+
   useEffect(() => {
       try {
         GetPostsFromServer();
@@ -19,8 +21,18 @@ const Community = ({ navigation }) => {
       }
   }, []);
 
+  useEffect(() => {
+      try {
+        GetPostsFromServer();
+      } catch (err) {
+        setError('게시물을 불러오는 데 실패했습니다.');
+        console.error('Error fetching posts:', err);
+      }
+      setIsFetched(false)
+  }, [isFetched]);
+
   const ReLoadPosts = async() =>{
-    GetPostsFromServer()
+    setIsFetched(true)
   }
   /**이미지 데이터 */
   xIcon = require('../../assets/community/x_icon.png');
