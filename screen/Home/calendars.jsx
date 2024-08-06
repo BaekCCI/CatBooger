@@ -1,52 +1,280 @@
-import React, { useState } from 'react';
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity, TextInput, Modal, StyleSheet } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import styled from 'styled-components/native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import React, { useState, useEffect, useContext } from "react";
+import {
+  SafeAreaView,
+  View,
+  Text,
+  SectionList,
+  TouchableOpacity,
+  TextInput,
+  Modal,
+  FlatList,
+  StyleSheet,
+  Image,
+} from "react-native";
+import { Calendar } from "react-native-calendars";
+import styled from "styled-components/native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import axios from "axios";
+import { UserContext } from "../../UseContext";
+import { ref, set, onValue } from "firebase/database";
+import { database } from "../../firebaseConfig";
 
-const initialSchedules = {
-  '2024-08-01': [
-    { time: '09:30', title: '미용실 가기', icon: '🐶' },
-    { time: '10:30', title: '병원 예방접종', icon: '🐱' },
-  ],
-  '2024-08-02': [
-    { time: '09:00', title: '출근', icon: '🐶' },
-    { time: '18:00', title: '퇴근', icon: '🐱' },
-  ],
-  // 추가 일정 데이터
-};
+const Uip = '192.168.1.23';
 
 const CalendarScreen = () => {
-  const [selectedDate, setSelectedDate] = useState('');
-  const [schedules, setSchedules] = useState(initialSchedules);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [schedules, setSchedules] = useState({});
+  const [bathingRecords, setBathingRecords] = useState([]);
+  const [feedingRecords, setFeedingRecords] = useState([]);
+  const [medicationRecords, setMedicationRecords] = useState([]);
+  const [vaccinationRecords, setVaccinationRecords] = useState([]);
+  const [weightRecords, setWeightRecords] = useState([]);
+  const [walkingRecords, setWalkingRecords] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [newSchedule, setNewSchedule] = useState({ time: '', title: '' });
+  const [newSchedule, setNewSchedule] = useState({ title: "", memo: "" });
+  const [selectedTime, setSelectedTime] = useState(null);
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
+  const [expandedScheduleId, setExpandedScheduleId] = useState(null);
+  const [isRecordVisible, setIsRecordVisible] = useState(false); // 기록 탭 상태 관리
+  const { userId } = useContext(UserContext);
 
   const onDayPress = (day) => {
+    const adjustedDate = new Date(day.dateString);
+    adjustedDate.setDate(adjustedDate.getDate() - 1);
+    const adjustedDateString = adjustedDate.toISOString().split('T')[0];
     setSelectedDate(day.dateString);
+    setExpandedScheduleId(null);
+    fetchBathingRecords(adjustedDateString);
+    fetchFeedingRecords(adjustedDateString);
+    fetchMedicationRecords(adjustedDateString);
+    fetchVaccinationRecords(adjustedDateString);
+    fetchWeightRecords(adjustedDateString);
+    fetchWalkingRecords(adjustedDateString);
   };
 
-  const renderScheduleItem = ({ item }) => (
-    <ScheduleItem>
-      <ScheduleTime>{item.time}</ScheduleTime>
-      <ScheduleTitle>{item.title}</ScheduleTitle>
-      <ScheduleIcon>{item.icon}</ScheduleIcon>
-    </ScheduleItem>
-  );
+  const fetchSchedules = (date) => {
+    const scheduleRef = ref(database, `calendar/${userId}`);
+    onValue(scheduleRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setSchedules((prevSchedules) => ({
+          ...prevSchedules,
+          [date]: Object.entries(data)
+            .filter(([_, event]) => event.date.startsWith(date))
+            .map(([id, event]) => ({ ...event, id })),
+        }));
+      } else {
+        setSchedules((prevSchedules) => ({
+          ...prevSchedules,
+          [date]: [],
+        }));
+      }
+    });
+  };
 
-  const selectedSchedules = schedules[selectedDate] || [];
+  const fetchBathingRecords = async (date) => {
+    try {
+      const response = await axios.get(`http://${Uip}:5001/get_bathing_events/${userId}`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        const bathingEvents = response.data;
+        const filteredRecords = [];
+
+        Object.values(bathingEvents).forEach(event => {
+          Object.values(event.dates).forEach(record => {
+            console.log(record);
+            if (record.date.startsWith(date)) {
+              filteredRecords.push(record);
+            }
+          });
+        });
+
+        console.log('Filtered Records:', filteredRecords); // 로그 출력 추가
+        setBathingRecords(filteredRecords);
+      } else {
+        setBathingRecords([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch bathingRecords: ", error.response ? error.response.data : error.message);
+      setBathingRecords([]);
+    }
+  };
+
+  const fetchFeedingRecords = async(date) => {
+    try {
+      const response = await axios.get(`http://${Uip}:5001/get_feeding_events/${userId}`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        const feedingEvents = response.data;
+        const filteredRecords = [];
+
+        Object.values(feedingEvents).forEach(event => {
+          Object.values(event.dates).forEach(record => {
+            console.log(record);
+            if (record.date.startsWith(date)) {
+              filteredRecords.push(record);
+            }
+          });
+        });
+
+        console.log('Filtered Records:', filteredRecords); // 로그 출력 추가
+        setFeedingRecords(filteredRecords);
+      } else {
+        setFeedingRecords([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch feedingRecords: ", error.response ? error.response.data : error.message);
+      setFeedingRecords([]);
+    }
+  };
+
+  const fetchMedicationRecords = async(date) => {
+    try {
+      const response = await axios.get(`http://${Uip}:5001/get_medication_events/${userId}`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        const medicationEvents = response.data;
+        const filteredRecords = [];
+
+        Object.values(medicationEvents).forEach(event => {
+          Object.values(event.dates).forEach(record => {
+            console.log(record);
+            if (record.date.startsWith(date)) {
+              filteredRecords.push(record);
+            }
+          });
+        });
+
+        console.log('Filtered Records:', filteredRecords); // 로그 출력 추가
+        setMedicationRecords(filteredRecords);
+      } else {
+        setMedicationRecords([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch medicationRecords: ", error.response ? error.response.data : error.message);
+      setMedicationRecords([]);
+    }
+  };
+
+  const fetchVaccinationRecords = async(date) => {
+    try {
+      const response = await axios.get(`http://${Uip}:5001/get_vaccination_events/${userId}`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        const vaccinationEvents = response.data;
+        const filteredRecords = [];
+
+        Object.values(vaccinationEvents).forEach(event => {
+          Object.values(event.dates).forEach(record => {
+            console.log(record);
+            if (record.date.startsWith(date)) {
+              filteredRecords.push(record);
+            }
+          });
+        });
+
+        console.log('Filtered Records:', filteredRecords); // 로그 출력 추가
+        setVaccinationRecords(filteredRecords);
+      } else {
+        setVaccinationRecords([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch vaccinationRecords: ", error.response ? error.response.data : error.message);
+      setVaccinationRecords([]);
+    }
+  };
+
+  const fetchWeightRecords = async(date) => {
+    try {
+      const response = await axios.get(`http://${Uip}:5001/get_weight_events/${userId}`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        const weightEvents = response.data;
+        const filteredRecords = [];
+
+        Object.values(weightEvents).forEach(event => {
+          Object.values(event.dates).forEach(record => {
+            console.log(record);
+            if (record.date.startsWith(date)) {
+              filteredRecords.push(record);
+            }
+          });
+        });
+
+        console.log('Filtered Records:', filteredRecords); // 로그 출력 추가
+        setWeightRecords(filteredRecords);
+      } else {
+        setWeightRecords([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch weightRecords: ", error.response ? error.response.data : error.message);
+      setWeightRecords([]);
+    }
+  };
+
+  const fetchWalkingRecords = async(date) => {
+    try {
+      const response = await axios.get(`http://${Uip}:5001/get_walking_events/${userId}`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        const walkingEvents = response.data;
+        const filteredRecords = [];
+
+        Object.values(walkingEvents).forEach(event => {
+          Object.values(event.dates).forEach(record => {
+            console.log(record);
+            if (record.date.startsWith(date)) {
+              filteredRecords.push(record);
+            }
+          });
+        });
+
+        console.log('Filtered Records:', filteredRecords); // 로그 출력 추가
+        setWalkingRecords(filteredRecords);
+      } else {
+        setWalkingRecords([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch walkingRecords: ", error.response ? error.response.data : error.message);
+      setWalkingRecords([]);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedDate) {
+      fetchSchedules(selectedDate);
+    }
+  }, [selectedDate]);
 
   const addSchedule = () => {
-    if (newSchedule.time && newSchedule.title) {
+    if (selectedTime && newSchedule.title) {
       const updatedSchedules = { ...schedules };
       if (!updatedSchedules[selectedDate]) {
         updatedSchedules[selectedDate] = [];
       }
-      updatedSchedules[selectedDate].push({ ...newSchedule, icon: '🐾' });
-      setSchedules(updatedSchedules);
-      setNewSchedule({ time: '', title: '' });
-      setModalVisible(false);
+
+      const newId = Date.now().toString(); // 고유한 ID 생성
+      const scheduleData = {
+        ...newSchedule,
+        date: `${selectedDate}T${selectedTime}:00`, // 선택한 날짜와 입력한 시간을 결합
+        notificationTime: new Date().toISOString(), // 일정을 게시한 시간을 ISO 형식으로 변환
+      };
+
+      updatedSchedules[selectedDate].push({ ...scheduleData, id: newId });
+
+      // Firebase에 새 일정 추가
+      const scheduleRef = ref(database, `calendar/${userId}/${newId}`);
+      set(scheduleRef, scheduleData)
+        .then(() => {
+          setSchedules(updatedSchedules);
+          setNewSchedule({ title: "", memo: "" });
+          setSelectedTime(null);
+          setModalVisible(false);
+          fetchSchedules(selectedDate); // 최신 데이터를 다시 불러옴
+        })
+        .catch((error) => {
+          console.error("Failed to add schedule:", error);
+        });
     }
   };
 
@@ -61,10 +289,163 @@ const CalendarScreen = () => {
   const handleTimeConfirm = (time) => {
     const hours = time.getHours();
     const minutes = time.getMinutes();
-    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    setNewSchedule({ ...newSchedule, time: formattedTime });
+    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+    setSelectedTime(formattedTime);
     hideTimePicker();
   };
+
+  const renderScheduleItem = ({ item }) => (
+    <View>
+      <TouchableOpacity onPress={() => setExpandedScheduleId(expandedScheduleId === item.id ? null : item.id)}>
+        <ScheduleItem>
+          <ScheduleTime>{new Date(item.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</ScheduleTime>
+          <ScheduleTitle>{item.title}</ScheduleTitle>
+        </ScheduleItem>
+      </TouchableOpacity>
+      {expandedScheduleId === item.id && (
+        <MemoContainer>
+          <ScheduleMemo>{item.memo}</ScheduleMemo>
+        </MemoContainer>
+      )}
+    </View>
+  );
+
+  const renderRecordItem = ({ item }) => (
+    <RecordItem>
+      <RecordTime>{new Date(item.date).toLocaleString()}</RecordTime>
+      <RecordMemo>{item.memo}</RecordMemo>
+    </RecordItem>
+  );
+
+  const renderFeedingRecordItem = ({ item }) => (
+    <RecordItem>
+      <RecordTime>{new Date(item.date).toLocaleString()}</RecordTime>
+      <RecordMemo>{item.memo}</RecordMemo>
+    </RecordItem>
+  );
+
+  const renderMedicationRecordItem = ({ item }) => (
+    <RecordItem>
+      <RecordTime>{new Date(item.date).toLocaleString()}</RecordTime>
+      <RecordMemo>{item.memo}</RecordMemo>
+    </RecordItem>
+  );
+
+  const renderVaccinationRecordItem = ({ item }) => (
+    <RecordItem>
+      <RecordTime>{new Date(item.date).toLocaleString()}</RecordTime>
+      <RecordMemo>{item.memo}</RecordMemo>
+    </RecordItem>
+  );
+
+  const renderWeightRecordItem = ({ item }) => (
+    <RecordItem>
+      <RecordTime>{new Date(item.date).toLocaleString()}</RecordTime>
+      <RecordKg>체중: {item.weightKg}</RecordKg>
+      <RecordMemo>{item.memo}</RecordMemo>
+    </RecordItem>
+  );
+
+  const formatWalkingTime = (time) => {
+    const [hours, minutes, seconds] = time.split(":").map(Number);
+    let formattedTime = "";
+  
+    if (hours > 0) {
+      formattedTime += `${hours}시간 `;
+    }
+    if (minutes > 0) {
+      formattedTime += `${minutes}분 `;
+    }
+    if (seconds > 0) {
+      formattedTime += `${seconds}초`;
+    }
+  
+    return formattedTime.trim();
+  };
+  
+  const renderWalkingRecordItem = ({ item }) => (
+    <RecordItem>
+      <RecordTime>{new Date(item.date).toLocaleString()}</RecordTime>
+      <RecordKg>산책 시간: {formatWalkingTime(item.time)}</RecordKg>
+      <RecordMemo>{item.memo}</RecordMemo>
+    </RecordItem>
+  );
+
+  const selectedSchedules = schedules[selectedDate] || [];
+
+  const sections = [];
+
+  if (bathingRecords.length > 0) {
+    sections.push({
+      title: (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+          <Image source={require('../../assets/Home/BathIcon.png')} style={{ width: 30, height: 30 }} />
+          <Text style={{ fontSize: 18, marginLeft: 10 }}>목욕</Text>
+        </View>
+      ),
+      data: bathingRecords
+    });
+  }
+
+  if (feedingRecords.length > 0) {
+    sections.push({
+      title: (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+          <Image source={require('../../assets/Home/FeedIcon.png')} style={{ width: 30, height: 30 }} />
+          <Text style={{ fontSize: 18, marginLeft: 10 }}>급여</Text>
+        </View>
+      ),
+      data: feedingRecords
+    });
+  }
+
+  if (medicationRecords.length > 0) {
+    sections.push({
+      title: (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+          <Image source={require('../../assets/Home/MedicineIcon.png')} style={{ width: 30, height: 30 }} />
+          <Text style={{ fontSize: 18, marginLeft: 10 }}>약</Text>
+        </View>
+      ),
+      data: medicationRecords
+    });
+  }
+
+  if (vaccinationRecords.length > 0) {
+    sections.push({
+      title: (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+          <Image source={require('../../assets/Home/VaccineIcon.png')} style={{ width: 30, height: 30 }} />
+          <Text style={{ fontSize: 18, marginLeft: 10 }}>예방접종</Text>
+        </View>
+      ),
+      data: vaccinationRecords
+    });
+  }
+
+  if (weightRecords.length > 0) {
+    sections.push({
+      title: (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+          <Image source={require('../../assets/Home/KgIcon.png')} style={{ width: 30, height: 30 }} />
+          <Text style={{ fontSize: 18, marginLeft: 10 }}>체중</Text>
+        </View>
+      ),
+      data: weightRecords
+    });
+  }
+
+  if (walkingRecords.length > 0) {
+    sections.push({
+      title: (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+          <Image source={require('../../assets/Home/WalkIcon.png')} style={{ width: 30, height: 30 }} />
+          <Text style={{ fontSize: 18, marginLeft: 10 }}>산책</Text>
+        </View>
+      ),
+      data: walkingRecords
+    });
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -72,7 +453,11 @@ const CalendarScreen = () => {
         <Calendar
           onDayPress={onDayPress}
           markedDates={{
-            [selectedDate]: { selected: true, marked: true, selectedColor: 'blue' },
+            [selectedDate]: {
+              selected: true,
+              marked: true,
+              selectedColor: "blue",
+            },
           }}
         />
         {selectedDate ? (
@@ -86,14 +471,41 @@ const CalendarScreen = () => {
               <FlatList
                 data={selectedSchedules}
                 renderItem={renderScheduleItem}
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item) => item.id}
               />
             ) : (
               <NoScheduleText>일정이 없습니다</NoScheduleText>
             )}
+            <TouchableOpacity onPress={() => setIsRecordVisible(!isRecordVisible)}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+                <Text style={{ fontSize: 25}}>기록 {isRecordVisible ? '▲' : '▼'}</Text>
+              </View>
+            </TouchableOpacity>
+            {isRecordVisible && (
+              <SectionList
+                sections={sections}
+                renderItem={({ item }) => {
+                  if (sections[0].data.includes(item)) {
+                    return renderRecordItem({ item });
+                  } else if (sections[1].data.includes(item)) {
+                    return renderFeedingRecordItem({ item });
+                  } else if (sections[2].data.includes(item)) {
+                    return renderMedicationRecordItem({ item });
+                  } else if (sections[3].data.includes(item)) {
+                    return renderVaccinationRecordItem({ item });
+                  } else if (sections[4].data.includes(item)) {
+                    return renderWeightRecordItem({ item });
+                  } else if (sections[5].data.includes(item)) {
+                    return renderWalkingRecordItem({ item });
+                  }
+                }}
+                renderSectionHeader={({ section: { title } }) => title}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            )}
           </>
         ) : (
-          <SelectedDateText>날짜를 선택하세요</SelectedDateText>
+          <SelectedDateText></SelectedDateText>
         )}
 
         <Modal
@@ -108,12 +520,22 @@ const CalendarScreen = () => {
             <ModalView>
               <ModalTitle>새 일정 추가</ModalTitle>
               <TouchableOpacity onPress={showTimePicker} style={styles.input}>
-                <Text>{newSchedule.time ? newSchedule.time : "시간 선택"}</Text>
+                <Text>{selectedTime ? selectedTime : "시간 선택"}</Text>
               </TouchableOpacity>
               <TextInput
                 placeholder="일정 제목"
                 value={newSchedule.title}
-                onChangeText={(text) => setNewSchedule({ ...newSchedule, title: text })}
+                onChangeText={(text) =>
+                  setNewSchedule({ ...newSchedule, title: text })
+                }
+                style={styles.input}
+              />
+              <TextInput
+                placeholder="메모"
+                value={newSchedule.memo}
+                onChangeText={(text) =>
+                  setNewSchedule({ ...newSchedule, memo: text })
+                }
                 style={styles.input}
               />
               <ModalSection>
@@ -164,6 +586,7 @@ const AddScheduleItem = styled.TouchableOpacity`
 const PlusText = styled.Text`
   font-size: 16px;
   color: rgba(47, 106, 176, 1);
+  margin-bottom : 3%;
 `;
 
 const NoScheduleText = styled.Text`
@@ -177,14 +600,14 @@ const ScheduleItem = styled.View`
   flex-direction: row;
   align-items: center;
   padding: 3%;
-  border-bottom-width: 1px;
+  border-bottom-width : 1px;
   border-bottom-color: #eee;
 `;
 
 const ScheduleTime = styled.Text`
   font-size: 16px;
   color: #555;
-  width: 20%;
+  width: 30%;
 `;
 
 const ScheduleTitle = styled.Text`
@@ -193,8 +616,49 @@ const ScheduleTitle = styled.Text`
   flex: 1;
 `;
 
-const ScheduleIcon = styled.Text`
-  font-size: 24px;
+const MemoContainer = styled.View`
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-top-width: 1px;
+  border-top-color: #eee;
+`;
+
+const ScheduleMemo = styled.Text`
+  font-size: 16px;
+  color: #333;
+  flex: 1;
+`;
+
+const RecordItem = styled.View`
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 5px;
+  margin-vertical: 5px;
+`;
+
+const RecordTime = styled.Text`
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 2%;
+`;
+
+const RecordKg = styled.Text`
+  font-size: 16px;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 1%;
+`;
+
+const RecordMemo = styled.Text`
+  font-size: 14px;
+  color: #333;
+`;
+
+const NoRecordText = styled.Text`
+  margin-top: 4%;
+  font-size: 18px;
+  text-align: center;
+  color: #888;
 `;
 
 const ModalContainer = styled.View`
@@ -241,11 +705,11 @@ const ModalButtonText = styled.Text`
 
 const styles = StyleSheet.create({
   input: {
-    width: '100%',
+    width: "100%",
     padding: 10,
     marginVertical: 5,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 5,
   },
 });

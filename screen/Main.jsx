@@ -1,19 +1,43 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {View,Text,ImageBackground,Modal,TouchableWithoutFeedback, TouchableHighlight, StyleSheet } from "react-native";
 import styled from "styled-components";
 import { useNavigation } from "@react-navigation/native";
+import { UserContext } from '../UseContext';
 
+import * as SecureStore from 'expo-secure-store';
 
 export default function Main(){
     const navigation = useNavigation();
+    const { setUserId } = useContext(UserContext);
+
+    useEffect(() => {
+        const checkLogin = async () => {
+            const token = await SecureStore.getItemAsync('authToken');
+            const uid = await SecureStore.getItemAsync('uid');
+
+            if(uid == null || token == null){
+                console.log("uid : null");
+            }
+            else if (token) {
+                setUserId(uid);
+                console.log("Token: ", token);
+                console.log("UID: ", uid);
+                navigation.navigate('Login');
+            } else {
+                console.log("로그인 필요");
+            }
+        }
+        checkLogin();
+    }, []);
 
     return(
         <MainView>
             <CenterView>
             <LogoImg source={require('../assets/Home_active.png')}/>
             </CenterView>
+
             <LoginBtn onPress={() => navigation.navigate('Login')}> 
-             {/* 원래는 AddAnimal */}
+
                 <LoginTxt>시작하기</LoginTxt>
             </LoginBtn>
         </MainView>

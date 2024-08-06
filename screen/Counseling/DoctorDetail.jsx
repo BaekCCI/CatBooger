@@ -1,5 +1,5 @@
 import React , { useState }from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView, Alert } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import styled from "styled-components/native";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -15,6 +15,7 @@ export default function DoctorDetail({ route }){
 
     const { id } = route.params;
     const doctor = doctors.find(doc => doc.id === id);
+
     if (!doctor) {
         return (
             <View>
@@ -22,8 +23,23 @@ export default function DoctorDetail({ route }){
             </View>
         );
     }
+    const docName = doctor.name;
+    const handleCounsel =() =>{
 
-    const onPress = () => navigation.navigate('Home');
+        
+        Alert.alert(
+            '',
+            '상담신청이 완료되었습니다.',
+            [
+                {
+                  text: '확인',
+                  onPress: () => navigation.navigate('ChatList')
+                }
+              ]
+        )
+        //navigation.navigate('Chatting' ,{docName});
+    };
+
     const handleButton = (category, setActiveButton) => {
         setActiveButton(category);
     };
@@ -33,17 +49,17 @@ export default function DoctorDetail({ route }){
         <Wrap>
             <DoctorWrap>
                 <DoctorLeftWrap>
-                    <DoctorName>{doctor.name}</DoctorName>
-                    <TextStyling color="gray">{doctor.hospital}</TextStyling>
+                    <DoctorName>{docName}</DoctorName>
+                    <TextStyling color="gray">{doctor.hospitalId}</TextStyling>
                     <Line/>
 
                     <TextStyling>{doctor.explain}</TextStyling>
 
                 </DoctorLeftWrap>
                 <DoctorRightWrap>
-                    <DoctorImg source={require('../../assets/DefaultProfile.png')}/> 
+                    <DoctorImg source={doctor.imgUri}/> 
                     <CounselBtn
-                        onPress= {()=>onPress()}>
+                        onPress= {handleCounsel}>
                         <ButtonText>상담 신청하기</ButtonText>
                     </CounselBtn>
                 </DoctorRightWrap>
@@ -74,7 +90,7 @@ export default function DoctorDetail({ route }){
                         <Title>상담 정보</Title>
                         <WrapAnimals>
                             <ContentText color="black">금액 </ContentText>
-                            <ContentText>1회 {doctor.Price["1회"]} / 3회 {doctor.Price["3회"]} </ContentText>
+                            <ContentText>1회 {doctor.Price} </ContentText>
                         </WrapAnimals>
                         <WrapAnimals>
                             <ContentText color="black">상담시간 </ContentText>
@@ -85,6 +101,7 @@ export default function DoctorDetail({ route }){
                         <ContentText>{doctor.Career}</ContentText>
                         <Line/>
                         <Title>병원 정보</Title>
+                        <ContentText>{doctor.hospitalId}</ContentText>
                     
                     </ListWrap>
                     

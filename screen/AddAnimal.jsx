@@ -7,9 +7,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import axios from 'axios';
 
-
-const UIp = '172.30.1.19';
-const userId = 'test';
+const uIp = '192.168.1.51';
 
 export default function AddAnimal(){
     const navigation = useNavigation();
@@ -40,12 +38,12 @@ export default function AddAnimal(){
 
     //const { userId } = useContext(UserContext);
     useEffect(() => {
-        console.log('userId:', userId, UIp); // userId가 제대로 설정되었는지 확인
+        console.log('userId:', userId, uIp); // userId가 제대로 설정되었는지 확인
       }, [userId]);
 
     const handleConfirm = async () => {
         try{
-            const response = await axios.post(`http://${UIp}:5001/add_animal`,{
+            const response = await axios.post(`http://${uIp}:5001/add_animal`,{
                 userId:String(userId),
                 name : name,
                 birthDate : birth.toISOString(),
@@ -56,6 +54,7 @@ export default function AddAnimal(){
             console.log('Response: ', response.data);
             if(response.status === 201){
                 alert('등록 완료');
+                navigation.navigate('MyTabs');
             }else{
                 alert('추가실패');
             }
