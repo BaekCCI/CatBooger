@@ -93,7 +93,7 @@ vscode 터미널 4개 생성
     
 ```
 
-<br/>
+<br/><br/>
 
 ## 💻프로젝트 소개
 * 홈 화면
@@ -101,20 +101,32 @@ vscode 터미널 4개 생성
    * 관련 일정 등록 및 관리
      
      ![main](https://github.com/BaekCCI/CatBooger/blob/startApp/home.png)
+     ![calendar](https://github.com/BaekCCI/CatBooger/blob/startApp/calendar.png)
+
+<br/>
 
 * 상담 화면
   * 의사에게 채팅 상담 요청 가능
   * 의사마다 상담권 구매 후 채팅 진행
 
+     ![doctor](https://github.com/BaekCCI/CatBooger/blob/startApp/community.png)
+
+<br/>
 
 
 * 커뮤니티 화면
   * 앱 사용자들과 자유롭게 소통 가능
   * 포스트 등록 및 댓글 기능
-    
+
+     ![community](https://github.com/BaekCCI/CatBooger/blob/startApp/doctor.png)
+
+<br/>
 
 * 병원 화면
   * 병원 위치 지도에 표시 및 리스트 나열
+
+     ![map](https://github.com/BaekCCI/CatBooger/blob/startApp/map.png)
+     ![list](https://github.com/BaekCCI/CatBooger/blob/startApp/list.png)
     
 
 <br/>
