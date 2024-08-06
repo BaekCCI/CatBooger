@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { auth, firestore } from './../../firebaseConfig'
-
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
-import { CLIENT_ID, LOGOUT_REDIRECT } from '@env';
 import { WebView } from 'react-native-webview';
+import { UserContext } from '../../UseContext';
+import { useFocusEffect } from '@react-navigation/native'; // 추가
 
-const MenuScreen = ({navigation}) => {
+const uIp = '192.168.44.204';
+
+const MenuScreen = ({ navigation }) => {
+  const [nickname, setNickname] = useState('');
+  const { userId } = useContext(UserContext);
 
   const handleLogout = () => {
     Alert.alert(
@@ -26,7 +29,7 @@ const MenuScreen = ({navigation}) => {
             try {
               const token = await SecureStore.getItemAsync('authToken');
               console.log(token);
-              if(token){
+              if (token) {
                 await SecureStore.deleteItemAsync('uid');
                 await SecureStore.deleteItemAsync('authToken');
               }
@@ -41,13 +44,29 @@ const MenuScreen = ({navigation}) => {
       { cancelable: false }
     );
   };
+
+  const fetchNickname = async () => {
+    try {
+      const response = await axios.get(`http://${uIp}:5000/nickname/${String(userId)}`);
+      setNickname(response.data);
+    } catch (error) {
+      console.error("Error fetching nickname:", error);
+      setNickname(userId); // 에러가 발생하면 userId를 닉네임으로 설정
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchNickname();
+    }, [])
+  );
   
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <Container>
       <ScrollView>
         <Header>
-        <HeaderTitle>고양이 코딱지</HeaderTitle>
+        <HeaderTitle>{nickname}</HeaderTitle>
         <IconWrapper onPress={() => navigation.navigate('NickName')}>
         <Icon name="settings-outline" size={32} color="#000" />
         </IconWrapper>

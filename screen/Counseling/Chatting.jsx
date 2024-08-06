@@ -23,7 +23,7 @@ const Chatting = () => {
   const [otherUserName, setOtherUserName] = useState("");
   const route = useRoute(); // route 객체 가져오기4
   //const { userId } = useContext(UserContext);
-  let userId = 'dr1';
+  let userId = '3634679806';
   const { chatId, name } = route.params || {};
 
 
