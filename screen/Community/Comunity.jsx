@@ -5,7 +5,7 @@ import { HorizontalLine } from "./CommunityCommonStyles.jsx";
 import {GetPosts, PostsContext, PostsProvider, basicProfilePicture, initialAnimalTags, initialCategoryTags, usersProfile} from './CommunityCommonData.jsx'
 import { UserProvider } from "../../UseContext.js";
 
-export const Uip = '172.22.155.176'
+export const Uip = '192.168.193.148'
 
 const Community = ({ navigation }) => {
   /**커뮤니티 공용 데이터 */

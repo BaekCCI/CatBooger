@@ -179,20 +179,25 @@ export const PostsContext = createContext();
 export const PostsProvider = ({ children }) => {
   const [Posts, setPosts] = useState([]);
 
-  const Uip = '172.22.155.176';
+  const Uip = '192.168.193.148';
+  const [isReloading, setIsReloading] = useState(false);
 
   useEffect(() => {
+    {
       try {
         GetPostsFromServer();
       } catch (err) {
         setError('게시물을 불러오는 데 실패했습니다.');
         console.error('Error fetching posts:', err);
+      } finally {
+        setIsReloading(false);
       }
+    }
   }, []);
   
   const GetPostsFromServer = async () => {
     try {
-      const response = await axios.get(`http://${Uip}:5001/posts`);
+      const response = await axios.get(`http://${Uip}:3000/posts`);
       console.log('Response:', response.data);
       if (response.status === 200) {
         setPosts(Object.entries(response.data));
@@ -208,7 +213,7 @@ export const PostsProvider = ({ children }) => {
   };
 
   const GetPostFromServer = async (postId) => { try {
-    const response = await axios.get(`http://${Uip}:5001/posts/${postId}`);
+    const response = await axios.get(`http://${Uip}:3000/posts/${postId}`);
     console.log('Response:', response.data);
     if (response.status === 200) {
       return response.data
@@ -244,7 +249,7 @@ export const PostsProvider = ({ children }) => {
   }
 
   return (
-    <PostsContext.Provider value={{ Posts,GetPostsFromServer,GetPostFromServer,GetPosts, AddPost, UpdatePost, DeletePost, AddComment }}>
+    <PostsContext.Provider value={{ Posts,setIsReloading,GetPostsFromServer,GetPostFromServer,GetPosts, AddPost, UpdatePost, DeletePost, AddComment }}>
       {children}
     </PostsContext.Provider>
   );

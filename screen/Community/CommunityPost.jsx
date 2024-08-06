@@ -8,7 +8,7 @@ import {basicProfilePicture, currentUserId, GetDate, initialPosts, originPosts, 
 import axios from "axios";
 import { UserContext, UserProvider } from "../../UseContext";
 
-const Uip = '172.22.155.176'
+const Uip = '192.168.193.176'
 /**이미지 데이터 */
 const commentIcon = require('../../assets/community/comment_icon.png')
 const sendCommentIcon = require('../../assets/community/send_comment_icon.png')
@@ -119,7 +119,7 @@ const CommunityPost = ({navigation}) => {
     
     const AddPostReplyToServer = async () => {
       try {
-        const response = await axios.put(`http://${Uip}:5001/posts/${postDataId}/replies/replyId${replyId}`, {
+        const response = await axios.put(`http://${Uip}:3000/posts/${postDataId}/replies/replyId${replyId}`, {
           acceptedAnswers: false,
           author: String(userId),
           content: inputCommentRef.current,
@@ -145,7 +145,7 @@ const CommunityPost = ({navigation}) => {
   const ClickLike = () => {
     const ClickLikeFucntion = async () => {
       try {
-        const response = await axios.put(`http://${Uip}:5001/posts/${postDataId}`, {
+        const response = await axios.put(`http://${Uip}:3000/posts/${postDataId}`, {
           likeNumber : postData.likeNumber + 1
         });
         console.log('Response:', response.data);
@@ -167,7 +167,7 @@ const CommunityPost = ({navigation}) => {
   const ClickScrap = () => {
     const ClickScrapFucntion = async () => {
       try {
-        const response = await axios.put(`http://${Uip}:5001/posts/${postDataId}`, {
+        const response = await axios.put(`http://${Uip}:3000/posts/${postDataId}`, {
           star : postData.star ? [...postData.star, userId] : [userId]
         });
         console.log('Response:', response.data);
