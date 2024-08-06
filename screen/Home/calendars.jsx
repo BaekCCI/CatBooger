@@ -19,7 +19,7 @@ import { UserContext } from "../../UseContext";
 import { ref, set, onValue } from "firebase/database";
 import { database } from "../../firebaseConfig";
 
-const Uip = '192.168.44.204';
+const Uip = '192.168.132.168';
 
 const CalendarScreen = () => {
   const [selectedDate, setSelectedDate] = useState("");
