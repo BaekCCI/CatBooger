@@ -58,7 +58,7 @@ const MenuScreen = ({navigation}) => {
       } catch (error) {
         console.error("Error fetching nickname:", error);
         setNickname(userId); // 에러가 발생하면 userId를 닉네임으로 설정
-      }
+      } 
     };
 
     fetchNickname();
