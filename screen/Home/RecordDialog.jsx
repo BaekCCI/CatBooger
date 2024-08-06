@@ -60,7 +60,7 @@ const Feed = ({info}) => {
     }, [text]);
 
 
-    //완료 버튼 동작 (text 변수 저장해야함)
+    //완료 버튼 동작 (bobCount, waterCount, text 변수 저장해야함)
     const handleComplete = async () => {
         try {
           const response = await axios.post(`http://${Uip}:5001/add_feeding_event`, {
