@@ -45,7 +45,7 @@ export default function RecordDialog(){
 
 }
 
-const Uip = '192.168.1.23'
+const Uip = '192.168.44.204'
 
 //급여
 const Feed = ({info}) => {
@@ -280,9 +280,9 @@ const Poop = ({info}) => {
             userId: String(userId), 
             defecationId: 'generated_id', 
             date: new Date().toISOString(), // 현재 날짜와 시간을 ISO 형식으로 변환
-            color: poopBtn ? poopColor : null,
-            type: poopBtn ? poopStatus : null,
-            colorP: peeBtn ? peeColor : null,
+            color: poopBtn ? poopColor : "none",
+            type: poopBtn ? poopStatus : "none",
+            colorP: peeBtn ? peeColor : "none",
             memo: text,
           });
           console.log('Response:', response.data);

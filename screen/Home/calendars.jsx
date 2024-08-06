@@ -19,7 +19,7 @@ import { UserContext } from "../../UseContext";
 import { ref, set, onValue } from "firebase/database";
 import { database } from "../../firebaseConfig";
 
-const Uip = '192.168.1.23';
+const Uip = '192.168.44.204';
 
 const CalendarScreen = () => {
   const [selectedDate, setSelectedDate] = useState("");
@@ -30,6 +30,7 @@ const CalendarScreen = () => {
   const [vaccinationRecords, setVaccinationRecords] = useState([]);
   const [weightRecords, setWeightRecords] = useState([]);
   const [walkingRecords, setWalkingRecords] = useState([]);
+  const [defecationRecords, setDefecationRecords] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [newSchedule, setNewSchedule] = useState({ title: "", memo: "" });
   const [selectedTime, setSelectedTime] = useState(null);
@@ -50,6 +51,7 @@ const CalendarScreen = () => {
     fetchVaccinationRecords(adjustedDateString);
     fetchWeightRecords(adjustedDateString);
     fetchWalkingRecords(adjustedDateString);
+    fetchDefecationRecords(day.dateString);
   };
 
   const fetchSchedules = (date) => {
@@ -240,6 +242,34 @@ const CalendarScreen = () => {
     }
   };
 
+  const fetchDefecationRecords = async(date) => {
+    try {
+      const response = await axios.get(`http://${Uip}:5001/get_defecation_events/${userId}`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        const defecationEvents = response.data;
+        const filteredRecords = [];
+
+        Object.values(defecationEvents).forEach(event => {
+          Object.values(event.dates).forEach(record => {
+            console.log(record);
+            if (record.date.startsWith(date)) {
+              filteredRecords.push(record);
+            }
+          });
+        });
+
+        console.log('Filtered Records:', filteredRecords); // 로그 출력 추가
+        setDefecationRecords(filteredRecords);
+      } else {
+        setDefecationRecords([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch defecationRecords: ", error.response ? error.response.data : error.message);
+      setDefecationRecords([]);
+    }
+  };
+
   useEffect(() => {
     if (selectedDate) {
       fetchSchedules(selectedDate);
@@ -371,6 +401,16 @@ const CalendarScreen = () => {
     </RecordItem>
   );
 
+  const renderDefecationRecordItem = ({ item }) => (
+    <RecordItem>
+      <RecordTime>{new Date(item.date).toLocaleString()}</RecordTime>
+      {item.color !== "none" && <RecordPoop>대변: {item.color}</RecordPoop>}
+      {item.type !== "none" && <RecordType>대변 상태: {item.type}</RecordType>}
+      {item.colorP !== "none" && <RecordPee>소변: {item.colorP}</RecordPee>}
+      <RecordMemo>{item.memo}</RecordMemo>
+    </RecordItem>
+  );
+
   const selectedSchedules = schedules[selectedDate] || [];
 
   const sections = [];
@@ -447,6 +487,18 @@ const CalendarScreen = () => {
     });
   }
 
+  if (defecationRecords.length > 0) {
+    sections.push({
+      title: (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+          <Image source={require('../../assets/Home/PoopIcon.png')} style={{ width: 30, height: 30 }} />
+          <Text style={{ fontSize: 18, marginLeft: 10 }}>대소변</Text>
+        </View>
+      ),
+      data: defecationRecords
+    });
+  }
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Container>
@@ -467,42 +519,47 @@ const CalendarScreen = () => {
                 <PlusText>+ 추가하기</PlusText>
               </AddScheduleItem>
             </Header>
-            {selectedSchedules.length > 0 ? (
-              <FlatList
-                data={selectedSchedules}
-                renderItem={renderScheduleItem}
-                keyExtractor={(item) => item.id}
-              />
-            ) : (
-              <NoScheduleText>일정이 없습니다</NoScheduleText>
-            )}
-            <TouchableOpacity onPress={() => setIsRecordVisible(!isRecordVisible)}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
-                <Text style={{ fontSize: 25}}>기록 {isRecordVisible ? '▲' : '▼'}</Text>
-              </View>
-            </TouchableOpacity>
-            {isRecordVisible && (
-              <SectionList
-                sections={sections}
-                renderItem={({ item }) => {
-                  if (sections[0].data.includes(item)) {
-                    return renderRecordItem({ item });
-                  } else if (sections[1].data.includes(item)) {
-                    return renderFeedingRecordItem({ item });
-                  } else if (sections[2].data.includes(item)) {
-                    return renderMedicationRecordItem({ item });
-                  } else if (sections[3].data.includes(item)) {
-                    return renderVaccinationRecordItem({ item });
-                  } else if (sections[4].data.includes(item)) {
-                    return renderWeightRecordItem({ item });
-                  } else if (sections[5].data.includes(item)) {
-                    return renderWalkingRecordItem({ item });
-                  }
-                }}
-                renderSectionHeader={({ section: { title } }) => title}
-                keyExtractor={(item, index) => index.toString()}
-              />
-            )}
+            <FlatList
+              data={[...selectedSchedules, { type: 'recordToggle' }]}
+              renderItem={({ item }) => {
+                if (item.type === 'recordToggle') {
+                  return (
+                    <TouchableOpacity onPress={() => setIsRecordVisible(!isRecordVisible)}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+                        <Text style={{ fontSize: 25 }}>기록 {isRecordVisible ? '▲' : '▼'}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                } else {
+                  return renderScheduleItem({ item });
+                }
+              }}
+              keyExtractor={(item, index) => item.id || index.toString()}
+              ListFooterComponent={() => isRecordVisible && (
+                <SectionList
+                  sections={sections}
+                  renderItem={({ item }) => {
+                    if (sections[0].data.includes(item)) {
+                      return renderRecordItem({ item });
+                    } else if (sections[1].data.includes(item)) {
+                      return renderFeedingRecordItem({ item });
+                    } else if (sections[2].data.includes(item)) {
+                      return renderMedicationRecordItem({ item });
+                    } else if (sections[3].data.includes(item)) {
+                      return renderVaccinationRecordItem({ item });
+                    } else if (sections[4].data.includes(item)) {
+                      return renderWeightRecordItem({ item });
+                    } else if (sections[5].data.includes(item)) {
+                      return renderWalkingRecordItem({ item });
+                    } else if (sections[6].data.includes(item)) {
+                      return renderDefecationRecordItem({ item });
+                    }
+                  }}
+                  renderSectionHeader={({ section: { title } }) => title}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              )}
+            />
           </>
         ) : (
           <SelectedDateText></SelectedDateText>
@@ -652,6 +709,24 @@ const RecordKg = styled.Text`
 const RecordMemo = styled.Text`
   font-size: 14px;
   color: #333;
+`;
+
+const RecordPoop = styled.Text`
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 1%;
+`;
+
+const RecordPee = styled.Text`
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 1%;
+`;
+
+const RecordType = styled.Text`
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 1%;
 `;
 
 const NoRecordText = styled.Text`
