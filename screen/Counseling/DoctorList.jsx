@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
 import styled from "styled-components/native";
 import { useNavigation } from '@react-navigation/native';
 import doctors from "./doctors";
+import { UserContext } from "../../UseContext";
 
 
 const DoctorCard = ({id, name, imgUri, star, review, adopt, explain, time}) => {

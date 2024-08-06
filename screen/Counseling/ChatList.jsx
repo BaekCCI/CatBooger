@@ -9,73 +9,71 @@ import {
   TouchableOpacity,
 } from "react-native";
 import styled from "styled-components/native";
-import { ref, set, onValue } from "firebase/database";
 import { firestore } from "../../firebaseConfig";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { UserContext } from "../../UseContext";
-import {
-  collection,
-  doc,
-  getDocs,
-  getDoc,
-  onSnapshot,
-} from "firebase/firestore";
-
-/*
-const chatData = [
-  { id: '1', name: '길동', status: '대기중' },
-  { id: '2', name: '홍길동', status: '상담중' },
-  { id: '3', name: '홍길동', status: '상담종료' },
-];
-*/
+import { collection, getDocs } from "firebase/firestore";
 
 const ChatList = ({ navigation }) => {
   const [chatRooms, setChatRooms] = useState([]);
   //const { userId } = useContext(UserContext); // 현재 사용자의 ID 가져오기
-  let userId = "userId5";
+  let userId = "dr1";
+  const route = useRoute(); // route 객체 가져오기4
+
+  const { doctorId } = route.params || {}; // route.params가 없을 경우 대비
+
+  console.log("Received doctorId:", doctorId); // doctorId가 잘 전달되었는지 확인용
+
+  const fetchChatRooms = async () => {
+    try {
+      // Firestore의 chats 컬렉션에서 현재 사용자가 참여하는 모든 채팅방 가져오기
+      const chatsCollection = collection(firestore, "users", userId, "chats");
+      const chatRoomsSnapshot = await getDocs(chatsCollection);
+
+      const chatRoomsData = chatRoomsSnapshot.docs
+        .map((chatRoomDoc) => {
+          const data = chatRoomDoc.data();
+          const otherUserId = data.participants.find(
+            (participant) => participant !== userId
+          );
+
+          if (!otherUserId) {
+            console.error(
+              "No other user found in participants for chatRoomDoc:",
+              chatRoomDoc.id
+            );
+            return null;
+          }
+
+          // participantNames에서 상대방의 이름을 가져오기
+          const otherUserName = data.participantNames
+            ? data.participantNames[otherUserId]
+            : "Unknown User";
+
+          return {
+            id: chatRoomDoc.id,
+            otherUserName, // 상대방의 이름 추가
+            ...data,
+          };
+        })
+        .filter((room) => room !== null);
+
+      setChatRooms(chatRoomsData);
+    } catch (error) {
+      console.error("Error fetching chat rooms:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchChatRooms = async () => {
-      try {
-        // Firestore의 chats 컬렉션에서 현재 사용자가 참여하는 모든 채팅방 가져오기
-        const chatsCollection = collection(firestore, "users", userId, "chats");
-        const chatRoomsSnapshot = await getDocs(chatsCollection);
-
-        const chatRoomsData = chatRoomsSnapshot.docs
-          .map((chatRoomDoc) => {
-            const data = chatRoomDoc.data();
-            const otherUserId = data.participants.find(
-              (participant) => participant !== userId
-            );
-
-            if (!otherUserId) {
-              console.error(
-                "No other user found in participants for chatRoomDoc:",
-                chatRoomDoc.id
-              );
-              return null;
-            }
-
-            // participantNames에서 상대방의 이름을 가져오기
-            const otherUserName = data.participantNames
-              ? data.participantNames[otherUserId]
-              : "Unknown User";
-
-            return {
-              id: chatRoomDoc.id,
-              otherUserName,
-              ...data,
-            };
-          })
-          .filter((room) => room !== null);
-
-        setChatRooms(chatRoomsData);
-      } catch (error) {
-        console.error("Error fetching chat rooms:", error);
-      }
-    };
-
     fetchChatRooms();
   }, [userId]);
+
+  // 화면이 포커스될 때마다 채팅방 목록을 새로고침
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchChatRooms();
+    }, [userId])
+  );
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
