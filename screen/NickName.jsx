@@ -39,7 +39,8 @@ export default function NickName(){
             console.log('Response: ', response.data);
             if(response.status === 201){
                 alert('등록 완료');
-                navigation.navigate('MyTabs');
+                console.log('navigate');
+                navigation.navigate('Menu');
             }else{
                 alert('추가실패');
             }

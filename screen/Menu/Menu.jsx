@@ -62,7 +62,7 @@ const MenuScreen = ({navigation}) => {
     };
 
     fetchNickname();
-  }, [nickname]);
+  }, []);
   
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
