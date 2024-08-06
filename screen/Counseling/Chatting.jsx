@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   View,
@@ -13,35 +12,17 @@ import {
 } from "react-native";
 import styled from "styled-components/native";
 import { firestore } from "../../firebaseConfig";
-import { collection, doc, addDoc, setDoc, onSnapshot } from "firebase/firestore";
+import { collection, doc, addDoc, onSnapshot } from "firebase/firestore";
+import { useRoute } from "@react-navigation/native";
+import { UserContext } from "../../UseContext";
 
-const Chatting = ({ route }) => {
+const Chatting = () => {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
-  let userId = "userId5"; // 현재 사용자의 ID
-
-  const chatId = route.params.id; // 현재 채팅방의 ID
-
-  useEffect(() => {
-    const fetchMessages = () => {
-      const chatDocRef = doc(firestore, "users", userId, "chats", chatId);
-
-      // Firestore의 실시간 업데이트를 구독
-      const unsubscribe = onSnapshot(chatDocRef, (doc) => {
-        if (doc.exists()) {
-          const data = doc.data();
-          if (data && data.messages) {
-            const messagesData = Object.values(data.messages);
-            setMessages(messagesData);
-          } else {
-            setMessages([]); // 메시지가 없는 경우 빈 배열로 설정
-          }
-        } else {
-          console.error("Chat document does not exist");
-          setMessages([]);
-        }
-  //const chatId = route.params.id; // 현재 채팅방의 ID
-  const { chatId, name } = route.params || {};
+  const route = useRoute(); // route 객체 가져오기4
+  const { userId } = useContext(UserContext);
+  const { chatId, name, doctorId } = route.params || {};
+  console.log("Received doctorId:", doctorId); // doctorId가 잘 전달되었는지 확인용
 
   useEffect(() => {
     // Firestore의 메시지 데이터를 실시간으로 구독하는 함수
@@ -75,12 +56,9 @@ const Chatting = ({ route }) => {
   const handleSend = async () => {
     if (inputText.trim() === "") return;
 
-    // Firestore에서 고유한 문서 ID를 생성
-    const newMessageId = `msg${Date.now()}`; // 간단한 ID 생성 방법
     const newMessage = {
-      id: newMessageId, // 고유한 메시지 ID
-      timestamp: new Date(), // 타임스탬프 생성
       text: inputText,
+      timestamp: new Date(), // 타임스탬프 생성
       sender: userId, // 현재 사용자의 userId를 sender로 저장
     };
 
@@ -90,6 +68,13 @@ const Chatting = ({ route }) => {
         collection(firestore, "users", userId, "chats", chatId, "messages"),
         newMessage
       );
+
+      // Firestore에 의사(doctorId) 측의 메시지 추가
+      await addDoc(
+        collection(firestore, "users", doctorId, "chats", chatId, "messages"),
+        newMessage
+      );
+
       setInputText(""); // 메시지 전송 후 입력란 비우기
     } catch (error) {
       console.error("Error sending message:", error);
