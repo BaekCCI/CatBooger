@@ -92,6 +92,32 @@ def oauth_url_api():
         % (CLIENT_ID, REDIRECT_URI)
     )
 
+@app.route('/oauth/nickname', methods=['POST'])
+def add_nickname():
+    data = request.json
+
+    who = data.get('who')
+    nickname = data.get('nickname')
+    if not all([who, nickname]):
+        return jsonify({"error": "Missing data fields"}), 400
+
+    nameRef = db.reference('users/' + str(who))
+    nameRef.update({
+        'nickname': nickname
+    })
+
+    return jsonify({"message": "nickname add"}), 201
+
+@app.route('/nickname/<user_id>')
+def nickname(user_id):
+    nameRef = db.reference('users/' + user_id + '/nickname')
+    name = nameRef.get()
+
+    if name is not None: 
+        return name
+    else:
+        return user_id
+
 # @app.route('/token/refresh')
 # @jwt_required()
 # def token_refresh_api():

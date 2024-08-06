@@ -3,16 +3,22 @@ import {View,Text,ImageBackground,Modal,TouchableWithoutFeedback, TouchableHighl
 import styled from "styled-components";
 import { useNavigation } from "@react-navigation/native";
 
-const uIp = '192.168.1.52';
+import axios from 'axios';
+import { UserContext } from '../UseContext';
 
-const userId = 'test';
+
+
+const uIp = '192.168.132.168';
+
+// const userId = SecureStore.getItemAsync('uid');
 
 export default function NickName(){
     const navigation = useNavigation();
 
     const [name, setName] = useState('');
     const [isModified, setIsModified] = useState(false);
-  
+
+    const { userId } = useContext(UserContext);
 
 
     useEffect(() => {
@@ -25,27 +31,22 @@ export default function NickName(){
       }, [userId]);
 
     const handleConfirm = async () => {
-        /*
         try{
-            const response = await axios.post(`http://${uIp}:5001/add_animal`,{
-                userId:String(userId),
-                name : name,
-                birthDate : birth.toISOString(),
-                breed : breed,
-                gender : gender,
-                type : type,             
+            const response = await axios.post(`http://${uIp}:5000/oauth/nickname`,{
+                who:String(userId),
+                nickname : name,          
             });
             console.log('Response: ', response.data);
             if(response.status === 201){
                 alert('등록 완료');
-                navigation.navigate('MyTabs');
+                console.log('navigate');
+                navigation.navigate('Menu');
             }else{
                 alert('추가실패');
             }
         }catch(error){
             console.error('Error adding defection event:', error.response ? error.response.data : error.message);
         }
-            */
     };
 
 
