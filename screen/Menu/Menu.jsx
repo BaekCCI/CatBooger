@@ -1,21 +1,16 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { SafeAreaView, ScrollView, View, Text, TouchableOpacity, Alert } from 'react-native';
 import styled from 'styled-components/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { auth, firestore } from './../../firebaseConfig'
-
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
-import { CLIENT_ID, LOGOUT_REDIRECT } from '@env';
 import { WebView } from 'react-native-webview';
-
 import { UserContext } from '../../UseContext';
+import { useFocusEffect } from '@react-navigation/native'; // 추가
 
+const uIp = '192.168.44.204';
 
-const uIp = '192.168.132.168';
-
-const MenuScreen = ({navigation}) => {
-
+const MenuScreen = ({ navigation }) => {
   const [nickname, setNickname] = useState('');
   const { userId } = useContext(UserContext);
 
@@ -34,7 +29,7 @@ const MenuScreen = ({navigation}) => {
             try {
               const token = await SecureStore.getItemAsync('authToken');
               console.log(token);
-              if(token){
+              if (token) {
                 await SecureStore.deleteItemAsync('uid');
                 await SecureStore.deleteItemAsync('authToken');
               }
@@ -50,19 +45,21 @@ const MenuScreen = ({navigation}) => {
     );
   };
 
-  useEffect(() => {
-    const fetchNickname = async () => {
-      try {
-        const response = await axios.get(`http://${uIp}:5000/nickname/${String(userId)}`);
-        setNickname(response.data);
-      } catch (error) {
-        console.error("Error fetching nickname:", error);
-        setNickname(userId); // 에러가 발생하면 userId를 닉네임으로 설정
-      } 
-    };
+  const fetchNickname = async () => {
+    try {
+      const response = await axios.get(`http://${uIp}:5000/nickname/${String(userId)}`);
+      setNickname(response.data);
+    } catch (error) {
+      console.error("Error fetching nickname:", error);
+      setNickname(userId); // 에러가 발생하면 userId를 닉네임으로 설정
+    }
+  };
 
-    fetchNickname();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchNickname();
+    }, [])
+  );
   
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
