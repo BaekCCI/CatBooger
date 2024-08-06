@@ -32,7 +32,7 @@ const CommunityWritingPost = () => {
   const cameraIcon = require("../../assets/community/camera_icon.png");
   const galleryIcon = require("../../assets/community/gallery_icon.png");
 
-  const { Posts, AddPost, GetPostFromServer, UpdatePost, DeletePost } = useContext(PostsContext);
+  const { Posts, AddPost,nickName, GetPostFromServer, UpdatePost, DeletePost } = useContext(PostsContext);
 
   const [animalTags, setAnimalTags] = useState(initialAnimalTags);
   const [categoryTags, setCategoryTags] = useState(initialCategoryTags);
@@ -229,7 +229,7 @@ const CommunityWritingPost = () => {
 
     try {
       const response = await axios.put(`http://${Uip}:3000/posts/${postId}`, {
-        author: userId,
+        author: nickName,
         content: contentRef.current,
         createdDate: createdDate,
         imgUri: imageUrl,

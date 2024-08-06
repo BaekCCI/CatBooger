@@ -93,7 +93,7 @@ export function KakaoLoginRedirect() {
       console.log(code);
       axios
 
-        .get(`http://192.168.193.148:8081/oauth?code=${code}`)
+        .get(`http://192.168.132.176:5000/oauth?code=${code}`)
 
         .then((getRes) => {
           // console.log("login successful: ", getRes.data.id);

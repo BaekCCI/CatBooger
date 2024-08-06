@@ -5,13 +5,12 @@ import { HorizontalLine } from "./CommunityCommonStyles.jsx";
 import {GetPosts, PostsContext, PostsProvider, basicProfilePicture, initialAnimalTags, initialCategoryTags, usersProfile} from './CommunityCommonData.jsx'
 import { UserProvider } from "../../UseContext.js";
 
-export const Uip = '192.168.193.148'
+export const Uip = '192.168.132.176'
 
 const Community = ({ navigation }) => {
   /**커뮤니티 공용 데이터 */
-  const {Posts, GetPostsFromServer, AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
+  const {Posts, nickName,GetPostsFromServer, GetNickName,AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
   const [isFetched, setIsFetched] = useState(false);
-
   useEffect(() => {
       try {
         GetPostsFromServer();
@@ -69,6 +68,9 @@ const Community = ({ navigation }) => {
         
         {/**커뮤니티 검색 버튼을담는 태그*/}
         <View style={{ flexDirection: 'row', gap: 10, top : 5}}>
+          <TouchableOpacity onPress={()=>ReLoadPosts()}>
+            <Image source={require('../../assets/community/reload_icon.png')} style={{ width: 25, height: 25 }} />
+          </TouchableOpacity>
           <TouchableOpacity 
           style = 
           {{
@@ -426,11 +428,6 @@ const Community = ({ navigation }) => {
   return (
       <View style={{flex : 1}}>
         <SafeAreaView style={{flex : 1}}>
-          <TouchableOpacity onPress={()=>ReLoadPosts()}>
-            <Text>
-              게시물 업데이트
-            </Text>
-          </TouchableOpacity>
           <ScrollView style={{ backgroundColor: 'white'}} stickyHeaderIndices={[1]}>
             <StatusBar/>
             <View style=

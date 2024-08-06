@@ -8,7 +8,7 @@ import {basicProfilePicture, currentUserId, GetDate, initialPosts, originPosts, 
 import axios from "axios";
 import { UserContext, UserProvider } from "../../UseContext";
 
-const Uip = '192.168.193.176'
+const Uip = '192.168.132.148'
 /**이미지 데이터 */
 const commentIcon = require('../../assets/community/comment_icon.png')
 const sendCommentIcon = require('../../assets/community/send_comment_icon.png')
@@ -20,7 +20,7 @@ const isDoctor = false;
 const CommunityPost = ({navigation}) => {
   const {userId} = useContext(UserContext);
   /**커뮤니티 공용 데이터 */
-  const {Posts, AddPost, GetPostFromServer, UpdatePost, DeletePost, AddComment} = useContext(PostsContext)
+  const {Posts, AddPost, nickName, GetPostFromServer, UpdatePost, DeletePost, AddComment} = useContext(PostsContext)
   
   const [postData, setPostData] = useState({
     "author": "",
@@ -114,72 +114,81 @@ const CommunityPost = ({navigation}) => {
   console.log("userID 확인 :", userId)
   const navigationA = useNavigation();
   const RegisterComment = () => {
-
-    const replyId = Date.now()
-    
+    const replyId = Date.now();
     const AddPostReplyToServer = async () => {
       try {
         const response = await axios.put(`http://${Uip}:3000/posts/${postDataId}/replies/replyId${replyId}`, {
           acceptedAnswers: false,
-          author: String(userId),
+          author: nickName,
           content: inputCommentRef.current,
           createdDate: new Date().toISOString()
         });
         console.log('Response:', response.data);
         if (response.status === 200) {
           alert('댓글을 추가하였습니다!');
+          ReloadPost();  // Reload post after successful submission
+          inputCommentRef.current = ""
         } else {
-          alert('댓글 추가를 실패했습니다.' +  response.status);
+          alert('댓글 추가를 실패했습니다.' + response.status);
         }
       } catch (error) {
-          console.error('Error adding feeding event:', error.response ? error.response.data : error.message);
+        console.error('Error adding feeding event:', error.response ? error.response.data : error.message);
         alert('댓글을 추가하는 과정에서 문제가 발생했습니다.');
       }
+    };
+    AddPostReplyToServer();
   };
+  
 
-    AddPostReplyToServer()
-    inputCommentRef.current = ""
-    ReloadPost()
-  }
-
-  const ClickLike = () => {
+  const ClickLike =  () => {
     const ClickLikeFucntion = async () => {
+      console.log('clike like');
       try {
-        const response = await axios.put(`http://${Uip}:3000/posts/${postDataId}`, {
+        console.log('start like')
+        const response = await axios.post(`http://${Uip}:3000/posts/${postDataId}/like`, {
           likeNumber : postData.likeNumber + 1
         });
         console.log('Response:', response.data);
         ReloadPost()
         if (response.status === 200) {
-          alert('좋아요을 추가하였습니다!');
+          // alert('좋아요을 추가하였습니다!');
+          console.log('좋아요 추가 성공');
         } else {
-          alert('좋아요를 실패했습니다.' +  response.status);
+          // alert('좋아요를 실패했습니다.' +  response.status);
+          console.log('좋아요 추가 실패: ', response.status);
         }
       } catch (error) {
           console.error('Error adding feeding event:', error.response ? error.response.data : error.message);
-        alert('댓글을 추가하는 과정에서 문제가 발생했습니다.');
+        // alert('좋아요를 추가하는 과정에서 문제가 발생했습니다.');
       }
   };
 
   ClickLikeFucntion()
   }
 
-  const ClickScrap = () => {
+  const ClickScrap =  () => {
     const ClickScrapFucntion = async () => {
+      console.log('scrap start')
       try {
-        const response = await axios.put(`http://${Uip}:3000/posts/${postDataId}`, {
+        const response = await axios.post(`http://${Uip}:3000/posts/${postDataId}/scrap`, {
           star : postData.star ? [...postData.star, userId] : [userId]
         });
+
+        postData.star = [...postData.star, userId]
+
+        console.log(postData.star.length);
         console.log('Response:', response.data);
         ReloadPost()
         if (response.status === 200) {
-          alert('스크랩 하였습니다!');
+          // alert('스크랩 하였습니다!');
+          console.log('scrap success');
         } else {
-          alert("스크랩 실패했습니다.' +  response.status");
+          // alert("스크랩 실패했습니다.' +  response.status");
+          console.log('스크랩 실패')
         }
       } catch (error) {
           console.error('Error adding feeding event:', error.response ? error.response.data : error.message);
-        alert('스크랩을 추가하는 과정에서 문제가 발생했습니다.');
+        // alert('스크랩을 추가하는 과정에서 문제가 발생했습니다.');
       }
   };
 

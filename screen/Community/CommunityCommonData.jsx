@@ -1,5 +1,6 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import axios from 'axios';
+import { UserContext } from "../../UseContext";
 
 // 태그 데이터
 export const initialAnimalTags = [
@@ -178,8 +179,9 @@ export const PostsContext = createContext();
 
 export const PostsProvider = ({ children }) => {
   const [Posts, setPosts] = useState([]);
-
-  const Uip = '192.168.193.148';
+  const {userId} = useContext(UserContext);
+  const [nickName, setNickName] = useState("")
+  const Uip = '192.168.132.176';
   const [isReloading, setIsReloading] = useState(false);
 
   useEffect(() => {
@@ -195,6 +197,27 @@ export const PostsProvider = ({ children }) => {
     }
   }, []);
   
+  useEffect(() => {
+    GetNickName()
+  }, [])
+
+  const GetNickName = async() => {
+    try {
+      const response = await axios.get(`http://${Uip}:5000/nickname/${userId}`);
+      console.log('Response NickName:', response.data);
+      if (response.status === 200) {
+        setNickName(response.data)
+      } else {
+        alert('댓글을 가져오는데 실패했습니다.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error.response ? error.response.data : error.message);
+      console.log('댓글을 가져오는 과정에서 문제가 발생했습니다. ' + error);
+      return null;
+    }
+  }
+
   const GetPostsFromServer = async () => {
     try {
       const response = await axios.get(`http://${Uip}:3000/posts`);
@@ -249,7 +272,7 @@ export const PostsProvider = ({ children }) => {
   }
 
   return (
-    <PostsContext.Provider value={{ Posts,setIsReloading,GetPostsFromServer,GetPostFromServer,GetPosts, AddPost, UpdatePost, DeletePost, AddComment }}>
+    <PostsContext.Provider value={{ Posts,nickName,GetNickName,setIsReloading,GetPostsFromServer,GetPostFromServer,GetPosts, AddPost, UpdatePost, DeletePost, AddComment }}>
       {children}
     </PostsContext.Provider>
   );

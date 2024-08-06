@@ -43,6 +43,35 @@ def update_post(post_id):
     db_ref.child('posts').child(post_id).update(data)
     return jsonify({'message': 'Post updated successfully'}), 200
 
+@app.route('/posts/<post_id>/like', methods=['POST'])
+def like_post(post_id):
+    """Updates an existing post in the database."""
+    data = request.get_json()
+    print(data)
+    likeData = data.get('likeNumber')
+    # db_ref.child('posts').child(post_id).update(data)
+    ref = db.reference('posts/' + post_id)
+    ref.update({
+        'likeNumber': likeData
+    })
+    return jsonify({'message': 'Post updated successfully'}), 200
+
+@app.route('/posts/<post_id>/scrap', methods=['POST'])
+def scrap_post(post_id):
+    """Updates an existing post in the database."""
+    data = request.get_json()
+    print(data)
+    starData = data.get('star')
+    count = len(starData)
+    print(count)
+    # db_ref.child('posts').child(post_id).update(data)
+    ref = db.reference('posts/' + post_id + '/star')
+    ref.update({
+        count-1: starData[count-1]
+    });
+
+    return jsonify({'message': 'Post updated successfully'}), 200
+
 @app.route('/posts/<post_id>', methods=['DELETE'])
 def delete_post(post_id):
     """Deletes a specific post from the database."""
