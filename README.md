@@ -100,8 +100,18 @@ vscode 터미널 4개 생성
    * 반려동물 건강 체크리스트 기록
    * 관련 일정 등록 및 관리
      
+     ![main](https://github.com/BaekCCI/CatBooger/blob/startApp/home1.png)
      ![main](https://github.com/BaekCCI/CatBooger/blob/startApp/home.png)
-     ![calendar](https://github.com/BaekCCI/CatBooger/blob/startApp/calendar.png)
+
+<br/>
+
+* 일정 화면
+   * 등록 일정 내역 확인
+   * 추가 기타 일정 등록
+     
+     ![cal1](https://github.com/BaekCCI/CatBooger/blob/startApp/cal1.jpg)
+     ![cal2](https://github.com/BaekCCI/CatBooger/blob/startApp/cal2.jpg)
+     ![cal3](https://github.com/BaekCCI/CatBooger/blob/startApp/cal3.jpg)
 
 <br/>
 
@@ -109,7 +119,7 @@ vscode 터미널 4개 생성
   * 의사에게 채팅 상담 요청 가능
   * 의사마다 상담권 구매 후 채팅 진행
 
-     ![doctor](https://github.com/BaekCCI/CatBooger/blob/startApp/community.png)
+     ![doctor](https://github.com/BaekCCI/CatBooger/blob/startApp/doctor.png)
 
 <br/>
 
@@ -118,7 +128,9 @@ vscode 터미널 4개 생성
   * 앱 사용자들과 자유롭게 소통 가능
   * 포스트 등록 및 댓글 기능
 
-     ![community](https://github.com/BaekCCI/CatBooger/blob/startApp/doctor.png)
+     ![community](https://github.com/BaekCCI/CatBooger/blob/startApp/community.jpg)
+     ![post](https://github.com/BaekCCI/CatBooger/blob/startApp/post.jpg)
+     ![post2](https://github.com/BaekCCI/CatBooger/blob/startApp/post2.jpg)
 
 <br/>
 
