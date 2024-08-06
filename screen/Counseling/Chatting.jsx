@@ -12,20 +12,44 @@ import {
 } from "react-native";
 import styled from "styled-components/native";
 import { firestore } from "../../firebaseConfig";
-import { collection, doc, addDoc, onSnapshot } from "firebase/firestore";
+import { collection, doc, getDoc, addDoc, onSnapshot } from "firebase/firestore";
 import { useRoute } from "@react-navigation/native";
 import { UserContext } from "../../UseContext";
 
 const Chatting = () => {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
+  const [otherUserId, setOtherUserId] = useState("");
+  const [otherUserName, setOtherUserName] = useState("");
   const route = useRoute(); // route 객체 가져오기4
-  const { userId } = useContext(UserContext);
-  const { chatId, name, doctorId } = route.params || {};
-  console.log("Received doctorId:", doctorId); // doctorId가 잘 전달되었는지 확인용
+  //const { userId } = useContext(UserContext);
+  let userId = '3634679806';
+  const { chatId, name } = route.params || {};
+
+
+  //console.log("Received doctorId:", doctorId); // doctorId가 잘 전달되었는지 확인용
 
   useEffect(() => {
-    // Firestore의 메시지 데이터를 실시간으로 구독하는 함수
+    const fetchChatDetails = async () => {
+      try {
+        const chatDocRef = doc(firestore, "users", userId, "chats", chatId);
+        const chatDoc = await getDoc(chatDocRef);
+  
+        if (chatDoc.exists()) {
+          const chatData = chatDoc.data();
+          const otherId = chatData.participants.find((participant) => participant !== userId);
+          setOtherUserId(otherId);
+          setOtherUserName(chatData.participantNames[otherId] || "Unknown User");
+        }
+      } catch (error) {
+        console.error("Error fetching chat details:", error);
+      }
+    };
+  
+    fetchChatDetails();
+  }, [userId, chatId]);
+
+  useEffect(() => {
     const fetchMessages = () => {
       const messagesCollectionRef = collection(
         firestore,
@@ -35,59 +59,73 @@ const Chatting = () => {
         chatId,
         "messages"
       );
-
-      // Firestore의 실시간 업데이트를 구독
-      const unsubscribe = onSnapshot(messagesCollectionRef, (snapshot) => {
+  
+      const otherMessagesCollectionRef = collection(
+        firestore,
+        "users",
+        otherUserId,
+        "chats",
+        chatId,
+        "messages"
+      );
+  
+      const unsubscribe1 = onSnapshot(messagesCollectionRef, (snapshot) => {
         const messagesData = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        setMessages(messagesData);
+        setMessages((prevMessages) => {
+          const allMessages = [...prevMessages, ...messagesData];
+          const uniqueMessages = Array.from(new Set(allMessages.map((msg) => msg.id)))
+            .map(id => allMessages.find(msg => msg.id === id));
+          return uniqueMessages.sort((a, b) => a.timestamp - b.timestamp);
+        });
       });
-
-      // 컴포넌트 언마운트 시 구독 해제
-      return unsubscribe;
+  
+      return () => {
+        unsubscribe1();
+      };
     };
-
-    const unsubscribe = fetchMessages();
-    return () => unsubscribe(); // cleanup 함수로 구독 해제
-  }, [userId, chatId]);
+  
+    if (otherUserId) {
+      const unsubscribe = fetchMessages();
+      return () => unsubscribe();
+    }
+  }, [userId, chatId, otherUserId]);
 
   const handleSend = async () => {
     if (inputText.trim() === "") return;
-
+  
     const newMessage = {
       text: inputText,
-      timestamp: new Date(), // 타임스탬프 생성
-      sender: userId, // 현재 사용자의 userId를 sender로 저장
+      timestamp: new Date(),
+      sender: userId,
     };
-
+  
     try {
-      // Firestore에 메시지 추가
       await addDoc(
         collection(firestore, "users", userId, "chats", chatId, "messages"),
         newMessage
       );
-
-      // Firestore에 의사(doctorId) 측의 메시지 추가
+  
       await addDoc(
-        collection(firestore, "users", doctorId, "chats", chatId, "messages"),
+        collection(firestore, "users", otherUserId, "chats", chatId, "messages"),
         newMessage
       );
-
-      setInputText(""); // 메시지 전송 후 입력란 비우기
+  
+      setInputText("");
     } catch (error) {
       console.error("Error sending message:", error);
-      alert(error.message); // 에러 처리
+      alert(error.message);
     }
   };
+  
 
   const renderItem = ({ item }) => {
-    // 타임스탬프를 사람이 읽을 수 있는 시간으로 변환
     const time = item.timestamp
-      ? new Date(item.timestamp).toLocaleTimeString()
+      ? new Date(item.timestamp.toDate()).toLocaleTimeString()
       : "";
-
+  
     return (
       <MessageContainer sender={item.sender === userId ? "me" : "other"}>
         <MessageBubble sender={item.sender === userId ? "me" : "other"}>
@@ -97,6 +135,7 @@ const Chatting = () => {
       </MessageContainer>
     );
   };
+  
 
   return (
     <KeyboardAvoidingView
