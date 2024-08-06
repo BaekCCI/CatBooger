@@ -22,7 +22,8 @@
 <br/>
 
 **cmd창에 ipconfig 입력(window 기준) 후 무선 LAN 어댑터 Wi-Fi의 IPv4주소 복사해두기(이후 [ip]라 칭함)**
->Uip
+>***[ip]***
+* /screen/Community/   CommunityPost.jsx Community.jsx
 * /screen/Home/   calendars.jsx RecordDialog.jsx WalkRecord.jsx
 * /screen/   AddAnimal.jsx LoginKakao.jsx NickName.jsx
 
