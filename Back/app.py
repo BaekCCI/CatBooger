@@ -106,7 +106,7 @@ def add_nickname():
         'nickname': nickname
     })
 
-    return jsonify({"message": "nickname add"}), 201
+    return jsonify({"message": "nickname add", "name" : nameRef.key}), 201
 
 @app.route('/nickname/<user_id>')
 def nickname(user_id):
