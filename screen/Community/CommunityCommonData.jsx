@@ -179,7 +179,7 @@ export const PostsContext = createContext();
 export const PostsProvider = ({ children }) => {
   const [Posts, setPosts] = useState([]);
 
-  const Uip = '192.168.137.14';
+  const Uip = '172.22.155.176';
 
   useEffect(() => {
       try {

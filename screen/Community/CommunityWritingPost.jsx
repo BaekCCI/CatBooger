@@ -204,7 +204,7 @@ const CommunityWritingPost = () => {
     const selectedTags = selectedAnimalTags.concat(selectedCategoryTags);
     const isQuestion = selectedCategoryTags.includes("QnA");
     const createdDate = GetDate();
-    const Uip = "192.168.137.14"
+    const Uip = "172.22.155.176"
     const postId = "postId" + Date.now();
     const AddPostToServer = async () => {
       try {
