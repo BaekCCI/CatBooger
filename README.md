@@ -123,41 +123,13 @@ vscode 터미널 4개 생성
 
 <br/>
 
-* [Notion](https://axiomatic-jelly-b5c.notion.site/Oss-Team-Space-c85bd6a5b7804ecd9d1e06ee71ccca44?pvs=4)
-
-  
-
-* *swagger documentation*
-  * http://localhost:3000/api-docs
- 
-    ![swagger](https://github.com/PSangYun/graegrae/blob/master/swagger.png)
-
-<br/>
-
 ## ⚙개발환경
 * Visual Studio Code
-* React
 * React Native
 * Node.js
-* 언어 : Javascript. Python
+* 언어 : Javascript, Python
 * 프레임워크 : Flask
 * 데이터베이스 : Firebase
 
-<br/>
-
-## 👨‍💻사용 오픈소스
-* 인물 프로필 Carousel
-  
-  <https://codesandbox.io/p/sandbox/1v96j74484?file=%2Fsrc%2Fexample.js%3A8%2C26&view=preview>
-  
-* 오픈AI API 호출
-  
-  <https://github.com/minji337/jjinchin>
-
-* 홈 화면 인물 카드
-
-  <https://uiverse.io/eslam-hany/selfish-bobcat-73>
-
 <br/><br/>
 
-This project is licensed under the terms of the MIT license.
