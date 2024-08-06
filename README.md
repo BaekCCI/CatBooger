@@ -100,26 +100,22 @@ vscode 터미널 4개 생성
    * 반려동물 건강 체크리스트 기록
    * 관련 일정 등록 및 관리
      
-     ![main](https://github.com/PSangYun/graegrae/blob/master/main.png)
+     ![main](https://github.com/BaekCCI/CatBooger/blob/startApp/home.png)
 
 * 상담 화면
   * 의사에게 채팅 상담 요청 가능
   * 의사마다 상담권 구매 후 채팅 진행
 
-    ![profile](https://github.com/PSangYun/graegrae/blob/master/profile.png)    
-    ![card](https://github.com/PSangYun/graegrae/blob/master/card.png)
-    ![news](https://github.com/PSangYun/graegrae/blob/master/news.png)
+
 
 * 커뮤니티 화면
   * 앱 사용자들과 자유롭게 소통 가능
   * 포스트 등록 및 댓글 기능
     
-    ![chat](https://github.com/PSangYun/graegrae/blob/master/chat.png)
 
 * 병원 화면
   * 병원 위치 지도에 표시 및 리스트 나열
     
-    ![chat](https://github.com/PSangYun/graegrae/blob/master/chat.png)
 
 <br/>
 
