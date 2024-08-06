@@ -1,14 +1,42 @@
-import React, { useState, useSyncExternalStore } from "react";
+import React, { useContext, useEffect, useState, useSyncExternalStore } from "react";
 import { View, Text, ScrollView, Image, TouchableOpacity, Modal, StatusBar, SafeAreaView, Alert, Pressable, TextInput, PanResponder } from "react-native";
 import styled from "styled-components/native";
 import { HorizontalLine } from "./CommunityCommonStyles.jsx";
-import {Posts, initialAnimalTags, initialCategoryTags} from './CommunityCommonData.jsx'
+import {GetPosts, PostsContext, PostsProvider, basicProfilePicture, initialAnimalTags, initialCategoryTags, usersProfile} from './CommunityCommonData.jsx'
+import { UserProvider } from "../../UseContext.js";
+
+export const Uip = '192.168.132.176'
 
 const Community = ({ navigation }) => {
+  /**커뮤니티 공용 데이터 */
+  const {Posts, nickName,GetPostsFromServer, GetNickName,AddPost, UpdatePost, DeletePost} = useContext(PostsContext)
+  const [isFetched, setIsFetched] = useState(false);
+  useEffect(() => {
+      try {
+        GetPostsFromServer();
+      } catch (err) {
+        setError('게시물을 불러오는 데 실패했습니다.');
+        console.error('Error fetching posts:', err);
+      }
+  }, []);
+
+  useEffect(() => {
+      try {
+        GetPostsFromServer();
+      } catch (err) {
+        setError('게시물을 불러오는 데 실패했습니다.');
+        console.error('Error fetching posts:', err);
+      }
+      setIsFetched(false)
+  }, [isFetched]);
+
+  const ReLoadPosts = async() =>{
+    setIsFetched(true)
+  }
   /**이미지 데이터 */
   xIcon = require('../../assets/community/x_icon.png');
   penIcon = require('../../assets/community/pen_icon.png');
-  
+
   const [animalTags, setAnimalTags] = useState(initialAnimalTags);
   const [categoryTags, setCategoryTags] = useState(initialCategoryTags);
   /**태그를 눌렀을 때, 태그가 활성화 되어있는 상태면 끄고, 비활성화 된 상태면 키는 함수 */
@@ -29,43 +57,47 @@ const Community = ({ navigation }) => {
   
   /**커뮤니티의 상단 부분을 담는 태그 */
   const CommunityTopContainer = () => (
-    <View style={{
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingLeft : '1%',
-      paddingRight : '1%',
-    }}>
-      {/**커뮤니티 제목을 담는 태그 */}
-      <Text style={{fontSize: 25, fontWeight:'bold'}}>커뮤니티</Text>
-      
-      {/**커뮤니티 검색 버튼을담는 태그*/}
-      <View style={{ flexDirection: 'row', gap: 10, top : 5}}>
-        <TouchableOpacity 
-        style = 
-        {{
-          backgroundColor : isSearchingBoxOpened ? "#4580ff88" : null,
-          borderRadius : isSearchingBoxOpened ? 5 : null,
-        }}
-        onPress={isSearchingBoxOpened ? closeSearching : openSearching}
-        >
-          <Image source={require('../../assets/community/search_logo.png')} style={{ width: 25, height: 25 }} />
-        </TouchableOpacity>
-      {/**커뮤니티 필터 버튼을 담는 태그*/}
-        <TouchableOpacity onPress={OpenFilter}>
-          <Image source={require('../../assets/community/filter_logo.png')} 
-          style={{ width: 25, height: 25 }} />
-        </TouchableOpacity>
+    <View>
+      <View style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+        {/**커뮤니티 제목을 담는 태그 */}
+        <Text style={{fontSize: 25, fontWeight:'bold'}}>커뮤니티</Text>
+        
+        {/**커뮤니티 검색 버튼을담는 태그*/}
+        <View style={{ flexDirection: 'row', gap: 10, top : 5}}>
+          <TouchableOpacity onPress={()=>ReLoadPosts()}>
+            <Image source={require('../../assets/community/reload_icon.png')} style={{ width: 25, height: 25 }} />
+          </TouchableOpacity>
+          <TouchableOpacity 
+          style = 
+          {{
+            backgroundColor : isSearchingBoxOpened ? "#4580ff88" : null,
+            borderRadius : isSearchingBoxOpened ? 5 : null,
+          }}
+          onPress={isSearchingBoxOpened ? closeSearching : openSearching}
+          >
+            <Image source={require('../../assets/community/search_logo.png')} style={{ width: 25, height: 25 }} />
+          </TouchableOpacity>
+        {/**커뮤니티 필터 버튼을 담는 태그*/}
+          <TouchableOpacity onPress={OpenFilter}>
+            <Image source={require('../../assets/community/filter_logo.png')} 
+            style={{ width: 25, height: 25 }} />
+          </TouchableOpacity>
+        </View>
       </View>
+        <HorizontalLine style={{marginBottom : 0, marginTop : '2%'}}/>
     </View>
   );
 
   const Tags = animalTags.concat(categoryTags)
   /**커뮤니티 창에서 태그를 띄우는 부분을 담는 태그*/
   const CommunityTagsContainer = () => (
-    <View style={{ gap: 3, flexDirection: 'row', flexWrap: 'wrap', marginTop : 10, marginLeft : 5, marginRight : 5}}>
+    <View style={{ gap: 5, flexDirection: 'row', flexWrap: 'wrap', marginRight : 5}}>
       {/**동물 태그들을 띄우는 태그 */}
-      <View style={{ flexDirection: "row", gap: 5 }}>
+      <View style={{ flexDirection: "row", gap: 5}}>
         {animalTags.map((tag, index) => (
           tag.isSelected && (
             <TouchableOpacity key={index} onPress={() => SelectTag(animalTags, setAnimalTags, index)}>
@@ -102,7 +134,9 @@ const Community = ({ navigation }) => {
     const selectedAnimalTags = getSelectedTags(animalTags);
     const selectedCategoryTags = getSelectedTags(categoryTags);
 
-    const titleFilteredPosts = SearchingText ? Posts.filter(post => post.title.includes(SearchingText)) : Posts
+    const titleFilteredPosts = SearchingText ? Posts.filter(postWithId => {
+      const post = postWithId[1]
+      return post.title.includes(SearchingText)}) : Posts
 
     // 모든 태그가 비활성화된 경우 모든 게시물을 반환
     if (selectedAnimalTags.length === 0 && selectedCategoryTags.length === 0) {
@@ -110,13 +144,13 @@ const Community = ({ navigation }) => {
     }
 
     // 활성화된 태그와 일치하는 게시물을 필터링
-    return Posts.filter(post =>
-      post.tags.some(tag => selectedAnimalTags.includes(tag) || selectedCategoryTags.includes(tag))
+    return Posts.filter(postWithId => {
+      const post = postWithId[1]
+      return post.tags.some(tag => selectedAnimalTags.includes(tag) || selectedCategoryTags.includes(tag))
+    }
     );
   };
 
-  /**필터링된 게시물 데이터를 반환 */
-  const filteredPosts = filterPosts();
 
   /**좋아요의 개수를 표시할 태그*/
   const LikeTag = ({ likeNumber }) => {
@@ -127,7 +161,7 @@ const Community = ({ navigation }) => {
       }}>
         <Image source={require('../../assets/community/like_logo.png')} style = {{width : 15, height : 15}}/>
         <Text style={{fontSize : 15}}>
-          {" " + likeNumber + "     "}
+          {likeNumber}
         </Text>
       </View>
     );
@@ -143,59 +177,67 @@ const Community = ({ navigation }) => {
       }}>
         <Image source={require('../../assets/community/scrape_logo.png')} style = {{width : 15, height : 15}}/>
         <Text style={{fontSize : 15}}>
-          {" " + scrapeNumber}
+          {scrapeNumber}
         </Text>
       </View>
     );
   };
 
   /**게시물을 렌더링하는 함수 */
-  const CommunityPosts = (postsData) => {
-    // 선택된 태그를 가져옴
-    const selectedAnimalTags = getSelectedTags(animalTags);
-    const selectedCategoryTags = getSelectedTags(categoryTags);
+  const CommunityPosts = () => {
     // 게시물을 필터링함
-    const filteredPosts = filterPosts(postsData, selectedAnimalTags, selectedCategoryTags);
+    const filteredPosts = filterPosts();
 
     // 필터링한 게시물들을 보여줌
     return (
-      filteredPosts.map((postData, index) => (
-        <Post key={index}>
-          <StyledButton onPress={() => MoveToPost(postData)} style={{flexDirection:'row', alignItems:'center', gap : 5}}>
-            <View style={{flex:3}}>
-              <View style={{marginBottom : '1%'}}>
-                <PostTitle numberOfLines={1} ellipsizeMode="tail">
-                {postData.tags.includes("QnA")
-                ? 
-                  <Text >Q. {postData.title}</Text>
-                : 
-                  <Text>{postData.title}</Text>}
-                </PostTitle>
-              </View>
-              
-              <PostContent numberOfLines={2} ellipsizeMode="tail">{postData.content}</PostContent>
-
-              <TagsContainer>
-                {postData.tags.map((tag, index) => (
-                <Tag key={index}>{'#' + tag}</Tag>
-                ))}
-              </TagsContainer>
-
-              <PostUnderContent>
-                <NickNameText>{postData.profileNickName}</NickNameText>
-                <View style={{flexDirection:'row', gap : 3, top : 1.5}}>
-                  <LikeTag likeNumber={postData.likeNumber} />
-                  <ScrapeTag scrapeNumber={postData.scrapeNumber} />
+      filteredPosts.reverse().map((postDataWithId, index) => {
+        const postData = postDataWithId[1]
+        return(
+          <Post key={index}>
+            <PostButton onPress={() => MoveToPost(postDataWithId[0])} style={{flexDirection:'row', gap : 5, alignItems : 'center'}}>
+              <View style={{flex:3}}>
+                <View style={{marginBottom : '1%'}}>
+                  <PostTitle numberOfLines={1} ellipsizeMode="tail">
+                  
+                  {postData.tags ? 
+                  postData.tags.includes("QnA")
+                      ? 
+                        <Text>
+                            <Text style={{color : postData.mark ? '#23C6B3' : '#989898'}}>Q.</Text>
+                            <Text>{postData.title}</Text>
+                        </Text>
+                      : 
+                        <Text>{postData.title}</Text>
+                    :
+                      <Text>{postData.title}</Text>}
+                  </PostTitle>
                 </View>
-              </PostUnderContent>
-            </View>
+                
+                <PostContent numberOfLines={2} ellipsizeMode="tail">{postData.content}</PostContent>
 
-            {postData.img !== "" ? <PostImg source={postData.img}/> : null}
-          </StyledButton>
+                <TagsContainer>
+                  {postData.tags ? postData.tags.map((tag, index) => (
+                  <Tag key={index}>{'#' + tag}</Tag>
+                  )) : null}
+                </TagsContainer>
+                
 
-          <HorizontalLine />
-        </Post>
-      ))
+                <PostUnderContent>
+                  <NickNameText>
+                    {postData.author}
+                  </NickNameText>
+                  
+                  <View style={{flexDirection:'row', gap : 5, top : 1.5}}>
+                    <LikeTag likeNumber={postData.likeNumber } />
+                    <ScrapeTag scrapeNumber={postData.star ? postData.star.length : 0} />
+                  </View>
+                  
+                </PostUnderContent>
+              </View>
+              {postData.imgUri === "" ? null : <PostImg source={{uri : postData.imageUri}}/>}
+            </PostButton>
+          </Post>
+      )})
     );
   };
 
@@ -216,13 +258,13 @@ const Community = ({ navigation }) => {
       isSearchingBoxOpened 
       ?
         <View style={{
-          width : '100%',
-          backgroundColor : '#ffffff', borderColor : '#c2c2c25c'}}>
+          backgroundColor : '#ffffff', borderColor : '#c2c2c25c',
+          marginTop : 5, marginBottom : 5
+          }}>
           <View 
-          style={{paddingLeft : 5 ,margin : 10,borderWidth : 2, borderRadius : 5 , 
-                  backgroundColor:'#ffffffed', margin : 10, flexDirection : 'row', 
-                  width : '100%', alignSelf : 'center'}}>
-                    
+          style={{paddingLeft : 5,borderWidth : 1.5, borderRadius : 5 , 
+                  backgroundColor:'#ffffffed', marginBottom : 0, flexDirection : 'row', 
+                  alignSelf : 'center'}}>
             <ScrollView>
               <TextInput 
               value={tempSearchingText}
@@ -254,71 +296,101 @@ const Community = ({ navigation }) => {
   /**필터 모달창을 닫는 함수 */
   const CloseFilter = () => setIsFilterOpened(false);
   /**필터 모달창에 해당하는 태그 */
-  const FilterModalTag = () => (
-    <Modal 
-      visible={isFilterOpened} 
-      onRequestClose={CloseFilter}
-      transparent={true}
-      animationType="fade"
-    >
-        <FilterContainer onPress={CloseFilter}>
-          <FilterContent>
-            {/**제목에 해당하는 태그 */}
-            <View style={{flexDirection: 'row', justifyContent : 'space-between'}}>
-              <Text style={{fontSize:25, textAlign: 'center', fontWeight:'bold'}}>
-                필터
-              </Text>
+  const FilterModalTag = () => {
+    const [tempAnimalTags, setTempAnimalTags] = useState(animalTags);
+    const [tempCategoryTags, setTempCategoryTags] = useState(categoryTags);
+    
+    const SelectTempTag = (tags, setTags, index) => {
+      const updatedTags = tags.map((tag, i) =>
+        i === index ? { ...tag, isSelected: !tag.isSelected } : tag
+      );
+      setTags(updatedTags);
+    };
+    /**태그 초기화 버튼에 해당하는 기능을 담은 함수 */
+    const ResetTempTag = () => {
+      const resetTempAnimalTags = tempAnimalTags.map((tag) => ({ ...tag, isSelected: false }));
+      setTempAnimalTags(resetTempAnimalTags);
+  
+      const resetTempCategoryTags = tempCategoryTags.map((tag) => ({ ...tag, isSelected: false }));
+      setTempCategoryTags(resetTempCategoryTags);
+    };
+    
+    const CloseAndSetFilter = () => {
+        setAnimalTags(tempAnimalTags)
+        setCategoryTags(tempCategoryTags)
+        CloseFilter()
+    }
 
-              <TouchableOpacity onPress={CloseFilter} style={{top : 5}}> 
-                <Image source={require("../../assets/community/x_icon.png")} style={{width:30, height: 30}}/>
-              </TouchableOpacity>
-            </View> 
+    return(
+      <Modal 
+        visible={isFilterOpened} 
+        onRequestClose={CloseFilter}
+        transparent={true}
+        animationType="fade"
+      >
+          <FilterContainer onPress={CloseAndSetFilter}>
+            <FilterContent>
+              {/**제목에 해당하는 태그 */}
+              <View>
+                <View style={{flexDirection: 'row', justifyContent : 'space-between'}}>
+                  <Text style={{fontSize:25, textAlign: 'center', fontWeight:'bold'}}>
+                    필터
+                  </Text>
 
-            <HorizontalLine/>
+                  <TouchableOpacity onPress={CloseAndSetFilter} style={{top : 5}}> 
+                    <Image source={require("../../assets/community/x_icon.png")} style={{width:30, height: 30}}/>
+                  </TouchableOpacity>
+                </View> 
 
-            <Text style={{fontSize: 18, fontWeight:'bold'}}>동물</Text>
-            {/**동물 태그들을 담은 태그 */}
-            <HorizontalLine/>
-            <View style={{ flexDirection: "row", gap: 5, flexWrap: "wrap", paddingLeft : 5, paddingRight : 5}}>
-              {animalTags.map((tag, index) => (
-                <TouchableOpacity key={index} onPress={() => SelectTag(animalTags, setAnimalTags, index)}>
-                  <View style={{ borderWidth: 2, borderColor: tag.isSelected ? '#139989' : '#D9D9D9', borderRadius: 5, width: 60, height: 25 }}>
-                    <Text style={{ textAlign: 'center', color: tag.isSelected ? '#139989' : '#595959'}}>{tag.name}</Text>
-                  </View>
+                <HorizontalLine/>
+                
+                <Text style={{fontSize: 18, fontWeight:'bold'}}>동물</Text>
+                {/**동물 태그들을 담은 태그 */}
+                <HorizontalLine/>
+                <View style={{ flexDirection: "row", gap: 5, flexWrap: "wrap", paddingLeft : 5, paddingRight : 5}}>
+                  {tempAnimalTags.map((tag, index) => (
+                    <TouchableOpacity key={index} onPress={() => SelectTempTag(tempAnimalTags, setTempAnimalTags, index)}>
+                      <View style={{ borderWidth: 2, borderColor: tag.isSelected ? '#139989' : '#D9D9D9', borderRadius: 5, width: 60, height: 25 }}>
+                        <Text style={{ textAlign: 'center', color: tag.isSelected ? '#139989' : '#595959'}}>{tag.name}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                <HorizontalLine/>
+              </View>
+
+              
+              <View>
+                <Text style={{fontSize: 18, marginTop: 10, fontWeight:'bold'}}>카테고리</Text>
+
+                <HorizontalLine/>
+
+                {/**카테고리 태그들을 담은 태그 */}
+                <View style={{ flexDirection: "row", gap: 10, flexWrap: "wrap", paddingLeft : 5, paddingRight : 5}}>
+                  {tempCategoryTags.map((tag, index) => (
+                    <TouchableOpacity key={index} onPress={() => SelectTempTag(tempCategoryTags, setTempCategoryTags, index)}>
+                      <View style={{ borderWidth: 2, borderColor: tag.isSelected ? '#139989' : '#D9D9D9', borderRadius: 5, width: 60, height: 25}}>
+                        <Text style={{textAlign: 'center', color: tag.isSelected ? '#139989' : '#595959'}}>{tag.name}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                
+                <HorizontalLine/>
+
+              </View>
+              {/**초기화 버튼을 담은 태그 */}
+              <View style={{alignItems:'flex-end'}}>
+                <TouchableOpacity onPress={() => ResetTempTag()}>
+                      <Text style={{fontSize : 15, borderBottomWidth : 1}}>
+                        필터 초기화
+                      </Text>
                 </TouchableOpacity>
-              ))}
-            </View>
-            
-            <Text style={{fontSize: 18, marginTop: 10, fontWeight:'bold'}}>카테고리</Text>
-
-            <HorizontalLine/>
-
-            {/**카테고리 태그들을 담은 태그 */}
-            <View style={{ flexDirection: "row", gap: 10, flexWrap: "wrap", paddingLeft : 5, paddingRight : 5}}>
-              {categoryTags.map((tag, index) => (
-                <TouchableOpacity key={index} onPress={() => SelectTag(categoryTags, setCategoryTags, index)}>
-                  <View style={{ borderWidth: 2, borderColor: tag.isSelected ? '#139989' : '#D9D9D9', borderRadius: 5, width: 60, height: 25}}>
-                    <Text style={{textAlign: 'center', color: tag.isSelected ? '#139989' : '#595959'}}>{tag.name}</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-            
-            <HorizontalLine/>
-
-            {/**초기화 버튼을 담은 태그 */}
-            <View style={{alignItems:'flex-end'}}>
-              <TouchableOpacity onPress={() => ResetTag()}>
-                    <Text style={{fontSize : 15, borderBottomWidth : 1}}>
-                      필터 초기화
-                    </Text>
-              </TouchableOpacity>
-            </View>
-
-          </FilterContent>
-        </FilterContainer>
-    </Modal>
-  );
+              </View>
+            </FilterContent>
+          </FilterContainer>
+      </Modal>
+  )};
 
   /**글쓰기 버튼에 해당하는 태그 */
   const WritePostButton = () => {
@@ -327,21 +399,21 @@ const Community = ({ navigation }) => {
           <TouchableOpacity 
           onPress={MoveToWritingPost}
           style={{
-            position:'absolute', 
-            bottom : 10,
+            position : 'absolute',
+            bottom : 8,
             backgroundColor:'#ffffff',
             flexDirection:'row', 
             justifyContent:'space-around', 
             borderWidth:1,
             borderColor : "#8585856c",
             borderRadius: 50,
-            width : '25%',
+            width : '28%',
             }}
             >
             {/* <Image source={penIcon} style={{width:33,height:33}}/> */}
             <View style={{paddingTop : '4%', marginBottom : '5%', flexDirection : 'row'}}>
-              <Image source={penIcon} style={{width:20,height:20, marginRight : '5%', marginTop : '2%'}}/> 
-                <Text style={{fontWeight : 'bold'}}>
+              <Image source={penIcon} style={{width:22,height:22, marginRight : '5%', marginTop : '2%'}}/> 
+                <Text style={{fontWeight : 'bold', fontSize : 16}}>
                   글 쓰기
                 </Text>
             </View>
@@ -351,50 +423,94 @@ const Community = ({ navigation }) => {
   }
   
   /**-------------------------------커뮤니티 화면-------------------------------*/
-  const MoveToPost = (data) => navigation.navigate('CommunityPost', {postData : data});
+  const MoveToPost = (postDataId) => navigation.navigate('CommunityPost', {postDataId : postDataId});
   const MoveToWritingPost = () => navigation.navigate('CommunityWritingPost')
   return (
       <View style={{flex : 1}}>
         <SafeAreaView style={{flex : 1}}>
           <ScrollView style={{ backgroundColor: 'white'}} stickyHeaderIndices={[1]}>
             <StatusBar/>
-
             <View style=
             {{
-              backgroundColor:'white', marginLeft : '5%', marginRight : '5%', paddingTop : '5%',
-              justifyContent : 'center'
+              backgroundColor:'white', padding : '4%', paddingBottom : 5,
+              justifyContent : 'center', columnGap : 10
             }}>
               <CommunityTopContainer />
-              <HorizontalLine style={{marginBottom : 0, marginTop : '2%'}}/>
-              <CommunityTagsContainer />
               <SearchingBox/>
+              <View>
+                <CommunityTagsContainer />
+              </View>
             </View>
-
+            <TouchableOpacity onPress={async () => {
+                    const post = await GetPost("postId1");
+                    if (post) {
+                      alert("함수 외부 : " + post.title);
+                    } else {
+                      alert("포스트를 가져오지 못했습니다.");
+                    }
+                  }}
+              >
+            </TouchableOpacity>
             <CommunityContainer>
-
-            <CommunityPosts postsData={filteredPosts}/>
-
+              <CommunityPosts/>
               <FilterModalTag />
             </CommunityContainer>
           </ScrollView>
+        <WritePostButton/>
         </SafeAreaView>
-          <WritePostButton/>
-
       </View>
   );
 };
 
+const ProvidePosts =  () => { 
+  const {Posts, GetPostsFromServer,GetPostFromServer} = useContext(PostsContext)
+
+  return(
+    <View>
+      <TouchableOpacity onPress={()=>GetPostsFromServer()}>
+        <Text>
+          {JSON.stringify(Posts)}
+        </Text>
+        <HorizontalLine/>
+        <Text>{GetPostFromServer("postId2").title}</Text>
+        <Text>-------------------------</Text>
+
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+const CommunityWithPostsProvider = ({ navigation }) => {
+  return(
+    <PostsProvider>
+        <Community navigation={navigation} />
+      {/* <ProvidePosts/> */}
+    </PostsProvider>
+  )
+}
+
+export default CommunityWithPostsProvider;
+
 const CommunityContainer = styled.View`
+  margin : 0 4%;
   border-radius: 5px;
-  margin: 15px;
   flex : 1;
 `;
 
-const StyledButton = styled.TouchableOpacity`
+const PostButton = styled.TouchableOpacity`
 `;
 
-const Post = styled.View`
-  margin : 0 1%;
+const Post = styled.View.attrs({
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.25,
+  shadowRadius: 3.84,
+  elevation: 4,
+})`
+  padding: 5%;
+  margin : 4px 0;
+  background-color: white;
+  border-radius: 10px;
 `;
 
 const PostTitle = styled.Text`
@@ -418,8 +534,9 @@ const PostImg = styled.Image`
 
 const PostUnderContent = styled.View`
   flex-direction: row;
+  flex-wrap : wrap;
   align-items: center;
-  gap : 10px;
+  gap : 5px;
 `;
 
 const NickNameText = styled.Text`
@@ -437,9 +554,11 @@ const FilterContainer = styled.Pressable`
 
 const FilterContent = styled.Pressable`
   width: 90%;
+  height : 70%;
   background-color: white;
   padding: 20px;
   border-radius : 15px;
+  justify-content : space-around;
 `;
 
 /**----게시물의 모든 태그들을 담을 컨테이너----*/
@@ -468,6 +587,3 @@ const SearchingInputCompleteButton = styled.TouchableOpacity`
     justify-content:center;
     align-items:center;
 `
-
-
-export default Community;

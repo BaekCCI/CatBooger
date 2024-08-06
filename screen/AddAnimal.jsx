@@ -9,8 +9,6 @@ import axios from 'axios';
 
 const uIp = '192.168.1.51';
 
-const userId = 'test';
-
 export default function AddAnimal(){
     const navigation = useNavigation();
 

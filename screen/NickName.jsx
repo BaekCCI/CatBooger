@@ -5,9 +5,12 @@ import { useNavigation } from "@react-navigation/native";
 import axios from 'axios';
 import { UserContext } from '../UseContext'
 
-const uIp = '192.168.44.204';
 
-export default function NickName() {
+const uIp = '192.168.193.176';
+
+// const userId = SecureStore.getItemAsync('uid');
+
+export default function NickName(){
     const navigation = useNavigation();
     const [name, setName] = useState('');
     const [isModified, setIsModified] = useState(false);

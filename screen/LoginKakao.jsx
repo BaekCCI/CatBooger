@@ -93,6 +93,8 @@ export function KakaoLoginRedirect() {
       console.log(code);
       axios
         .get(`http://172.20.10.2:5000/oauth?code=${code}`)
+
+
         .then((getRes) => {
           // console.log("login successful: ", getRes.data.id);
           const { user, exists, token } = getRes.data;

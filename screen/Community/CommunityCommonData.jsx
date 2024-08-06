@@ -1,3 +1,7 @@
+import { createContext, useContext, useEffect, useState } from "react";
+import axios from 'axios';
+import { UserContext } from "../../UseContext";
+
 // 태그 데이터
 export const initialAnimalTags = [
   { name: "강아지", isSelected: false },
@@ -11,21 +15,59 @@ export const initialCategoryTags = [
   { name: "정보", isSelected: false },
 ];
 
+//현제 데이터 시간을 가져오는 함수
+export const GetDate = () => {
+  const now = new Date();
+  
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
 // 게시물 데이터
-export const Posts = [
+const initialPosts = [
   { 
-    id : 1,
+    id : 0,
+    writerID: 0,
+    isQuestion : false,
+    isQuestionSolved : null,
     title: "게시물 제목",
     content: "게시물 내용",
     img: "",
     tags: ["강아지", "간식", "일상"],
-    profileNickName: "글쓴이 닉네임",
+    postTime: "게시 시간",
+    likeNumber: 0,
+    scrapeNumber: 0,
+    comments : [
+      { 
+        writerID : 0,
+        isAdopted : null,
+        content: '댓글내용',
+        postTime: '2024-07-26'
+      }
+    ]
+  },
+  { 
+    id : 1,
+    writerID: 0,
+    isQuestion : true,
+    isQuestionSolved : false,
+    title: "게시물 제목",
+    content: "게시물 내용",
+    img: {uri : "https://image.newsis.com/2023/07/12/NISI20230712_0001313626_web.jpg?rnd=20230712163021"},
+    tags: ["강아지", "간식", "일상", "QnA"],
     postTime: "게시 시간",
     likeNumber: 0,
     scrapeNumber: 0,
     comments : [
       {
-        profileNickName: '닉네임',
+        writerID : 1,
+        isAdopted : null,
         content: '댓글내용',
         postTime: '2024-07-26'
       }
@@ -33,46 +75,36 @@ export const Posts = [
   },
   { 
     id : 2,
-    title: "게시물 제목",
-    content: "게시물 내용",
-    img: {uri : "https://image.newsis.com/2023/07/12/NISI20230712_0001313626_web.jpg?rnd=20230712163021"},
-    tags: ["강아지", "간식", "일상", "QnA"],
-    profileNickName: "글쓴이 닉네임",
-    postTime: "게시 시간",
-    likeNumber: 0,
-    scrapeNumber: 0,
-    comments : [
-      {
-        profileNickName: '닉네임',
-        content: '댓글내용',
-        postTime: '2024-07-26'
-      }
-    ]
-  },
-  { 
-    id : 3,
+    writerID: 2,
+    isQuestion : false,
+    isQuestionSolved : null,
     title: "사실 우리집 고양이 킬러임",
     content: "레옹이 아니라 냐옹이라는 유명한 킬러임 지금도 황태밀수 사업에서 손때고 짜져있으라고 권총으로 협박받고이써 ㅠㅠ",
     img: { uri: "https://ac-p1.namu.la/20240528sac/48a02548e24db4bade8089a58d4b34244c48cfd0436b894097ec670bdcfd9bac.jpg?expires=1722017549&key=ZnAk61LlLLP9Qb30HFTLhA&type=orig" },
     tags: ["고양이", "일상"],
-    profileNickName: "괴문서맵게하는집",
     postTime: "2024-05-28 19:17:11",
     likeNumber: 15,
     scrapeNumber: 10,
     comments : [
       {
-        profileNickName: '개냥이',
+        writerID : 2,
+        isAdopted : null,
         content: '저 킬러 이름이 야옹 이군요.',
         postTime: '2024-05-29 14:18:19'
       },
       {
-        profileNickName: '얼죽패딩',
+        writerID : 3,
+        isAdopted : null,
         content: '킬러군',
         postTime: '2024-05-30 17:17:43'
       },
     ]
   },
-  {
+  { 
+    id : 3,
+    writerID: 3,
+    isQuestion : true,
+    isQuestionSolved : true,
     title: "강아지 우울증인가요?",
     content:
     `남자친구랑 같이 2박3일로 놀러가게되서 지인집에 맡겼는데 지인집에는 친한 강아지 2마리가 있어서 너무 재밌게 놀고 지인이랑도 너무 잘지내고 사진이랑 영상을 봤을때 너무 행복해보였습니다.​
@@ -84,13 +116,19 @@ export const Posts = [
 저희집 강아지는 진도믹스/11개월 입니다`,
     img: {uri : "https://bff-images.bemypet.kr/media/medias/all/650-KakaoTalk_20240730_004108127.jpg"},
     tags: ["강아지", "QnA"],
-    profileNickName: "min",
     postTime: "2023-07-18 11:00:00",
     likeNumber: 0,
     scrapeNumber: 0,
     comments : [
       {
-        profileNickName: '나물이네',
+        writerID : 1,
+        isAdopted : true,        
+        content: '저희 병문에 와서 검사하시지요오',
+        postTime: '2024-07-30'
+      },
+      {
+        writerID : 3,
+        isAdopted : null,
         content: '떨어져있어서 조금 ..삐진거 아닐까용... ?!! 👉🏻👈🏻  맛있는 간식으로  보상을🫶🏻',
         postTime: '2024-07-30'
       },
@@ -98,6 +136,9 @@ export const Posts = [
   },
   { 
     id : 4,
+    writerID: 3,
+    isQuestion : false,
+    isQuestionSolved : null,
     title: "아파도 티 안 내는 고양이… 질병 ‘조기 진단’하려면?",
     content: 
     `고양이는 아파도 아픈 티를 안 낸다. 고양이의 조상은 사막에서 살던 야생동물이었다. 조금이라도 아파 보이면 자신보다 강한 포식자에 공격당할 위험이 커진다. 이에 아픔을 숨기던 본능이 여태 남아있다.
@@ -120,16 +161,190 @@ export const Posts = [
 고양이의 ▲식사량 ▲음수량 ▲체형·체중 ▲배변·배뇨량이 적힌 기록은 병원에 갈 때 꼭 지참한다. 이 수의사는 “보호자에게 고양이가 밥은 얼마나 먹는지, 배변·배뇨량은 얼마나 되는지 등을 물었을 때 정확한 답이 돌아오면 진료·진단에 큰 도움이 된다”며 “건강 상태와 생활 습관의 변화를 오랫동안 기록한 데이터가 있으면 더 좋다”고 말했다. 고양이의 몸 상태를 기록하는 습관이 잡혀있지 않은 보호자는 한국고양이수의사회가 로얄캐닌코리아와 개발한 ‘마이 캣 다이어리’를 사용해볼 수 있다. 반려묘 보호자가 반드시 알아야 할 육묘 상식과 ▲배변·배뇨량 ▲음수량 ▲활력도 기록란이 수록된 육묘수첩이다. 오는 9월 30일까지 동물병원을 통해 반려묘 보호자들에게 배포된다.`,
     img: {uri : "https://health.chosun.com/site/data/img_dir/2023/07/17/2023071701753_0.jpg"},
     tags: ["고양이", "정보"],
-    profileNickName: "해리미",
     postTime: "2023-07-18 11:00:00",
     likeNumber: 241,
     scrapeNumber: 64,
     comments : [
       {
-        profileNickName: '고양이가 좋아',
+        writerID : 0,
+        isAdopted : null,
         content: '정보글 아주 좋아요!',
         postTime: '2024-05-29 14:18:19'
       },
     ]
   }
 ];
+
+export const PostsContext = createContext();
+
+export const PostsProvider = ({ children }) => {
+  const [Posts, setPosts] = useState([]);
+  const {userId} = useContext(UserContext);
+  const [nickName, setNickName] = useState("")
+  const Uip = '192.168.132.176';
+  const [isReloading, setIsReloading] = useState(false);
+
+  useEffect(() => {
+    {
+      try {
+        GetPostsFromServer();
+      } catch (err) {
+        setError('게시물을 불러오는 데 실패했습니다.');
+        console.error('Error fetching posts:', err);
+      } finally {
+        setIsReloading(false);
+      }
+    }
+  }, []);
+  
+  useEffect(() => {
+    GetNickName()
+  }, [])
+
+  const GetNickName = async() => {
+    try {
+      const response = await axios.get(`http://${Uip}:5000/nickname/${userId}`);
+      console.log('Response NickName:', response.data);
+      if (response.status === 200) {
+        setNickName(response.data)
+      } else {
+        alert('댓글을 가져오는데 실패했습니다.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error.response ? error.response.data : error.message);
+      console.log('댓글을 가져오는 과정에서 문제가 발생했습니다. ' + error);
+      return null;
+    }
+  }
+
+  const GetPostsFromServer = async () => {
+    try {
+      const response = await axios.get(`http://${Uip}:3000/posts`);
+      console.log('Response:', response.data);
+      if (response.status === 200) {
+        setPosts(Object.entries(response.data));
+      } else {
+        alert('전체 게시물을 가져오는데 실패했습니다.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error.response ? error.response.data : error.message);
+      console.log('전체 게시물을 가져오는 과정에서 문제가 발생했습니다. ' + error);
+      return null;
+    }
+  };
+
+  const GetPostFromServer = async (postId) => { try {
+    const response = await axios.get(`http://${Uip}:3000/posts/${postId}`);
+    console.log('Response:', response.data);
+    if (response.status === 200) {
+      return response.data
+    } else {
+      alert('게시물을 가져오는데 실패했습니다.');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching posts:', error.response ? error.response.data : error.message);
+    alert('게시물을 가져오는 과정에서 문제가 발생했습니다.');
+    return null;
+  }
+
+  }
+  const AddPost = (newPost) => {
+    setPosts(prevPosts => [...prevPosts, { ...newPost, id: prevPosts.length}]);
+  };
+
+  const UpdatePost = (id, updatedPost) => {
+    setPosts(prevPosts => prevPosts.map(post => post.id === id ? { ...post, ...updatedPost } : post));
+  };
+
+  const DeletePost = (id) => {
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== id));
+  };
+
+  const AddComment = (id, writerID, content, postTime) => {
+    setPosts(prevPosts => prevPosts.map(post => post.id === id ?
+      {...post, comments : [{writerID : writerID, content : content, postTime : postTime}, ...post.comments]}
+      :
+      post
+    ))
+  }
+
+  return (
+    <PostsContext.Provider value={{ Posts,nickName,GetNickName,setIsReloading,GetPostsFromServer,GetPostFromServer,GetPosts, AddPost, UpdatePost, DeletePost, AddComment }}>
+      {children}
+    </PostsContext.Provider>
+  );
+};
+
+//유저 프로필 데이터
+export const currentUserId = 0;
+
+export const usersProfile = 
+[
+  { 
+    id : 0,
+    isDoctor : false,
+    doctorProfile : null,
+    nickName: 'Admin',
+    writtenPostsId : [0, 1],
+    CommentedPostsId : [0, 4],
+    likePosts : [],
+    scrapedPosts : [2, 3]
+  },
+  { 
+    id : 1,
+    isDoctor : true,
+    doctorProfile : 
+    {
+      hospitalName : '올리몰스 동물메디컬 센터',
+      profilePicture : {uri : 'https://img.freepik.com/free-photo/smiling-asian-doctor-female-nurse-holding-clipboard-pen-wearing-uniform-with-gloves-writing-pati_1258-83340.jpg?t=st=1722671824~exp=1722675424~hmac=afd022ece291d1365c2add477d452a7a99e685966fced2501acb5fc2a0c32d98&w=996'},
+    },
+    nickName: '길동',
+    writtenPostsId : [],
+    CommentedPostsId : [1, 3],
+    likePosts : [],
+    scrapedPosts : []
+  },
+  {
+    id : 2,
+    isDoctor : false,
+    doctorProfile : null,
+    nickName: '괴문서맵게하는집',
+    writtenPostsId : [2],
+    CommentedPostsId : [2],
+    likePosts : [],
+    scrapedPosts : []
+  },
+  {
+    id : 3,
+    isDoctor : false,
+    doctorProfile : null,
+    nickName: '해리미',
+    writtenPostsId : [3,4],
+    CommentedPostsId : [3, 4, 2],
+    likePosts : [],
+    scrapedPosts : []
+  }
+]
+//서버 데이터 가져오기
+
+const Uip = '172.22.155.176';
+
+export const GetPosts = async () => {
+  try {
+    const response = await axios.get(`http://${Uip}:8081/posts`);
+    console.log('Response:', response.data);
+    if (response.status === 200) {
+      return Object.values(response.data);
+    } else {
+      alert('전체 게시물을 가져오는데 실패했습니다.');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching posts:', error.response ? error.response.data : error.message);
+    alert('전체 게시물을 가져오는 과정에서 문제가 발생했습니다.');
+    return null;
+  }
+};
