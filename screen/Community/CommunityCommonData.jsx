@@ -15,30 +15,30 @@ export const initialCategoryTags = [
 export const Posts = [
   { 
     id : 1,
-    title: "게시물 제목",
-    content: "게시물 내용",
+    title: "우리집 고양이가 아파요",
+    content: "고양이가 아파요. 길냥이가 친정집에 왔다는데 눈이 빨갛고 계속 눈물을 흘린다네요 ㅠㅠ",
     img: "",
-    tags: ["강아지", "간식", "일상"],
-    profileNickName: "글쓴이 닉네임",
-    postTime: "게시 시간",
-    likeNumber: 0,
-    scrapeNumber: 0,
+    tags: ["강아지", "건강", "QnA"],
+    profileNickName: "고양이 코딱지",
+    postTime: "2023-08-06 20:24",
+    likeNumber: 10,
+    scrapeNumber: 3,
     comments : [
       {
-        profileNickName: '닉네임',
-        content: '댓글내용',
-        postTime: '2024-07-26'
+        profileNickName: '코코코',
+        content: '헉 얼른 쾌차하길 바래요ㅜㅜ',
+        postTime: '2024-08-06 20:52'
       }
     ]
   },
   { 
     id : 2,
-    title: "게시물 제목",
-    content: "게시물 내용",
+    title: "울집 애옹이",
+    content: "우리집 고양이 짱 귀엽죵! 입꼬리 좀 보세여",
     img: {uri : "https://image.newsis.com/2023/07/12/NISI20230712_0001313626_web.jpg?rnd=20230712163021"},
-    tags: ["강아지", "간식", "일상", "QnA"],
-    profileNickName: "글쓴이 닉네임",
-    postTime: "게시 시간",
+    tags: ["고양이", "일상"],
+    profileNickName: "고양이 최고",
+    postTime: "2023-07-1 13:00",
     likeNumber: 0,
     scrapeNumber: 0,
     comments : [

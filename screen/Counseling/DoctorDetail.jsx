@@ -16,7 +16,7 @@ import DoctorList from "./DoctorList";
 import doctors from "./doctors";
 
 import { UserContext } from "../../UseContext";
-import { firestore } from "../../firebaseConfig";
+import { firestore, database } from "../../firebaseConfig";
 import { collection, doc, setDoc, getDoc } from "firebase/firestore";
 
 export default function DoctorDetail({ route }) {

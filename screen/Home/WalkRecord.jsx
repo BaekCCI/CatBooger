@@ -8,7 +8,7 @@ import axios from 'axios';
 import { UserContext } from '../../UseContext';
 
 
-const Uip = '192.168.44.204'
+const Uip = '172.20.10.2'
 
 export default function WalkRecord(){
     const navigation = useNavigation();
