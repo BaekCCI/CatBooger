@@ -213,7 +213,7 @@ const CommunityWritingPost = () => {
     const selectedCategoryTags = categoryTags.filter(tag => tag.isSelected).map(selectedTag => selectedTag.name);
     const selectedTags = selectedAnimalTags.concat(selectedCategoryTags);
     const createdDate = GetDate();
-    const Uip = "192.168.193.176";
+    const Uip = "192.168.45.218";
     const postId = "postId" + Date.now();
 
     if (titleRef.current === "") {

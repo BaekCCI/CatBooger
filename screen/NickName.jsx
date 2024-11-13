@@ -6,7 +6,7 @@ import axios from 'axios';
 import { UserContext } from '../UseContext'
 
 
-const uIp = '192.168.193.176';
+const uIp = '192.168.132.168';
 
 // const userId = SecureStore.getItemAsync('uid');
 

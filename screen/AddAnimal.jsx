@@ -7,7 +7,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import axios from 'axios';
 
-const uIp = '192.168.1.51';
+const uIp = '192.168.45.218';
 
 export default function AddAnimal(){
     const navigation = useNavigation();

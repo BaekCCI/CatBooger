@@ -8,7 +8,10 @@ import { WebView } from 'react-native-webview';
 import { UserContext } from '../../UseContext';
 import { useFocusEffect } from '@react-navigation/native'; // 추가
 
-const uIp = '192.168.44.204';
+import { CLIENT_ID, LOGOUT_REDIRECT } from '@env';
+
+
+const uIp = '192.168.132.168';
 
 const MenuScreen = ({ navigation }) => {
   const [nickname, setNickname] = useState('');

@@ -8,7 +8,7 @@ import {basicProfilePicture, currentUserId, GetDate, initialPosts, originPosts, 
 import axios from "axios";
 import { UserContext, UserProvider } from "../../UseContext";
 
-const Uip = '192.168.132.148'
+const Uip = '192.168.45.218'
 /**이미지 데이터 */
 const commentIcon = require('../../assets/community/comment_icon.png')
 const sendCommentIcon = require('../../assets/community/send_comment_icon.png')

@@ -181,7 +181,7 @@ export const PostsProvider = ({ children }) => {
   const [Posts, setPosts] = useState([]);
   const {userId} = useContext(UserContext);
   const [nickName, setNickName] = useState("")
-  const Uip = '192.168.132.176';
+  const Uip = '192.168.45.218';
   const [isReloading, setIsReloading] = useState(false);
 
   useEffect(() => {
@@ -330,11 +330,11 @@ export const usersProfile =
 ]
 //서버 데이터 가져오기
 
-const Uip = '172.22.155.176';
+const Uip = '192.168.45.218';
 
 export const GetPosts = async () => {
   try {
-    const response = await axios.get(`http://${Uip}:8081/posts`);
+    const response = await axios.get(`http://${Uip}:3000/posts`);
     console.log('Response:', response.data);
     if (response.status === 200) {
       return Object.values(response.data);
